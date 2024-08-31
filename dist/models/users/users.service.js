@@ -11,15 +11,22 @@ var __metadata = (this && this.__metadata) || function (k, v) {
 var __param = (this && this.__param) || function (paramIndex, decorator) {
     return function (target, key) { decorator(target, key, paramIndex); }
 };
+var __importDefault = (this && this.__importDefault) || function (mod) {
+    return (mod && mod.__esModule) ? mod : { "default": mod };
+};
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.UsersService = void 0;
 const common_1 = require("@nestjs/common");
 const sequelize_1 = require("@nestjs/sequelize");
 const user_entity_1 = require("./entities/user.entity");
 const utils_1 = require("../../helper/utils");
+const uuid_1 = require("uuid");
+const dayjs_1 = __importDefault(require("dayjs"));
+const mailer_1 = require("@nestjs-modules/mailer");
 let UsersService = class UsersService {
-    constructor(userModel) {
+    constructor(userModel, mailerService) {
         this.userModel = userModel;
+        this.mailerService = mailerService;
     }
     async create(createUserDto) {
         try {
@@ -47,11 +54,49 @@ let UsersService = class UsersService {
     remove(id) {
         return `This action removes a #${id} user`;
     }
+    async handleRegister(registerDto) {
+        const { name, email, password } = registerDto;
+        const isExist = await this.isEmailExist(email);
+        if (isExist === true) {
+            throw new common_1.BadRequestException(`Email đã tồn tại:${email}. Vui lòng dùng email khác`);
+        }
+        const hashPassword = await (0, utils_1.hashPasswordHelper)(password);
+        const codeId = (0, uuid_1.v4)();
+        const user = await this.userModel.create({
+            name,
+            email,
+            password: hashPassword,
+            isActive: false,
+            codeId: codeId,
+            codeExpired: (0, dayjs_1.default)().add(5, 'minutes').toDate()
+        });
+        try {
+            await this.mailerService.sendMail({
+                to: email,
+                subject: `Activate your account`,
+                template: "template",
+                context: {
+                    name: name ?? email,
+                    activationCode: codeId
+                }
+            });
+        }
+        catch (error) {
+            console.error('Error sending email:', error);
+        }
+        return {
+            _id: user.id
+        };
+    }
+    async isEmailExist(email) {
+        const user = await this.userModel.findOne({ where: { email } });
+        return !!user;
+    }
 };
 exports.UsersService = UsersService;
 exports.UsersService = UsersService = __decorate([
     (0, common_1.Injectable)(),
     __param(0, (0, sequelize_1.InjectModel)(user_entity_1.User)),
-    __metadata("design:paramtypes", [Object])
+    __metadata("design:paramtypes", [Object, mailer_1.MailerService])
 ], UsersService);
 //# sourceMappingURL=users.service.js.map

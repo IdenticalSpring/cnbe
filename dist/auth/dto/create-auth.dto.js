@@ -16,13 +16,18 @@ class CreateAuthDto {
 }
 exports.CreateAuthDto = CreateAuthDto;
 __decorate([
-    (0, swagger_1.ApiProperty)({ description: 'The name of the user' }),
-    (0, class_validator_1.IsNotEmpty)({ message: "Username không được để trống" }),
+    (0, swagger_1.ApiProperty)({ description: 'The email of the user' }),
+    (0, class_validator_1.IsNotEmpty)({ message: "Email không được để trống" }),
     __metadata("design:type", String)
-], CreateAuthDto.prototype, "username", void 0);
+], CreateAuthDto.prototype, "email", void 0);
 __decorate([
     (0, swagger_1.ApiProperty)({ description: 'The password of the user' }),
     (0, class_validator_1.IsNotEmpty)({ message: "Password không được để trống" }),
     __metadata("design:type", String)
 ], CreateAuthDto.prototype, "password", void 0);
+__decorate([
+    (0, swagger_1.ApiProperty)({ description: 'The password of the user' }),
+    (0, class_validator_1.IsOptional)({ message: "Name không được để trống" }),
+    __metadata("design:type", String)
+], CreateAuthDto.prototype, "name", void 0);
 //# sourceMappingURL=create-auth.dto.js.map

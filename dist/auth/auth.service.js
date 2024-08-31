@@ -18,16 +18,20 @@ let AuthService = class AuthService {
     constructor(usersService, jwtService) {
         this.usersService = usersService;
         this.jwtService = jwtService;
+        this.handleRegister = async (registerDto) => {
+            return await this.usersService.handleRegister(registerDto);
+        };
     }
-    async validateUser(username, pass) {
-        const user = await this.usersService.findByEmail(username);
+    async validateUser(email, pass) {
+        const user = await this.usersService.findByEmail(email);
         const isValidPassword = await (0, utils_1.comparePasswordHelper)(pass, user.password);
-        if (!user || !isValidPassword)
+        if (!user || !isValidPassword) {
             return null;
+        }
         return user;
     }
     async login(user) {
-        const payload = { username: user.email, sub: user.id };
+        const payload = { email: user.email, sub: user.id };
         return {
             access_token: this.jwtService.sign(payload),
         };

@@ -9,25 +9,20 @@ var __metadata = (this && this.__metadata) || function (k, v) {
     if (typeof Reflect === "object" && typeof Reflect.metadata === "function") return Reflect.metadata(k, v);
 };
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.ProfileResponseDto = void 0;
+exports.LoginAuthDto = void 0;
 const swagger_1 = require("@nestjs/swagger");
-class ProfileResponseDto {
+const class_validator_1 = require("class-validator");
+class LoginAuthDto {
 }
-exports.ProfileResponseDto = ProfileResponseDto;
+exports.LoginAuthDto = LoginAuthDto;
 __decorate([
-    (0, swagger_1.ApiProperty)({ example: 1, description: 'The ID of the user' }),
-    __metadata("design:type", Number)
-], ProfileResponseDto.prototype, "id", void 0);
-__decorate([
-    (0, swagger_1.ApiProperty)({ example: 'john.doe@example.com', description: 'The email of the user' }),
+    (0, swagger_1.ApiProperty)({ description: 'The email of the user' }),
+    (0, class_validator_1.IsNotEmpty)({ message: "Email không được để trống" }),
     __metadata("design:type", String)
-], ProfileResponseDto.prototype, "email", void 0);
+], LoginAuthDto.prototype, "email", void 0);
 __decorate([
-    (0, swagger_1.ApiProperty)({ example: 'John Doe', description: 'The name of the user' }),
+    (0, swagger_1.ApiProperty)({ description: 'The password of the user' }),
+    (0, class_validator_1.IsNotEmpty)({ message: "Password không được để trống" }),
     __metadata("design:type", String)
-], ProfileResponseDto.prototype, "name", void 0);
-__decorate([
-    (0, swagger_1.ApiProperty)({ example: ['user'], description: 'The roles of the user' }),
-    __metadata("design:type", Array)
-], ProfileResponseDto.prototype, "roles", void 0);
-//# sourceMappingURL=ProfileResponseDto.js.map
+], LoginAuthDto.prototype, "password", void 0);
+//# sourceMappingURL=login-auth.dto.js.map

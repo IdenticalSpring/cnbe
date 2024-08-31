@@ -11,13 +11,12 @@ export class User extends Model<User> {
 
     @Column({
         type: DataType.STRING,
-        allowNull: false,
+        allowNull: true,
     })
-    username: string;
-
+    name: string;
     @Column({
         type: DataType.STRING,
-        allowNull: false,
+        allowNull: true,
     })
     email: string;
 
@@ -26,6 +25,21 @@ export class User extends Model<User> {
         allowNull: false,
     })
     password: string;
+    @Column({
+        type: DataType.STRING,
+        allowNull: false,
+    })
+    codeId: string;
+    @Column({
+        type: DataType.DATE,  
+        allowNull: false,    
+    })
+    codeExpired: Date;
+    @Column({
+        type: DataType.BOOLEAN,
+        allowNull: false,
+    })
+    isActive: boolean;
     @Column({
         type: DataType.ENUM('user', 'admin'),
         defaultValue: 'user',
