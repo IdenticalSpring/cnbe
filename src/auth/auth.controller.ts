@@ -5,7 +5,7 @@ import { ApiBearerAuth, ApiBody, ApiOperation, ApiResponse, ApiTags } from '@nes
 import { AuthGuard } from '@nestjs/passport';
 import { LocalAuthGuard } from './passport/local-auth.guard';
 import { JwtAuthGuard } from './passport/jwt-auth.guard';
-import { Public } from 'src/decorator/public.decorator';
+import { Public, ResponseMassage } from 'src/decorator/public.decorator';
 import { LoginAuthDto } from './dto/login-auth.dto';
 import { MailerService } from '@nestjs-modules/mailer';
 
@@ -22,6 +22,7 @@ export class AuthController {
   @ApiBody({ type: LoginAuthDto })
   @UseGuards(LocalAuthGuard)
   @Public()
+  @ResponseMassage('Fetch Login')
   handleLogin(@Request() req, @Body() loginDto: LoginAuthDto) {
     return this.authService.login(req.user)
   }
@@ -43,6 +44,7 @@ export class AuthController {
 register(@Body() registerDto:CreateAuthDto){
   return this.authService.handleRegister(registerDto);
 }
+//test email
   @Get('mail')
   @Public()
   @ApiOperation({ summary: 'Test email sending' })

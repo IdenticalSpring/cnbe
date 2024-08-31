@@ -63,6 +63,7 @@ __decorate([
     (0, swagger_1.ApiBody)({ type: login_auth_dto_1.LoginAuthDto }),
     (0, common_1.UseGuards)(local_auth_guard_1.LocalAuthGuard),
     (0, public_decorator_1.Public)(),
+    (0, public_decorator_1.ResponseMassage)('Fetch Login'),
     __param(0, (0, common_1.Request)()),
     __param(1, (0, common_1.Body)()),
     __metadata("design:type", Function),

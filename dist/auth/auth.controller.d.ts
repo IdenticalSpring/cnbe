@@ -7,6 +7,11 @@ export declare class AuthController {
     private readonly mailerService;
     constructor(authService: AuthService, mailerService: MailerService);
     handleLogin(req: any, loginDto: LoginAuthDto): Promise<{
+        user: {
+            email: any;
+            id: any;
+            name: any;
+        };
         access_token: string;
     }>;
     getProfile(req: any): any;

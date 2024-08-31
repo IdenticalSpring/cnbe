@@ -19,6 +19,7 @@ const core_1 = require("@nestjs/core");
 const jwt_auth_guard_1 = require("./auth/passport/jwt-auth.guard");
 const handlebars_adapter_1 = require("@nestjs-modules/mailer/dist/adapters/handlebars.adapter");
 const mailer_1 = require("@nestjs-modules/mailer");
+const transform_interceptor_1 = require("./core/transform.interceptor");
 let AppModule = class AppModule {
 };
 exports.AppModule = AppModule;
@@ -77,6 +78,10 @@ exports.AppModule = AppModule = __decorate([
             {
                 provide: core_1.APP_GUARD,
                 useClass: jwt_auth_guard_1.JwtAuthGuard,
+            },
+            {
+                provide: core_1.APP_INTERCEPTOR,
+                useClass: transform_interceptor_1.TransformInterceptor,
             },
         ],
     })
