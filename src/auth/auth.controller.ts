@@ -1,8 +1,7 @@
-import { Controller, Get, Post, Body, Patch, Param, Delete, UseGuards, Request, HttpException, HttpStatus } from '@nestjs/common';
+import { Controller, Get, Post, Body,  UseGuards, Request, HttpException, HttpStatus } from '@nestjs/common';
 import { AuthService } from './auth.service';
 import { CreateAuthDto } from './dto/create-auth.dto';
 import { ApiBearerAuth, ApiBody, ApiOperation, ApiResponse, ApiTags } from '@nestjs/swagger';
-import { AuthGuard } from '@nestjs/passport';
 import { LocalAuthGuard } from './passport/local-auth.guard';
 import { JwtAuthGuard } from './passport/jwt-auth.guard';
 import { Public, ResponseMassage } from 'src/decorator/public.decorator';
@@ -16,55 +15,32 @@ export class AuthController {
     private readonly mailerService: MailerService
   ) {}
 
-  @Post("login")
-  @ApiOperation({ summary: 'Login' })
-  @ApiResponse({ status: 200, description: 'Successfully login.' })
+  @Post('login')
+  @ApiOperation({ summary: 'User Login' })
+  @ApiResponse({ status: 200, description: 'Login successful.' })
   @ApiBody({ type: LoginAuthDto })
   @UseGuards(LocalAuthGuard)
   @Public()
-  @ResponseMassage('Fetch Login')
+  @ResponseMassage('User logged in successfully')
   handleLogin(@Request() req, @Body() loginDto: LoginAuthDto) {
-    return this.authService.login(req.user)
+    return this.authService.login(req.user);
   }
- 
-//profile
-  @UseGuards(JwtAuthGuard)
+
   @Get('profile')
-  @ApiBearerAuth() 
-  @ApiOperation({ summary: 'Profile' })
-  @ApiResponse({ status: 200, description: 'Successfully profile.' })
+  @UseGuards(JwtAuthGuard)
+  @ApiBearerAuth()
+  @ApiOperation({ summary: 'Get User Profile' })
+  @ApiResponse({ status: 200, description: 'Profile retrieved successfully.' })
   getProfile(@Request() req) {
     return req.user;
   }
-//Register
-@Post('register')
-@ApiOperation({ summary: 'Register' })
-@ApiResponse({ status: 200, description: 'Successfully register.' })
-@Public()
-register(@Body() registerDto:CreateAuthDto){
-  return this.authService.handleRegister(registerDto);
-}
-//test email
-  @Get('mail')
+
+  @Post('register')
+  @ApiOperation({ summary: 'User Registration' })
+  @ApiResponse({ status: 200, description: 'Registration successful.' })
   @Public()
-  @ApiOperation({ summary: 'Test email sending' })
-  @ApiResponse({ status: 200, description: 'Email sent successfully.' })
-  @ApiResponse({ status: 500, description: 'Failed to send email.' })
-  async testMail() {
-    try {
-      await this.mailerService.sendMail({
-        to: 'qpham7286@gmail.com',
-        subject: 'Testing Nest MailerModule ✔',
-        template: 'register',
-        context: {
-          name: "Eric",
-          activationCode: 123456789
-        }
-      });
-      return { message: "Email sent successfully" };
-    } catch (error) {
-      console.error('Failed to send email:', error);
-      throw new HttpException('Failed to send email', HttpStatus.INTERNAL_SERVER_ERROR);
-    }
+  register(@Body() registerDto: CreateAuthDto) {
+    return this.authService.handleRegister(registerDto);
   }
+
 }

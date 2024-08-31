@@ -18,16 +18,16 @@ export class UsersService {
 
   async create(createUserDto: CreateUserDto): Promise<User> {
     try {
-      // Hash the password before creating the user
+      
       const hashedPassword = await hashPasswordHelper(createUserDto.password);
 
-      // Create a new object with the hashed password
+      
       const userWithHashedPassword = {
         ...createUserDto,
         password: hashedPassword,
       };
 
-      // Create and return the new user
+     
       return await this.userModel.create(userWithHashedPassword as User);
     } catch (error) {
       console.error('Error creating user:', error);
@@ -55,7 +55,7 @@ export class UsersService {
     const { name, email, password } = registerDto;
     const isExist = await this.isEmailExist(email);
     if (isExist === true) {
-      throw new BadRequestException(`Email đã tồn tại:${email}. Vui lòng dùng email khác`)
+      throw new BadRequestException(`Email already exists: ${email}. Please use a different email.`);
     }
     const hashPassword = await hashPasswordHelper(password)
     const codeId = uuidv4();
@@ -89,7 +89,7 @@ export class UsersService {
   }
   async isEmailExist(email: string): Promise<boolean> {
     const user = await this.userModel.findOne({ where: { email } });
-    return !!user; // Trả về true nếu user tồn tại, ngược lại là false
+    return !!user; 
   }
 
 }
