@@ -1,18 +1,32 @@
-import { Controller, Get, Post, Body, Patch, Param, Delete } from '@nestjs/common';
+import { Controller, Get, Post, Body, Patch, Param, Delete, UseGuards, Request } from '@nestjs/common';
 import { AuthService } from './auth.service';
 import { CreateAuthDto } from './dto/create-auth.dto';
-import { UpdateAuthDto } from './dto/update-auth.dto';
-import { ApiOperation, ApiResponse, ApiTags } from '@nestjs/swagger';
+import { ApiBearerAuth, ApiBody, ApiOperation, ApiResponse, ApiTags } from '@nestjs/swagger';
+import { AuthGuard } from '@nestjs/passport';
+import { LocalAuthGuard } from './passport/local-auth.guard';
+import { JwtAuthGuard } from './passport/jwt-auth.guard';
 
 @ApiTags('auth')
 @Controller('auth')
 export class AuthController {
   constructor(private readonly authService: AuthService) {}
-@Post("login")
-@ApiOperation({ summary: 'Login' })
-@ApiResponse({ status: 200, description: 'Successfully login.' })
-create(@Body() createAuthDto:CreateAuthDto){
-  return this.authService.signIn(createAuthDto.username,createAuthDto.password)
-}
+
+  @Post("login")
+  @ApiOperation({ summary: 'Login' })
+  @ApiResponse({ status: 200, description: 'Successfully login.' })
+  @ApiBody({ type: CreateAuthDto })
+  @UseGuards(LocalAuthGuard)
+  handleLogin(@Request() req, @Body() loginDto: CreateAuthDto) {
+    return this.authService.login(req.user)
+  }
  
+//profile
+  @UseGuards(JwtAuthGuard)
+  @Get('profile')
+  @ApiBearerAuth() 
+  @ApiOperation({ summary: 'Profile' })
+  @ApiResponse({ status: 200, description: 'Successfully profile.' })
+  getProfile(@Request() req) {
+    return req.user;
+  }
 }
