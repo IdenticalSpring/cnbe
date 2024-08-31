@@ -14,6 +14,7 @@ const sequelize_1 = require("@nestjs/sequelize");
 const users_module_1 = require("./models/users/users.module");
 const config_1 = require("@nestjs/config");
 const user_entity_1 = require("./models/users/entities/user.entity");
+const auth_module_1 = require("./auth/auth.module");
 let AppModule = class AppModule {
 };
 exports.AppModule = AppModule;
@@ -38,7 +39,7 @@ exports.AppModule = AppModule = __decorate([
                 }),
                 inject: [config_1.ConfigService],
             }),
-            users_module_1.UsersModule,
+            users_module_1.UsersModule, auth_module_1.AuthModule
         ],
         controllers: [app_controller_1.AppController],
         providers: [app_service_1.AppService],

@@ -5,6 +5,8 @@ import { SequelizeModule } from '@nestjs/sequelize';
 import { UsersModule } from './models/users/users.module';
 import { ConfigModule, ConfigService } from '@nestjs/config';
 import { User } from './models/users/entities/user.entity';
+import { Auth } from './auth/entities/auth.entity';
+import { AuthModule } from './auth/auth.module';
 
 @Module({
   imports: [
@@ -26,7 +28,8 @@ import { User } from './models/users/entities/user.entity';
       }),
       inject: [ConfigService],
     }),
-    UsersModule,
+    UsersModule,AuthModule
+    
   ],
   controllers: [AppController],
   providers: [AppService],

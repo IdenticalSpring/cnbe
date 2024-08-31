@@ -1,10 +1,12 @@
 import { NestFactory } from '@nestjs/core';
 import { AppModule } from './app.module';
 import { DocumentBuilder, SwaggerModule } from '@nestjs/swagger';
+import { ValidationPipe } from '@nestjs/common';
 
 async function bootstrap() {
   const app = await NestFactory.create(AppModule);
-  // Cấu hình Swagger
+  app.setGlobalPrefix('api/v1');
+  // Swagger config
   const config = new DocumentBuilder()
     .setTitle('API Documentation')
     .setDescription('API description for the application')
@@ -12,8 +14,9 @@ async function bootstrap() {
     .addBearerAuth()
     .build();
   const document = SwaggerModule.createDocument(app, config);
-  SwaggerModule.setup('api', app, document);
-
+  SwaggerModule.setup('api/v1/docs', app, document);
+  // app.useGlobalPipes(new ValidationPipe());
+  
   await app.listen(8080);
 }
 bootstrap();

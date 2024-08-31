@@ -16,18 +16,33 @@ exports.UsersService = void 0;
 const common_1 = require("@nestjs/common");
 const sequelize_1 = require("@nestjs/sequelize");
 const user_entity_1 = require("./entities/user.entity");
+const utils_1 = require("../../helper/utils");
 let UsersService = class UsersService {
     constructor(userModel) {
         this.userModel = userModel;
     }
     async create(createUserDto) {
-        return this.userModel.create(createUserDto);
+        try {
+            const hashedPassword = await (0, utils_1.hashPasswordHelper)(createUserDto.password);
+            const userWithHashedPassword = {
+                ...createUserDto,
+                password: hashedPassword,
+            };
+            return await this.userModel.create(userWithHashedPassword);
+        }
+        catch (error) {
+            console.error('Error creating user:', error);
+            throw new Error('Failed to create user');
+        }
     }
     async findAll() {
         return this.userModel.findAll();
     }
     findOne(id) {
         return `This action returns a #${id} user`;
+    }
+    async findByEmail(email) {
+        return await this.userModel.findOne({ where: { email } });
     }
     remove(id) {
         return `This action removes a #${id} user`;
