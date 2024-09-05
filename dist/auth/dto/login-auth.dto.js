@@ -16,13 +16,13 @@ class LoginAuthDto {
 }
 exports.LoginAuthDto = LoginAuthDto;
 __decorate([
-    (0, swagger_1.ApiProperty)({ description: 'The email of the user' }),
-    (0, class_validator_1.IsNotEmpty)({ message: "Email không được để trống" }),
+    (0, swagger_1.ApiProperty)({ description: 'The username of the user' }),
+    (0, class_validator_1.IsNotEmpty)({ message: "Username cannot be empty" }),
     __metadata("design:type", String)
-], LoginAuthDto.prototype, "email", void 0);
+], LoginAuthDto.prototype, "username", void 0);
 __decorate([
     (0, swagger_1.ApiProperty)({ description: 'The password of the user' }),
-    (0, class_validator_1.IsNotEmpty)({ message: "Password không được để trống" }),
+    (0, class_validator_1.IsNotEmpty)({ message: "Password cannot be empty" }),
     __metadata("design:type", String)
 ], LoginAuthDto.prototype, "password", void 0);
 //# sourceMappingURL=login-auth.dto.js.map

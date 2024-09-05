@@ -21,7 +21,8 @@ let AuthModule = class AuthModule {
 exports.AuthModule = AuthModule;
 exports.AuthModule = AuthModule = __decorate([
     (0, common_1.Module)({
-        imports: [users_module_1.UsersModule,
+        imports: [
+            users_module_1.UsersModule,
             jwt_1.JwtModule.registerAsync({
                 imports: [config_1.ConfigModule],
                 useFactory: async (configService) => ({
@@ -32,7 +33,8 @@ exports.AuthModule = AuthModule = __decorate([
                 }),
                 inject: [config_1.ConfigService],
             }),
-            passport_1.PassportModule],
+            passport_1.PassportModule
+        ],
         controllers: [auth_controller_1.AuthController],
         providers: [auth_service_1.AuthService, local_strategy_1.LocalStrategy, jwt_strategy_1.JwtStrategy],
     })

@@ -9,10 +9,10 @@ export declare class UsersService {
     create(createUserDto: CreateUserDto): Promise<User>;
     findAll(): Promise<User[]>;
     findOne(id: number): string;
-    findByEmail(email: string): Promise<User | null>;
+    findByUsername(username: string): Promise<User | null>;
     remove(id: number): string;
     handleRegister(registerDto: CreateAuthDto): Promise<{
         _id: number;
     }>;
-    isEmailExist(email: string): Promise<boolean>;
+    isUsernameExist(username: string): Promise<boolean>;
 }

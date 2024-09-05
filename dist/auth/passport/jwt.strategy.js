@@ -17,14 +17,16 @@ const config_1 = require("@nestjs/config");
 let JwtStrategy = class JwtStrategy extends (0, passport_1.PassportStrategy)(passport_jwt_1.Strategy) {
     constructor(configService) {
         super({
-            jwtFromRequest: passport_jwt_1.ExtractJwt.fromAuthHeaderAsBearerToken(),
+            jwtFromRequest: passport_jwt_1.ExtractJwt.fromExtractors([(request) => {
+                    return request?.cookies?.jwt;
+                }]),
             ignoreExpiration: false,
             secretOrKey: configService.get('JWT_SECRET_KEY'),
         });
         this.configService = configService;
     }
     async validate(payload) {
-        return { userId: payload.sub, email: payload.email };
+        return { userId: payload.sub, username: payload.username };
     }
 };
 exports.JwtStrategy = JwtStrategy;

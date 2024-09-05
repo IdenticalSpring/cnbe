@@ -48,22 +48,23 @@ let UsersService = class UsersService {
     findOne(id) {
         return `This action returns a #${id} user`;
     }
-    async findByEmail(email) {
-        return await this.userModel.findOne({ where: { email } });
+    async findByUsername(username) {
+        return await this.userModel.findOne({ where: { username } });
     }
     remove(id) {
         return `This action removes a #${id} user`;
     }
     async handleRegister(registerDto) {
-        const { name, email, password } = registerDto;
-        const isExist = await this.isEmailExist(email);
+        const { name, username, password, email } = registerDto;
+        const isExist = await this.isUsernameExist(username);
         if (isExist === true) {
-            throw new common_1.BadRequestException(`Email đã tồn tại:${email}. Vui lòng dùng email khác`);
+            throw new common_1.BadRequestException(`Username already exists: ${username}. Please use a different username.`);
         }
         const hashPassword = await (0, utils_1.hashPasswordHelper)(password);
         const codeId = (0, uuid_1.v4)();
         const user = await this.userModel.create({
             name,
+            username,
             email,
             password: hashPassword,
             isActive: false,
@@ -72,11 +73,11 @@ let UsersService = class UsersService {
         });
         try {
             await this.mailerService.sendMail({
-                to: email,
+                to: user.email,
                 subject: `Activate your account`,
                 template: "template",
                 context: {
-                    name: name ?? email,
+                    name: name ?? username,
                     activationCode: codeId
                 }
             });
@@ -88,8 +89,8 @@ let UsersService = class UsersService {
             _id: user.id
         };
     }
-    async isEmailExist(email) {
-        const user = await this.userModel.findOne({ where: { email } });
+    async isUsernameExist(username) {
+        const user = await this.userModel.findOne({ where: { username } });
         return !!user;
     }
 };

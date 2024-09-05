@@ -27,8 +27,16 @@ let AuthController = class AuthController {
         this.authService = authService;
         this.mailerService = mailerService;
     }
-    handleLogin(req, loginDto) {
-        return this.authService.login(req.user);
+    async login(req, res) {
+        const { access_token } = await this.authService.login(req.user);
+        res.cookie('jwt', access_token, { httpOnly: true, secure: process.env.NODE_ENV !== 'development' });
+        return { message: 'Logged in successfully' };
+    }
+    async logout(req, res) {
+        const token = req.cookies['jwt'];
+        const result = await this.authService.logout(token);
+        res.clearCookie('jwt');
+        return result;
     }
     getProfile(req) {
         return req.user;
@@ -36,46 +44,37 @@ let AuthController = class AuthController {
     register(registerDto) {
         return this.authService.handleRegister(registerDto);
     }
-    async testMail() {
-        try {
-            await this.mailerService.sendMail({
-                to: 'qpham7286@gmail.com',
-                subject: 'Testing Nest MailerModule ✔',
-                template: 'register',
-                context: {
-                    name: "Eric",
-                    activationCode: 123456789
-                }
-            });
-            return { message: "Email sent successfully" };
-        }
-        catch (error) {
-            console.error('Failed to send email:', error);
-            throw new common_1.HttpException('Failed to send email', common_1.HttpStatus.INTERNAL_SERVER_ERROR);
-        }
-    }
 };
 exports.AuthController = AuthController;
 __decorate([
-    (0, common_1.Post)("login"),
-    (0, swagger_1.ApiOperation)({ summary: 'Login' }),
-    (0, swagger_1.ApiResponse)({ status: 200, description: 'Successfully login.' }),
+    (0, common_1.Post)('login'),
+    (0, swagger_1.ApiOperation)({ summary: 'User Login' }),
+    (0, swagger_1.ApiResponse)({ status: 200, description: 'Login successful.' }),
     (0, swagger_1.ApiBody)({ type: login_auth_dto_1.LoginAuthDto }),
     (0, common_1.UseGuards)(local_auth_guard_1.LocalAuthGuard),
     (0, public_decorator_1.Public)(),
-    (0, public_decorator_1.ResponseMassage)('Fetch Login'),
+    (0, public_decorator_1.ResponseMassage)('User logged in successfully'),
     __param(0, (0, common_1.Request)()),
-    __param(1, (0, common_1.Body)()),
+    __param(1, (0, common_1.Response)({ passthrough: true })),
     __metadata("design:type", Function),
-    __metadata("design:paramtypes", [Object, login_auth_dto_1.LoginAuthDto]),
-    __metadata("design:returntype", void 0)
-], AuthController.prototype, "handleLogin", null);
+    __metadata("design:paramtypes", [Object, Object]),
+    __metadata("design:returntype", Promise)
+], AuthController.prototype, "login", null);
 __decorate([
     (0, common_1.UseGuards)(jwt_auth_guard_1.JwtAuthGuard),
+    (0, common_1.Delete)('logout'),
+    __param(0, (0, common_1.Request)()),
+    __param(1, (0, common_1.Response)({ passthrough: true })),
+    __metadata("design:type", Function),
+    __metadata("design:paramtypes", [Object, Object]),
+    __metadata("design:returntype", Promise)
+], AuthController.prototype, "logout", null);
+__decorate([
     (0, common_1.Get)('profile'),
+    (0, common_1.UseGuards)(jwt_auth_guard_1.JwtAuthGuard),
     (0, swagger_1.ApiBearerAuth)(),
-    (0, swagger_1.ApiOperation)({ summary: 'Profile' }),
-    (0, swagger_1.ApiResponse)({ status: 200, description: 'Successfully profile.' }),
+    (0, swagger_1.ApiOperation)({ summary: 'Get User Profile' }),
+    (0, swagger_1.ApiResponse)({ status: 200, description: 'Profile retrieved successfully.' }),
     __param(0, (0, common_1.Request)()),
     __metadata("design:type", Function),
     __metadata("design:paramtypes", [Object]),
@@ -83,24 +82,14 @@ __decorate([
 ], AuthController.prototype, "getProfile", null);
 __decorate([
     (0, common_1.Post)('register'),
-    (0, swagger_1.ApiOperation)({ summary: 'Register' }),
-    (0, swagger_1.ApiResponse)({ status: 200, description: 'Successfully register.' }),
+    (0, swagger_1.ApiOperation)({ summary: 'User Registration' }),
+    (0, swagger_1.ApiResponse)({ status: 200, description: 'Registration successful.' }),
     (0, public_decorator_1.Public)(),
     __param(0, (0, common_1.Body)()),
     __metadata("design:type", Function),
     __metadata("design:paramtypes", [create_auth_dto_1.CreateAuthDto]),
     __metadata("design:returntype", void 0)
 ], AuthController.prototype, "register", null);
-__decorate([
-    (0, common_1.Get)('mail'),
-    (0, public_decorator_1.Public)(),
-    (0, swagger_1.ApiOperation)({ summary: 'Test email sending' }),
-    (0, swagger_1.ApiResponse)({ status: 200, description: 'Email sent successfully.' }),
-    (0, swagger_1.ApiResponse)({ status: 500, description: 'Failed to send email.' }),
-    __metadata("design:type", Function),
-    __metadata("design:paramtypes", []),
-    __metadata("design:returntype", Promise)
-], AuthController.prototype, "testMail", null);
 exports.AuthController = AuthController = __decorate([
     (0, swagger_1.ApiTags)('auth'),
     (0, common_1.Controller)('auth'),

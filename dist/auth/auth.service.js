@@ -22,24 +22,25 @@ let AuthService = class AuthService {
             return await this.usersService.handleRegister(registerDto);
         };
     }
-    async validateUser(email, pass) {
-        const user = await this.usersService.findByEmail(email);
+    async validateUser(username, pass) {
+        const user = await this.usersService.findByUsername(username);
+        if (!user) {
+            return null;
+        }
         const isValidPassword = await (0, utils_1.comparePasswordHelper)(pass, user.password);
-        if (!user || !isValidPassword) {
+        if (!isValidPassword) {
             return null;
         }
         return user;
     }
     async login(user) {
-        const payload = { email: user.email, sub: user.id };
+        const payload = { username: user.username, sub: user.id };
         return {
-            user: {
-                email: user.email,
-                id: user.id,
-                name: user.name
-            },
             access_token: this.jwtService.sign(payload),
         };
+    }
+    async logout(token) {
+        return { message: 'Logged out successfully' };
     }
 };
 exports.AuthService = AuthService;

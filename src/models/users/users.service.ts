@@ -14,20 +14,17 @@ export class UsersService {
     @InjectModel(User)
     private userModel: typeof User,
     private readonly mailerService: MailerService
-  ) {}
+  ) { }
 
   async create(createUserDto: CreateUserDto): Promise<User> {
     try {
-      
       const hashedPassword = await hashPasswordHelper(createUserDto.password);
 
-      
       const userWithHashedPassword = {
         ...createUserDto,
         password: hashedPassword,
       };
 
-     
       return await this.userModel.create(userWithHashedPassword as User);
     } catch (error) {
       console.error('Error creating user:', error);
@@ -38,29 +35,30 @@ export class UsersService {
   async findAll(): Promise<User[]> {
     return this.userModel.findAll();
   }
+
   findOne(id: number) {
     return `This action returns a #${id} user`;
   }
-  async findByEmail(email: string): Promise<User | null> {
-    return await this.userModel.findOne({ where: { email } });
+
+  async findByUsername(username: string): Promise<User | null> {
+    return await this.userModel.findOne({ where: { username } });
   }
-  // update(id: number, updateUserDto: UpdateUserDto) {
-  //   return `This action updates a #${id} user`;
-  // }
 
   remove(id: number) {
     return `This action removes a #${id} user`;
   }
+
   async handleRegister(registerDto: CreateAuthDto) {
-    const { name, email, password } = registerDto;
-    const isExist = await this.isEmailExist(email);
+    const { name, username, password,email } = registerDto;
+    const isExist = await this.isUsernameExist(username);
     if (isExist === true) {
-      throw new BadRequestException(`Email already exists: ${email}. Please use a different email.`);
+      throw new BadRequestException(`Username already exists: ${username}. Please use a different username.`);
     }
     const hashPassword = await hashPasswordHelper(password)
     const codeId = uuidv4();
     const user = await this.userModel.create({
       name,
+      username,
       email,
       password: hashPassword,
       isActive: false,
@@ -70,26 +68,25 @@ export class UsersService {
 
     try {
       await this.mailerService.sendMail({
-        to: email,  
+        to: user.email,
         subject: `Activate your account`,
         template: "template",
         context: {
-          name: name ?? email,
+          name: name ?? username,
           activationCode: codeId
         }
       });
     } catch (error) {
       console.error('Error sending email:', error);
-     
     }
 
     return {
       _id: user.id
     }
   }
-  async isEmailExist(email: string): Promise<boolean> {
-    const user = await this.userModel.findOne({ where: { email } });
-    return !!user; 
-  }
 
+  async isUsernameExist(username: string): Promise<boolean> {
+    const user = await this.userModel.findOne({ where: { username } });
+    return !!user;
+  }
 }

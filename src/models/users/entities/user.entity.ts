@@ -8,12 +8,17 @@ export class User extends Model<User> {
         primaryKey: true,
     })
     id: number;
-
     @Column({
         type: DataType.STRING,
         allowNull: true,
     })
     name: string;
+    @Column({
+        type: DataType.STRING,
+        allowNull: false,
+        unique: true,
+    })
+    username: string;
     @Column({
         type: DataType.STRING,
         allowNull: true,
