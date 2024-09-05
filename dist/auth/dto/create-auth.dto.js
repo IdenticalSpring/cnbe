@@ -32,7 +32,8 @@ __decorate([
 ], CreateAuthDto.prototype, "name", void 0);
 __decorate([
     (0, swagger_1.ApiProperty)({ description: 'The email of the user' }),
-    (0, class_validator_1.IsOptional)(),
+    (0, class_validator_1.IsNotEmpty)({ message: "Email cannot be empty" }),
+    (0, class_validator_1.IsEmail)({}, { message: "Invalid email format" }),
     __metadata("design:type", String)
 ], CreateAuthDto.prototype, "email", void 0);
 //# sourceMappingURL=create-auth.dto.js.map
