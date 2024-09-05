@@ -69,29 +69,68 @@ let UsersService = class UsersService {
             password: hashPassword,
             isActive: false,
             codeId: codeId,
-            codeExpired: (0, dayjs_1.default)().add(5, 'minutes').toDate()
+            codeExpired: (0, dayjs_1.default)().add(5, 'minutes').toDate(),
         });
+        await this.sendActivationEmail(user, name ?? username, codeId);
+        return { _id: user.id };
+    }
+    async sendActivationEmail(user, name, activationCode) {
         try {
             await this.mailerService.sendMail({
                 to: user.email,
                 subject: `Activate your account`,
-                template: "template",
+                template: 'template',
                 context: {
-                    name: name ?? username,
-                    activationCode: codeId
-                }
+                    name,
+                    activationCode,
+                },
             });
         }
         catch (error) {
             console.error('Error sending email:', error);
+            throw new Error('Failed to send activation email');
         }
-        return {
-            _id: user.id
-        };
     }
     async isUsernameExist(username) {
         const user = await this.userModel.findOne({ where: { username } });
         return !!user;
+    }
+    async handleActive(data) {
+        const user = await this.userModel.findOne({
+            where: {
+                id: data.id,
+                codeId: data.codeId,
+                isActive: false,
+            },
+        });
+        if (!user) {
+            throw new common_1.BadRequestException("Invalid activation code or the code has expired.");
+        }
+        const isBeforeCheck = (0, dayjs_1.default)().isBefore(user.codeExpired);
+        if (isBeforeCheck) {
+            await this.userModel.update({ isActive: true, codeId: null, codeExpired: null }, { where: { id: data.id } });
+        }
+        else {
+            throw new common_1.BadRequestException("Invalid activation code or the code has expired.");
+        }
+        return { isActive: true };
+    }
+    async retryActive(email) {
+        const user = await this.userModel.findOne({ where: { email } });
+        if (!user) {
+            throw new common_1.BadRequestException("Account does not exist");
+        }
+        if (user.isActive) {
+            throw new common_1.BadRequestException("Account is already activated");
+        }
+        const newCodeId = (0, uuid_1.v4)();
+        const newCodeExpiration = (0, dayjs_1.default)().add(5, "minutes").toDate();
+        await user.update({
+            codeId: newCodeId,
+            codeExpired: newCodeExpiration,
+        });
+        await this.sendActivationEmail(user, user.name ?? user.email, newCodeId);
+        return { id: user.id };
     }
 };
 exports.UsersService = UsersService;

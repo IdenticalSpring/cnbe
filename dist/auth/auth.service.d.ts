@@ -1,6 +1,7 @@
 import { UsersService } from '../models/users/users.service';
 import { JwtService } from '@nestjs/jwt';
 import { CreateAuthDto } from './dto/create-auth.dto';
+import { codeAuthDto } from './dto/code-auth.dto';
 export declare class AuthService {
     private usersService;
     private jwtService;
@@ -14,5 +15,11 @@ export declare class AuthService {
     }>;
     handleRegister: (registerDto: CreateAuthDto) => Promise<{
         _id: number;
+    }>;
+    checkCode: (data: codeAuthDto) => Promise<{
+        isActive: boolean;
+    }>;
+    retryActive: (data: string) => Promise<{
+        id: number;
     }>;
 }

@@ -7,6 +7,7 @@ import { JwtAuthGuard } from './passport/jwt-auth.guard';
 import { Public, ResponseMassage } from 'src/decorator/public.decorator';
 import { LoginAuthDto } from './dto/login-auth.dto';
 import { MailerService } from '@nestjs-modules/mailer';
+import { codeAuthDto, RetryActiveDto } from './dto/code-auth.dto';
 
 @ApiTags('auth')
 @Controller('auth')
@@ -54,4 +55,15 @@ export class AuthController {
     return this.authService.handleRegister(registerDto);
   }
 
+  @Post('check-code')
+  @Public()
+  async checkCode(@Body() codeDto: codeAuthDto) {
+    return await this.authService.checkCode(codeDto);
+  }
+
+  @Post('retry-active')
+  @Public()
+  retryActive(@Body() retryActiveDto: RetryActiveDto) {
+    return this.authService.retryActive(retryActiveDto.email);
+  }
 }

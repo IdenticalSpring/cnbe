@@ -21,6 +21,12 @@ let AuthService = class AuthService {
         this.handleRegister = async (registerDto) => {
             return await this.usersService.handleRegister(registerDto);
         };
+        this.checkCode = async (data) => {
+            return await this.usersService.handleActive(data);
+        };
+        this.retryActive = async (data) => {
+            return await this.usersService.retryActive(data);
+        };
     }
     async validateUser(username, pass) {
         const user = await this.usersService.findByUsername(username);

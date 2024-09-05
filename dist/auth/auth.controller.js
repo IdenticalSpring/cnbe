@@ -22,6 +22,7 @@ const jwt_auth_guard_1 = require("./passport/jwt-auth.guard");
 const public_decorator_1 = require("../decorator/public.decorator");
 const login_auth_dto_1 = require("./dto/login-auth.dto");
 const mailer_1 = require("@nestjs-modules/mailer");
+const code_auth_dto_1 = require("./dto/code-auth.dto");
 let AuthController = class AuthController {
     constructor(authService, mailerService) {
         this.authService = authService;
@@ -43,6 +44,12 @@ let AuthController = class AuthController {
     }
     register(registerDto) {
         return this.authService.handleRegister(registerDto);
+    }
+    async checkCode(codeDto) {
+        return await this.authService.checkCode(codeDto);
+    }
+    retryActive(retryActiveDto) {
+        return this.authService.retryActive(retryActiveDto.email);
     }
 };
 exports.AuthController = AuthController;
@@ -90,6 +97,22 @@ __decorate([
     __metadata("design:paramtypes", [create_auth_dto_1.CreateAuthDto]),
     __metadata("design:returntype", void 0)
 ], AuthController.prototype, "register", null);
+__decorate([
+    (0, common_1.Post)('check-code'),
+    (0, public_decorator_1.Public)(),
+    __param(0, (0, common_1.Body)()),
+    __metadata("design:type", Function),
+    __metadata("design:paramtypes", [code_auth_dto_1.codeAuthDto]),
+    __metadata("design:returntype", Promise)
+], AuthController.prototype, "checkCode", null);
+__decorate([
+    (0, common_1.Post)('retry-active'),
+    (0, public_decorator_1.Public)(),
+    __param(0, (0, common_1.Body)()),
+    __metadata("design:type", Function),
+    __metadata("design:paramtypes", [code_auth_dto_1.RetryActiveDto]),
+    __metadata("design:returntype", void 0)
+], AuthController.prototype, "retryActive", null);
 exports.AuthController = AuthController = __decorate([
     (0, swagger_1.ApiTags)('auth'),
     (0, common_1.Controller)('auth'),

@@ -7,6 +7,7 @@ import { CreateAuthDto } from 'src/auth/dto/create-auth.dto';
 import { v4 as uuidv4 } from 'uuid';
 import dayjs from 'dayjs';
 import { MailerService } from '@nestjs-modules/mailer';
+import { codeAuthDto } from 'src/auth/dto/code-auth.dto';
 
 @Injectable()
 export class UsersService {
@@ -49,12 +50,13 @@ export class UsersService {
   }
 
   async handleRegister(registerDto: CreateAuthDto) {
-    const { name, username, password,email } = registerDto;
+    const { name, username, password, email } = registerDto;
     const isExist = await this.isUsernameExist(username);
     if (isExist === true) {
       throw new BadRequestException(`Username already exists: ${username}. Please use a different username.`);
     }
-    const hashPassword = await hashPasswordHelper(password)
+
+    const hashPassword = await hashPasswordHelper(password);
     const codeId = uuidv4();
     const user = await this.userModel.create({
       name,
@@ -63,30 +65,80 @@ export class UsersService {
       password: hashPassword,
       isActive: false,
       codeId: codeId,
-      codeExpired: dayjs().add(5, 'minutes').toDate()
-    })
+      codeExpired: dayjs().add(5, 'minutes').toDate(),
+    });
 
+
+    await this.sendActivationEmail(user, name ?? username, codeId);
+
+    return { _id: user.id };
+  }
+
+  private async sendActivationEmail(user: User, name: string, activationCode: string) {
     try {
       await this.mailerService.sendMail({
         to: user.email,
         subject: `Activate your account`,
-        template: "template",
+        template: 'template',
         context: {
-          name: name ?? username,
-          activationCode: codeId
-        }
+          name,
+          activationCode,
+        },
       });
     } catch (error) {
       console.error('Error sending email:', error);
-    }
-
-    return {
-      _id: user.id
+      throw new Error('Failed to send activation email');
     }
   }
 
   async isUsernameExist(username: string): Promise<boolean> {
     const user = await this.userModel.findOne({ where: { username } });
     return !!user;
+  }
+
+  async handleActive(data: codeAuthDto) {
+    const user = await this.userModel.findOne({
+      where: {
+        id: data.id,
+        codeId: data.codeId, 
+        isActive: false,
+      },
+    });
+
+    if (!user) {
+      throw new BadRequestException("Invalid activation code or the code has expired.");
+    }
+
+    const isBeforeCheck = dayjs().isBefore(user.codeExpired);
+
+    if (isBeforeCheck) {
+      await this.userModel.update(
+        { isActive: true, codeId: null, codeExpired: null }, 
+        { where: { id: data.id } }
+      );
+    } else {
+      throw new BadRequestException("Invalid activation code or the code has expired.");
+    }
+
+    return { isActive: true };
+  }
+
+
+  async retryActive(email: string) { 
+    const user = await this.userModel.findOne({ where: { email } });
+    if (!user) {
+      throw new BadRequestException("Account does not exist"); 
+    }
+    if (user.isActive) {
+      throw new BadRequestException("Account is already activated"); 
+    }
+    const newCodeId = uuidv4();
+    const newCodeExpiration = dayjs().add(5, "minutes").toDate();
+    await user.update({
+      codeId: newCodeId,
+      codeExpired: newCodeExpiration,
+    });
+    await this.sendActivationEmail(user, user.name ?? user.email, newCodeId);
+    return { id: user.id };
   }
 }

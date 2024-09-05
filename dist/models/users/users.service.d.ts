@@ -2,6 +2,7 @@ import { CreateUserDto } from './dto/create-user.dto';
 import { User } from './entities/user.entity';
 import { CreateAuthDto } from 'src/auth/dto/create-auth.dto';
 import { MailerService } from '@nestjs-modules/mailer';
+import { codeAuthDto } from 'src/auth/dto/code-auth.dto';
 export declare class UsersService {
     private userModel;
     private readonly mailerService;
@@ -14,5 +15,12 @@ export declare class UsersService {
     handleRegister(registerDto: CreateAuthDto): Promise<{
         _id: number;
     }>;
+    private sendActivationEmail;
     isUsernameExist(username: string): Promise<boolean>;
+    handleActive(data: codeAuthDto): Promise<{
+        isActive: boolean;
+    }>;
+    retryActive(email: string): Promise<{
+        id: number;
+    }>;
 }

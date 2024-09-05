@@ -22,7 +22,10 @@ let LocalStrategy = class LocalStrategy extends (0, passport_1.PassportStrategy)
     async validate(username, password) {
         const user = await this.authService.validateUser(username, password);
         if (!user) {
-            throw new common_1.UnauthorizedException("Invalid credentials");
+            throw new common_1.UnauthorizedException("Wrong password or username.");
+        }
+        if (user.isActive === false) {
+            throw new common_1.BadRequestException("The account has not been activated.");
         }
         return user;
     }

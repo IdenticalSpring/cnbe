@@ -21,7 +21,8 @@ export class User extends Model<User> {
     username: string;
     @Column({
         type: DataType.STRING,
-        allowNull: true,
+        allowNull: false,
+        unique: true,
     })
     email: string;
 
@@ -32,17 +33,17 @@ export class User extends Model<User> {
     password: string;
     @Column({
         type: DataType.STRING,
-        allowNull: false,
+        allowNull: true,
     })
     codeId: string;
     @Column({
         type: DataType.DATE,  
-        allowNull: false,    
+        allowNull: true,    
     })
     codeExpired: Date;
     @Column({
         type: DataType.BOOLEAN,
-        allowNull: false,
+        allowNull: true,
     })
     isActive: boolean;
     @Column({
