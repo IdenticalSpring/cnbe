@@ -38,12 +38,89 @@ CREATE TABLE `users` (
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8 COLLATE=utf8_general_ci;
 
 --
+-- Cấu trúc bảng cho bảng `subject`
+--
+CREATE TABLE `courses` (
+  `id` int(11) NOT NULL AUTO_INCREMENT,
+  `title` varchar(255) NOT NULL,
+  `description` text DEFAULT NULL,
+  `createdAt` datetime DEFAULT NULL,
+  `updatedAt` datetime DEFAULT NULL,
+  PRIMARY KEY (`id`)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8 COLLATE=utf8_general_ci;
+
+-- -- Table: exercises
+CREATE TABLE `exercises` (
+  `id` int(11) NOT NULL AUTO_INCREMENT,
+  `title` varchar(255) NOT NULL,
+  `description` text DEFAULT NULL,
+  `difficulty` varchar(255) NOT NULL,
+  `courseId` int(11) NOT NULL,
+  `createdAt` datetime DEFAULT NULL,
+  `updatedAt` datetime DEFAULT NULL,
+  PRIMARY KEY (`id`),
+  FOREIGN KEY (`courseId`) REFERENCES `courses`(`id`) ON DELETE CASCADE ON UPDATE CASCADE
+) ENGINE=InnoDB DEFAULT CHARSET=utf8 COLLATE=utf8_general_ci;
+
+-- -- Table: process
+CREATE TABLE `process` (
+  `id` int(11) NOT NULL AUTO_INCREMENT,
+  `userId` int(11) NOT NULL,
+  `exerciseId` int(11) NOT NULL,
+  `status` enum('pending','in-progress','completed') DEFAULT 'pending',
+  `completeAt` datetime DEFAULT NULL,
+  PRIMARY KEY (`id`),
+  FOREIGN KEY (`userId`) REFERENCES `users`(`id`) ON DELETE CASCADE ON UPDATE CASCADE,
+  FOREIGN KEY (`exerciseId`) REFERENCES `exercises`(`id`) ON DELETE CASCADE ON UPDATE CASCADE
+) ENGINE=InnoDB DEFAULT CHARSET=utf8 COLLATE=utf8_general_ci;
+
+-- -- Table: enrollments
+CREATE TABLE `enrollments` (
+  `id` int(11) NOT NULL AUTO_INCREMENT,
+  `userId` int(11) NOT NULL,
+  `courseId` int(11) NOT NULL,
+  `createdAt` datetime DEFAULT NULL,
+  `updatedAt` datetime DEFAULT NULL,
+  PRIMARY KEY (`id`),
+  FOREIGN KEY (`userId`) REFERENCES `users`(`id`) ON DELETE CASCADE ON UPDATE CASCADE,
+  FOREIGN KEY (`courseId`) REFERENCES `courses`(`id`) ON DELETE CASCADE ON UPDATE CASCADE
+) ENGINE=InnoDB DEFAULT CHARSET=utf8 COLLATE=utf8_general_ci;
+
+--
 -- Đang đổ dữ liệu cho bảng `users`
 --
 
 INSERT INTO `users` (`id`, `username`, `email`, `password`, `role`, `createdAt`, `updatedAt`) VALUES
 (1, 'string', 'string', 'string', 'user', '2024-08-29 15:11:41', '2024-08-29 15:11:41'),
 (2, 'string', 'string', 'string', 'user', '2024-08-30 02:42:12', '2024-08-30 02:42:12');
+
+--
+-- Đang đổ dữ liệu cho bảng `subject`
+--
+
+-- -- Insert data into `courses` table
+INSERT INTO `courses` (`title`, `description`, `createdAt`, `updatedAt`) 
+VALUES 
+('Introduction to Programming', 'Learn the basics of programming.', NOW(), NOW()),
+('Advanced Databases', 'Deep dive into database management and optimization.', NOW(), NOW());
+
+-- -- Insert data into `exercises` table
+INSERT INTO `exercises` (`title`, `description`, `difficulty`, `courseId`, `createdAt`, `updatedAt`) 
+VALUES 
+('Hello World Exercise', 'Write your first program.', 'Easy', 1, NOW(), NOW()),
+('Database Indexing', 'Optimize queries using indexing.', 'Hard', 2, NOW(), NOW());
+
+-- -- Insert data into `process` table
+INSERT INTO `process` (`userId`, `exerciseId`, `status`, `completeAt`) 
+VALUES 
+(1, 1, 'completed', NOW()),
+(2, 2, 'in-progress', NULL);
+
+-- -- Insert data into `enrollments` table
+INSERT INTO `enrollments` (`userId`, `courseId`, `createdAt`, `updatedAt`) 
+VALUES 
+(1, 1, NOW(), NOW()),
+(2, 2, NOW(), NOW());
 
 --
 -- Chỉ mục cho các bảng đã đổ
