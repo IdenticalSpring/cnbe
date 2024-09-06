@@ -68,10 +68,9 @@ export class UsersService {
       codeExpired: dayjs().add(5, 'minutes').toDate(),
     });
 
-
     await this.sendActivationEmail(user, name ?? username, codeId);
 
-    return { _id: user.id };
+    return { success: true, message: "User registered successfully", id: user.id };
   }
 
   private async sendActivationEmail(user: User, name: string, activationCode: string) {
@@ -100,7 +99,7 @@ export class UsersService {
     const user = await this.userModel.findOne({
       where: {
         id: data.id,
-        codeId: data.codeId, 
+        codeId: data.codeId,
         isActive: false,
       },
     });
@@ -113,23 +112,23 @@ export class UsersService {
 
     if (isBeforeCheck) {
       await this.userModel.update(
-        { isActive: true, codeId: null, codeExpired: null }, 
+        { isActive: true, codeId: null, codeExpired: null },
         { where: { id: data.id } }
       );
     } else {
       throw new BadRequestException("Invalid activation code or the code has expired.");
     }
 
-    return { isActive: true };
+    return { success: true, message: "Account activated successfully" };
   }
 
-  async retryActive(email: string) { 
+  async retryActive(email: string) {
     const user = await this.userModel.findOne({ where: { email } });
     if (!user) {
-      throw new BadRequestException("Account does not exist"); 
+      throw new BadRequestException("Account does not exist");
     }
     if (user.isActive) {
-      throw new BadRequestException("Account is already activated"); 
+      throw new BadRequestException("Account is already activated");
     }
     const newCodeId = uuidv4();
     const newCodeExpiration = dayjs().add(5, "minutes").toDate();
@@ -138,7 +137,7 @@ export class UsersService {
       codeExpired: newCodeExpiration,
     });
     await this.sendActivationEmail(user, user.name ?? user.email, newCodeId);
-    return { id: user.id };
+    return { success: true, message: "New activation code sent successfully", id: user.id };
   }
   async retryPassword(email: string) {
     const user = await this.userModel.findOne({ where: { email } });
@@ -163,7 +162,7 @@ export class UsersService {
       }
     });
 
-    return { id: user.id, email: user.email };
+    return { success: true, message: "Password reset code sent successfully", id: user.id, email: user.email };
   }
 
   async changePassword(data: ChangePasswordAuthDto) {
@@ -195,6 +194,6 @@ export class UsersService {
       codeExpired: null
     });
 
-    return { message: "Password has been changed successfully" };
+    return { success: true, message: "Password changed successfully" };
   }
 }

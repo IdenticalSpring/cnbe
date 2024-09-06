@@ -16,17 +16,18 @@ export class RetryActiveDto {
     email: string;
 }
 export class ChangePasswordAuthDto {
-    @IsNotEmpty({ message: "Password cannot be empty" })
+    @IsNotEmpty({ message: "Email cannot be empty" })
     @ApiProperty()
-    password: string
     @IsNotEmpty({ message: "Code cannot be empty" })
     @ApiProperty()
     code: string
+    email: string
+    @IsNotEmpty({ message: "Password cannot be empty" })
+    @ApiProperty()
+    password: string 
     @IsNotEmpty({ message: "ConfirmPassword cannot be empty" })
     @ApiProperty()
     confirmPassword: string
-    @IsNotEmpty({ message: "Email cannot be empty" })
-    @ApiProperty()
-    email: string
+   
 
 }

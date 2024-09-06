@@ -72,7 +72,7 @@ let UsersService = class UsersService {
             codeExpired: (0, dayjs_1.default)().add(5, 'minutes').toDate(),
         });
         await this.sendActivationEmail(user, name ?? username, codeId);
-        return { _id: user.id };
+        return { success: true, message: "User registered successfully", id: user.id };
     }
     async sendActivationEmail(user, name, activationCode) {
         try {
@@ -113,7 +113,7 @@ let UsersService = class UsersService {
         else {
             throw new common_1.BadRequestException("Invalid activation code or the code has expired.");
         }
-        return { isActive: true };
+        return { success: true, message: "Account activated successfully" };
     }
     async retryActive(email) {
         const user = await this.userModel.findOne({ where: { email } });
@@ -130,7 +130,7 @@ let UsersService = class UsersService {
             codeExpired: newCodeExpiration,
         });
         await this.sendActivationEmail(user, user.name ?? user.email, newCodeId);
-        return { id: user.id };
+        return { success: true, message: "New activation code sent successfully", id: user.id };
     }
     async retryPassword(email) {
         const user = await this.userModel.findOne({ where: { email } });
@@ -152,7 +152,7 @@ let UsersService = class UsersService {
                 activationCode: codeId
             }
         });
-        return { id: user.id, email: user.email };
+        return { success: true, message: "Password reset code sent successfully", id: user.id, email: user.email };
     }
     async changePassword(data) {
         if (data.confirmPassword !== data.password) {
@@ -178,7 +178,7 @@ let UsersService = class UsersService {
             codeId: null,
             codeExpired: null
         });
-        return { message: "Password has been changed successfully" };
+        return { success: true, message: "Password changed successfully" };
     }
 };
 exports.UsersService = UsersService;

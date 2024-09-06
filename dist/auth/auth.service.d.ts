@@ -14,19 +14,27 @@ export declare class AuthService {
         message: string;
     }>;
     handleRegister: (registerDto: CreateAuthDto) => Promise<{
-        _id: number;
+        success: boolean;
+        message: string;
+        id: number;
     }>;
     checkCode: (data: codeAuthDto) => Promise<{
-        isActive: boolean;
+        success: boolean;
+        message: string;
     }>;
     retryActive: (data: string) => Promise<{
+        success: boolean;
+        message: string;
         id: number;
     }>;
     retryPassword: (data: string) => Promise<{
+        success: boolean;
+        message: string;
         id: number;
         email: string;
     }>;
     changePassword: (data: ChangePasswordAuthDto) => Promise<{
+        success: boolean;
         message: string;
     }>;
 }

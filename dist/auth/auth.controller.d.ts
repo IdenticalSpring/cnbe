@@ -14,19 +14,27 @@ export declare class AuthController {
     }>;
     getProfile(req: any): any;
     register(registerDto: CreateAuthDto): Promise<{
-        _id: number;
+        success: boolean;
+        message: string;
+        id: number;
     }>;
     checkCode(codeDto: codeAuthDto): Promise<{
-        isActive: boolean;
+        success: boolean;
+        message: string;
     }>;
     retryActive(retryActiveDto: RetryActiveDto): Promise<{
+        success: boolean;
+        message: string;
         id: number;
     }>;
     retryPassword(email: string): Promise<{
+        success: boolean;
+        message: string;
         id: number;
         email: string;
     }>;
     changePassword(data: ChangePasswordAuthDto): Promise<{
+        success: boolean;
         message: string;
     }>;
 }

@@ -13,21 +13,29 @@ export declare class UsersService {
     findByUsername(username: string): Promise<User | null>;
     remove(id: number): string;
     handleRegister(registerDto: CreateAuthDto): Promise<{
-        _id: number;
+        success: boolean;
+        message: string;
+        id: number;
     }>;
     private sendActivationEmail;
     isUsernameExist(username: string): Promise<boolean>;
     handleActive(data: codeAuthDto): Promise<{
-        isActive: boolean;
+        success: boolean;
+        message: string;
     }>;
     retryActive(email: string): Promise<{
+        success: boolean;
+        message: string;
         id: number;
     }>;
     retryPassword(email: string): Promise<{
+        success: boolean;
+        message: string;
         id: number;
         email: string;
     }>;
     changePassword(data: ChangePasswordAuthDto): Promise<{
+        success: boolean;
         message: string;
     }>;
 }
