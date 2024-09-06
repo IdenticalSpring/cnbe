@@ -132,6 +132,54 @@ let UsersService = class UsersService {
         await this.sendActivationEmail(user, user.name ?? user.email, newCodeId);
         return { id: user.id };
     }
+    async retryPassword(email) {
+        const user = await this.userModel.findOne({ where: { email } });
+        if (!user) {
+            throw new common_1.BadRequestException("Account does not exist");
+        }
+        const codeId = (0, uuid_1.v4)();
+        const codeExpired = (0, dayjs_1.default)().add(5, "minutes").toDate();
+        await user.update({
+            codeId: codeId,
+            codeExpired: codeExpired
+        });
+        await this.mailerService.sendMail({
+            to: user.email,
+            subject: `Change password`,
+            template: "password-reset",
+            context: {
+                name: user.name ?? user.email,
+                activationCode: codeId
+            }
+        });
+        return { id: user.id, email: user.email };
+    }
+    async changePassword(data) {
+        if (data.confirmPassword !== data.password) {
+            throw new common_1.BadRequestException("Passwords do not match");
+        }
+        const user = await this.userModel.findOne({
+            where: {
+                email: data.email,
+                codeId: data.code,
+                isActive: true
+            }
+        });
+        if (!user) {
+            throw new common_1.BadRequestException("Account does not exist or the code is invalid");
+        }
+        const isBeforeExpiration = (0, dayjs_1.default)().isBefore(user.codeExpired);
+        if (!isBeforeExpiration) {
+            throw new common_1.BadRequestException("The code has expired");
+        }
+        const newPassword = await (0, utils_1.hashPasswordHelper)(data.password);
+        await user.update({
+            password: newPassword,
+            codeId: null,
+            codeExpired: null
+        });
+        return { message: "Password has been changed successfully" };
+    }
 };
 exports.UsersService = UsersService;
 exports.UsersService = UsersService = __decorate([

@@ -27,6 +27,12 @@ let AuthService = class AuthService {
         this.retryActive = async (data) => {
             return await this.usersService.retryActive(data);
         };
+        this.retryPassword = async (data) => {
+            return await this.usersService.retryPassword(data);
+        };
+        this.changePassword = async (data) => {
+            return await this.usersService.changePassword(data);
+        };
     }
     async validateUser(username, pass) {
         const user = await this.usersService.findByUsername(username);

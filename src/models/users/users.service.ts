@@ -7,7 +7,7 @@ import { CreateAuthDto } from 'src/auth/dto/create-auth.dto';
 import { v4 as uuidv4 } from 'uuid';
 import dayjs from 'dayjs';
 import { MailerService } from '@nestjs-modules/mailer';
-import { codeAuthDto } from 'src/auth/dto/code-auth.dto';
+import { ChangePasswordAuthDto, codeAuthDto } from 'src/auth/dto/code-auth.dto';
 
 @Injectable()
 export class UsersService {
@@ -123,7 +123,6 @@ export class UsersService {
     return { isActive: true };
   }
 
-
   async retryActive(email: string) { 
     const user = await this.userModel.findOne({ where: { email } });
     if (!user) {
@@ -140,5 +139,62 @@ export class UsersService {
     });
     await this.sendActivationEmail(user, user.name ?? user.email, newCodeId);
     return { id: user.id };
+  }
+  async retryPassword(email: string) {
+    const user = await this.userModel.findOne({ where: { email } });
+    if (!user) {
+      throw new BadRequestException("Account does not exist");
+    }
+    const codeId = uuidv4();
+    const codeExpired = dayjs().add(5, "minutes").toDate();
+
+    await user.update({
+      codeId: codeId,
+      codeExpired: codeExpired
+    });
+
+    await this.mailerService.sendMail({
+      to: user.email,
+      subject: `Change password`,
+      template: "password-reset",
+      context: {
+        name: user.name ?? user.email,
+        activationCode: codeId
+      }
+    });
+
+    return { id: user.id, email: user.email };
+  }
+
+  async changePassword(data: ChangePasswordAuthDto) {
+    if (data.confirmPassword !== data.password) {
+      throw new BadRequestException("Passwords do not match");
+    }
+
+    const user = await this.userModel.findOne({
+      where: {
+        email: data.email,
+        codeId: data.code,
+        isActive: true
+      }
+    });
+
+    if (!user) {
+      throw new BadRequestException("Account does not exist or the code is invalid");
+    }
+
+    const isBeforeExpiration = dayjs().isBefore(user.codeExpired);
+    if (!isBeforeExpiration) {
+      throw new BadRequestException("The code has expired");
+    }
+
+    const newPassword = await hashPasswordHelper(data.password);
+    await user.update({
+      password: newPassword,
+      codeId: null,
+      codeExpired: null
+    });
+
+    return { message: "Password has been changed successfully" };
   }
 }

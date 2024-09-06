@@ -5,3 +5,9 @@ export declare class codeAuthDto {
 export declare class RetryActiveDto {
     email: string;
 }
+export declare class ChangePasswordAuthDto {
+    password: string;
+    code: string;
+    confirmPassword: string;
+    email: string;
+}

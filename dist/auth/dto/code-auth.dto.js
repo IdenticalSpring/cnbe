@@ -9,7 +9,7 @@ var __metadata = (this && this.__metadata) || function (k, v) {
     if (typeof Reflect === "object" && typeof Reflect.metadata === "function") return Reflect.metadata(k, v);
 };
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.RetryActiveDto = exports.codeAuthDto = void 0;
+exports.ChangePasswordAuthDto = exports.RetryActiveDto = exports.codeAuthDto = void 0;
 const swagger_1 = require("@nestjs/swagger");
 const class_validator_1 = require("class-validator");
 class codeAuthDto {
@@ -34,4 +34,27 @@ __decorate([
     (0, class_validator_1.IsEmail)({}, { message: 'Invalid email format' }),
     __metadata("design:type", String)
 ], RetryActiveDto.prototype, "email", void 0);
+class ChangePasswordAuthDto {
+}
+exports.ChangePasswordAuthDto = ChangePasswordAuthDto;
+__decorate([
+    (0, class_validator_1.IsNotEmpty)({ message: "Password cannot be empty" }),
+    (0, swagger_1.ApiProperty)(),
+    __metadata("design:type", String)
+], ChangePasswordAuthDto.prototype, "password", void 0);
+__decorate([
+    (0, class_validator_1.IsNotEmpty)({ message: "Code cannot be empty" }),
+    (0, swagger_1.ApiProperty)(),
+    __metadata("design:type", String)
+], ChangePasswordAuthDto.prototype, "code", void 0);
+__decorate([
+    (0, class_validator_1.IsNotEmpty)({ message: "ConfirmPassword cannot be empty" }),
+    (0, swagger_1.ApiProperty)(),
+    __metadata("design:type", String)
+], ChangePasswordAuthDto.prototype, "confirmPassword", void 0);
+__decorate([
+    (0, class_validator_1.IsNotEmpty)({ message: "Email cannot be empty" }),
+    (0, swagger_1.ApiProperty)(),
+    __metadata("design:type", String)
+], ChangePasswordAuthDto.prototype, "email", void 0);
 //# sourceMappingURL=code-auth.dto.js.map

@@ -51,6 +51,12 @@ let AuthController = class AuthController {
     retryActive(retryActiveDto) {
         return this.authService.retryActive(retryActiveDto.email);
     }
+    retryPassword(email) {
+        return this.authService.retryPassword(email);
+    }
+    changePassword(data) {
+        return this.authService.changePassword(data);
+    }
 };
 exports.AuthController = AuthController;
 __decorate([
@@ -113,6 +119,35 @@ __decorate([
     __metadata("design:paramtypes", [code_auth_dto_1.RetryActiveDto]),
     __metadata("design:returntype", void 0)
 ], AuthController.prototype, "retryActive", null);
+__decorate([
+    (0, common_1.Post)('retry-password'),
+    (0, public_decorator_1.Public)(),
+    (0, swagger_1.ApiBody)({
+        schema: {
+            type: 'object',
+            properties: {
+                email: {
+                    type: 'string',
+                    example: 'user@example.com',
+                    description: 'The email address of the account to reset the password',
+                },
+            },
+            required: ['email'],
+        },
+    }),
+    __param(0, (0, common_1.Body)("email")),
+    __metadata("design:type", Function),
+    __metadata("design:paramtypes", [String]),
+    __metadata("design:returntype", void 0)
+], AuthController.prototype, "retryPassword", null);
+__decorate([
+    (0, common_1.Post)('change-password'),
+    (0, public_decorator_1.Public)(),
+    __param(0, (0, common_1.Body)()),
+    __metadata("design:type", Function),
+    __metadata("design:paramtypes", [code_auth_dto_1.ChangePasswordAuthDto]),
+    __metadata("design:returntype", void 0)
+], AuthController.prototype, "changePassword", null);
 exports.AuthController = AuthController = __decorate([
     (0, swagger_1.ApiTags)('auth'),
     (0, common_1.Controller)('auth'),

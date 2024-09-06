@@ -2,7 +2,7 @@ import { CreateUserDto } from './dto/create-user.dto';
 import { User } from './entities/user.entity';
 import { CreateAuthDto } from 'src/auth/dto/create-auth.dto';
 import { MailerService } from '@nestjs-modules/mailer';
-import { codeAuthDto } from 'src/auth/dto/code-auth.dto';
+import { ChangePasswordAuthDto, codeAuthDto } from 'src/auth/dto/code-auth.dto';
 export declare class UsersService {
     private userModel;
     private readonly mailerService;
@@ -22,5 +22,12 @@ export declare class UsersService {
     }>;
     retryActive(email: string): Promise<{
         id: number;
+    }>;
+    retryPassword(email: string): Promise<{
+        id: number;
+        email: string;
+    }>;
+    changePassword(data: ChangePasswordAuthDto): Promise<{
+        message: string;
     }>;
 }

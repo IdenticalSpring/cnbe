@@ -1,7 +1,7 @@
 import { AuthService } from './auth.service';
 import { CreateAuthDto } from './dto/create-auth.dto';
 import { MailerService } from '@nestjs-modules/mailer';
-import { codeAuthDto, RetryActiveDto } from './dto/code-auth.dto';
+import { ChangePasswordAuthDto, codeAuthDto, RetryActiveDto } from './dto/code-auth.dto';
 export declare class AuthController {
     private readonly authService;
     private readonly mailerService;
@@ -21,5 +21,12 @@ export declare class AuthController {
     }>;
     retryActive(retryActiveDto: RetryActiveDto): Promise<{
         id: number;
+    }>;
+    retryPassword(email: string): Promise<{
+        id: number;
+        email: string;
+    }>;
+    changePassword(data: ChangePasswordAuthDto): Promise<{
+        message: string;
     }>;
 }

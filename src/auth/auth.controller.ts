@@ -7,7 +7,7 @@ import { JwtAuthGuard } from './passport/jwt-auth.guard';
 import { Public, ResponseMassage } from 'src/decorator/public.decorator';
 import { LoginAuthDto } from './dto/login-auth.dto';
 import { MailerService } from '@nestjs-modules/mailer';
-import { codeAuthDto, RetryActiveDto } from './dto/code-auth.dto';
+import { ChangePasswordAuthDto, codeAuthDto, RetryActiveDto } from './dto/code-auth.dto';
 
 @ApiTags('auth')
 @Controller('auth')
@@ -65,5 +65,30 @@ export class AuthController {
   @Public()
   retryActive(@Body() retryActiveDto: RetryActiveDto) {
     return this.authService.retryActive(retryActiveDto.email);
+  }
+
+  @Post('retry-password')
+  @Public()
+  @ApiBody({
+    schema: {
+      type: 'object',
+      properties: {
+        email: {
+          type: 'string',
+          example: 'user@example.com',
+          description: 'The email address of the account to reset the password',
+        },
+      },
+      required: ['email'],
+    },
+  })
+  retryPassword(@Body("email") email: string) {
+    return this.authService.retryPassword(email);
+  }
+  @Post('change-password')
+  
+  @Public()
+  changePassword(@Body() data: ChangePasswordAuthDto) {
+    return this.authService.changePassword(data);
   }
 }
