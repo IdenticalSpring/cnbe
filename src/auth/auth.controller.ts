@@ -1,4 +1,4 @@
-import { Controller, Get, Post, Body, UseGuards, Request, Response, Delete } from '@nestjs/common';
+import { Controller, Get, Post, Body, UseGuards, Request, Response, Delete, Req } from '@nestjs/common';
 import { AuthService } from './auth.service';
 import { CreateAuthDto } from './dto/create-auth.dto';
 import { ApiBearerAuth, ApiBody, ApiOperation, ApiResponse, ApiTags } from '@nestjs/swagger';
@@ -8,6 +8,7 @@ import { Public, ResponseMassage } from 'src/decorator/public.decorator';
 import { LoginAuthDto } from './dto/login-auth.dto';
 import { MailerService } from '@nestjs-modules/mailer';
 import { ChangePasswordAuthDto, codeAuthDto, RetryActiveDto } from './dto/code-auth.dto';
+import { AuthGuard } from '@nestjs/passport';
 
 @ApiTags('auth')
 @Controller('auth')
@@ -90,5 +91,23 @@ export class AuthController {
   @Public()
   changePassword(@Body() data: ChangePasswordAuthDto) {
     return this.authService.changePassword(data);
+  }
+
+  @Get('google')
+  @Public()
+  @UseGuards(AuthGuard('google'))
+  async googleAuth(@Req() req) {
+  
+  }
+
+  @Get('google/callback')
+  @ApiOperation({ summary: 'Google OAuth Callback' })
+  @ApiResponse({ status: 200, description: 'Handles Google OAuth callback and logs user in.' })
+  @Public()
+  @UseGuards(AuthGuard('google'))
+  async googleAuthRedirect(@Req() req, @Response({ passthrough: true }) res) {
+    const { access_token } = req.user;
+    res.cookie('jwt', access_token, { httpOnly: true, secure: process.env.NODE_ENV !== 'development' });
+    return { message: 'Logged in successfully with Google' };
   }
 }

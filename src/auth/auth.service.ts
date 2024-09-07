@@ -1,4 +1,4 @@
-import { Injectable, UnauthorizedException } from '@nestjs/common';
+import { Injectable } from '@nestjs/common';
 import { UsersService } from '../models/users/users.service';
 import { comparePasswordHelper } from 'src/helper/utils';
 import { JwtService } from '@nestjs/jwt';
@@ -23,7 +23,23 @@ export class AuthService {
     }
     return user;
   }
-
+  async validateGoogleUser(profile: any): Promise<any> {
+    let user = await this.usersService.findByEmail(profile.email);
+    if (!user) {
+      user = await this.usersService.create({
+        username: profile.email.split('@')[0],
+        email: profile.email,
+        name: `${profile.firstName} ${profile.lastName}`,
+        isActive: true,
+        password: null,  
+      });
+    }
+    const payload = { username: user.username, sub: user.id };
+    return {
+      access_token: this.jwtService.sign(payload),
+      user,
+    };
+  }
   async login(user: any) {
     const payload = { username: user.username, sub: user.id };
     return {
