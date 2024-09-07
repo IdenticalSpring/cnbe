@@ -14,15 +14,17 @@ const common_1 = require("@nestjs/common");
 const passport_1 = require("@nestjs/passport");
 const passport_google_oauth20_1 = require("passport-google-oauth20");
 const auth_service_1 = require("../auth.service");
+const config_1 = require("@nestjs/config");
 let GoogleStrategy = class GoogleStrategy extends (0, passport_1.PassportStrategy)(passport_google_oauth20_1.Strategy, 'google') {
-    constructor(authService) {
+    constructor(authService, configService) {
         super({
-            clientID: '769954175129-mje8nl9sfm59rpcqavjdqjad267hjqk5.apps.googleusercontent.com',
-            clientSecret: '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',
-            callbackURL: 'http://localhost:8080/api/v1/auth/google/callback',
+            clientID: configService.get('GOOGLE_CLIENT_ID'),
+            clientSecret: configService.get('GOOGLE_CLIENT_SECRET'),
+            callbackURL: configService.get('GOOGLE_CALLBACK_URL'),
             scope: ['email', 'profile'],
         });
         this.authService = authService;
+        this.configService = configService;
     }
     async validate(accessToken, refreshToken, profile, done) {
         const { name, emails, photos } = profile;
@@ -40,6 +42,7 @@ let GoogleStrategy = class GoogleStrategy extends (0, passport_1.PassportStrateg
 exports.GoogleStrategy = GoogleStrategy;
 exports.GoogleStrategy = GoogleStrategy = __decorate([
     (0, common_1.Injectable)(),
-    __metadata("design:paramtypes", [auth_service_1.AuthService])
+    __metadata("design:paramtypes", [auth_service_1.AuthService,
+        config_1.ConfigService])
 ], GoogleStrategy);
 //# sourceMappingURL=google.strategy.js.map
