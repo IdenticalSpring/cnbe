@@ -13,9 +13,12 @@ import { CoursesModule } from './models/courses/courses.module';
 import { ExercisesModule } from './models/exercises/exercises.module';
 import { ProcessModule } from './models/process/process.module';
 import { EnrollmentModule } from './models/enrollments/enrollments.module';
+import { MulterModule } from '@nestjs/platform-express';
+import { CloudinaryModule } from './models/cloudinary/cloudinary.module';
 
 @Module({
   imports: [
+    MulterModule.register({ dest: './images/' }),
     ConfigModule.forRoot({
       isGlobal: true,
     }),
@@ -39,6 +42,7 @@ import { EnrollmentModule } from './models/enrollments/enrollments.module';
     ExercisesModule,
     ProcessModule,
     EnrollmentModule,
+    CloudinaryModule,
   ],
   controllers: [AppController],
   providers: [AppService],

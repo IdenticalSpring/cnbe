@@ -22,12 +22,15 @@ const courses_module_1 = require("./models/courses/courses.module");
 const exercises_module_1 = require("./models/exercises/exercises.module");
 const process_module_1 = require("./models/process/process.module");
 const enrollments_module_1 = require("./models/enrollments/enrollments.module");
+const platform_express_1 = require("@nestjs/platform-express");
+const cloudinary_module_1 = require("./models/cloudinary/cloudinary.module");
 let AppModule = class AppModule {
 };
 exports.AppModule = AppModule;
 exports.AppModule = AppModule = __decorate([
     (0, common_1.Module)({
         imports: [
+            platform_express_1.MulterModule.register({ dest: './images/' }),
             config_1.ConfigModule.forRoot({
                 isGlobal: true,
             }),
@@ -51,6 +54,7 @@ exports.AppModule = AppModule = __decorate([
             exercises_module_1.ExercisesModule,
             process_module_1.ProcessModule,
             enrollments_module_1.EnrollmentModule,
+            cloudinary_module_1.CloudinaryModule,
         ],
         controllers: [app_controller_1.AppController],
         providers: [app_service_1.AppService],
