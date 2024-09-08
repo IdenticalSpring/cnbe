@@ -45,6 +45,19 @@ let AuthService = class AuthService {
         }
         return user;
     }
+    async validateOAuthLoginGithub(profile) {
+        const { id, username, emails, name } = profile;
+        let user = await this.usersService.findByUsername(username);
+        if (!user) {
+            user = await this.usersService.create({
+                name,
+                username,
+                email: emails[0].value,
+                password: null,
+            });
+        }
+        return user;
+    }
     async login(user) {
         const payload = { username: user.username, sub: user.id };
         return {

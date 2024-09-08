@@ -28,7 +28,7 @@ export class User extends Model<User> {
 
     @Column({
         type: DataType.STRING,
-        allowNull: false,
+        allowNull: true,
     })
     password: string;
     @Column({

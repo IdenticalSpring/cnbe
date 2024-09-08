@@ -23,6 +23,7 @@ const public_decorator_1 = require("../decorator/public.decorator");
 const login_auth_dto_1 = require("./dto/login-auth.dto");
 const mailer_1 = require("@nestjs-modules/mailer");
 const code_auth_dto_1 = require("./dto/code-auth.dto");
+const passport_1 = require("@nestjs/passport");
 let AuthController = class AuthController {
     constructor(authService, mailerService) {
         this.authService = authService;
@@ -56,6 +57,13 @@ let AuthController = class AuthController {
     }
     changePassword(data) {
         return this.authService.changePassword(data);
+    }
+    async githubLogin() { }
+    async githubLoginCallback(req, res) {
+        const user = req.user;
+        const { access_token } = await this.authService.login(user);
+        res.cookie('jwt', access_token, { httpOnly: true, secure: process.env.NODE_ENV !== 'development' });
+        return { message: 'Logged in successfully', access_token };
     }
 };
 exports.AuthController = AuthController;
@@ -148,6 +156,24 @@ __decorate([
     __metadata("design:paramtypes", [code_auth_dto_1.ChangePasswordAuthDto]),
     __metadata("design:returntype", void 0)
 ], AuthController.prototype, "changePassword", null);
+__decorate([
+    (0, common_1.Get)('github'),
+    (0, public_decorator_1.Public)(),
+    (0, common_1.UseGuards)((0, passport_1.AuthGuard)('github')),
+    __metadata("design:type", Function),
+    __metadata("design:paramtypes", []),
+    __metadata("design:returntype", Promise)
+], AuthController.prototype, "githubLogin", null);
+__decorate([
+    (0, common_1.Get)('github/callback'),
+    (0, common_1.UseGuards)((0, passport_1.AuthGuard)('github')),
+    (0, public_decorator_1.Public)(),
+    __param(0, (0, common_1.Req)()),
+    __param(1, (0, common_1.Res)({ passthrough: true })),
+    __metadata("design:type", Function),
+    __metadata("design:paramtypes", [Object, Object]),
+    __metadata("design:returntype", Promise)
+], AuthController.prototype, "githubLoginCallback", null);
 exports.AuthController = AuthController = __decorate([
     (0, swagger_1.ApiTags)('auth'),
     (0, common_1.Controller)('auth'),

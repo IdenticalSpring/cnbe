@@ -38,23 +38,23 @@ class ChangePasswordAuthDto {
 }
 exports.ChangePasswordAuthDto = ChangePasswordAuthDto;
 __decorate([
-    (0, class_validator_1.IsNotEmpty)({ message: "Password cannot be empty" }),
+    (0, class_validator_1.IsNotEmpty)({ message: "Email cannot be empty" }),
     (0, swagger_1.ApiProperty)(),
     __metadata("design:type", String)
-], ChangePasswordAuthDto.prototype, "password", void 0);
+], ChangePasswordAuthDto.prototype, "email", void 0);
 __decorate([
     (0, class_validator_1.IsNotEmpty)({ message: "Code cannot be empty" }),
     (0, swagger_1.ApiProperty)(),
     __metadata("design:type", String)
 ], ChangePasswordAuthDto.prototype, "code", void 0);
 __decorate([
+    (0, class_validator_1.IsNotEmpty)({ message: "Password cannot be empty" }),
+    (0, swagger_1.ApiProperty)(),
+    __metadata("design:type", String)
+], ChangePasswordAuthDto.prototype, "password", void 0);
+__decorate([
     (0, class_validator_1.IsNotEmpty)({ message: "ConfirmPassword cannot be empty" }),
     (0, swagger_1.ApiProperty)(),
     __metadata("design:type", String)
 ], ChangePasswordAuthDto.prototype, "confirmPassword", void 0);
-__decorate([
-    (0, class_validator_1.IsNotEmpty)({ message: "Email cannot be empty" }),
-    (0, swagger_1.ApiProperty)(),
-    __metadata("design:type", String)
-], ChangePasswordAuthDto.prototype, "email", void 0);
 //# sourceMappingURL=code-auth.dto.js.map
