@@ -19,7 +19,7 @@ let GitHubStrategy = class GitHubStrategy extends (0, passport_1.PassportStrateg
         super({
             clientID: process.env.GITHUB_CLIENT_ID,
             clientSecret: process.env.GITHUB_CLIENT_SECRET,
-            callbackURL: 'http://localhost:8080/api/v1/auth/github/callback',
+            callbackURL: process.env.GITHUB_CLIENT_URL,
             scope: ['user:email'],
         });
         this.authService = authService;
