@@ -23,6 +23,28 @@ export class AuthService {
     }
     return user;
   }
+
+  async validateOAuthLoginGithub(profile: any): Promise<any> {
+    const { id, username, emails,name } = profile;
+
+    
+    let user = await this.usersService.findByUsername(username);
+
+    if (!user) {
+    
+      user = await this.usersService.create({
+        name, 
+        username,
+        email: emails[0].value,
+        password: null,
+      });
+    }
+
+    return user;
+  }
+
+
+
   async validateGoogleUser(profile: any): Promise<any> {
     let user = await this.usersService.findByEmail(profile.email);
     if (!user) {
@@ -40,6 +62,7 @@ export class AuthService {
       user,
     };
   }
+
   async login(user: any) {
     const payload = { username: user.username, sub: user.id };
     return {
@@ -64,4 +87,5 @@ export class AuthService {
   changePassword = async (data: ChangePasswordAuthDto) => {
     return await this.usersService.changePassword(data)
   }
+
 }
