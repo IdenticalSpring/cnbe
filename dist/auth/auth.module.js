@@ -16,7 +16,11 @@ const config_1 = require("@nestjs/config");
 const local_strategy_1 = require("./passport/local.strategy");
 const passport_1 = require("@nestjs/passport");
 const jwt_strategy_1 = require("./passport/jwt.strategy");
+
 const github_strategy_1 = require("./passport/github.strategy");
+
+const google_strategy_1 = require("./passport/google.strategy");
+
 let AuthModule = class AuthModule {
 };
 exports.AuthModule = AuthModule;
@@ -37,7 +41,7 @@ exports.AuthModule = AuthModule = __decorate([
             passport_1.PassportModule
         ],
         controllers: [auth_controller_1.AuthController],
-        providers: [auth_service_1.AuthService, local_strategy_1.LocalStrategy, jwt_strategy_1.JwtStrategy, github_strategy_1.GitHubStrategy],
+        providers: [auth_service_1.AuthService, local_strategy_1.LocalStrategy, jwt_strategy_1.JwtStrategy, github_strategy_1.GitHubStrategy,google_strategy_1.GoogleStrategy],  
     })
 ], AuthModule);
 //# sourceMappingURL=auth.module.js.map

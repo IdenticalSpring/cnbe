@@ -1,3 +1,4 @@
+
 import { Controller, Get, Post, Body, UseGuards, Request, Response, Delete, Req, Res } from '@nestjs/common';
 import { AuthService } from './auth.service';
 import { CreateAuthDto } from './dto/create-auth.dto';
@@ -92,7 +93,7 @@ export class AuthController {
   changePassword(@Body() data: ChangePasswordAuthDto) {
     return this.authService.changePassword(data);
   }
-  
+
   @Get('github')
   @Public()
   @UseGuards(AuthGuard('github'))
@@ -108,4 +109,22 @@ export class AuthController {
     return { message: 'Logged in successfully', access_token };
   }
 
+
+  @Get('google')
+  @Public()
+  @UseGuards(AuthGuard('google'))
+  async googleAuth(@Req() req) {
+  
+  }
+
+  @Get('google/callback')
+  @ApiOperation({ summary: 'Google OAuth Callback' })
+  @ApiResponse({ status: 200, description: 'Handles Google OAuth callback and logs user in.' })
+  @Public()
+  @UseGuards(AuthGuard('google'))
+  async googleAuthRedirect(@Req() req, @Response({ passthrough: true }) res) {
+    const { access_token } = req.user;
+    res.cookie('jwt', access_token, { httpOnly: true, secure: process.env.NODE_ENV !== 'development' });
+    return { message: 'Logged in successfully with Google' };
+  }
 }

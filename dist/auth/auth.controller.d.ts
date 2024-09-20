@@ -37,9 +37,15 @@ export declare class AuthController {
         success: boolean;
         message: string;
     }>;
+
     githubLogin(): Promise<void>;
     githubLoginCallback(req: any, res: any): Promise<{
         message: string;
         access_token: string;
+
+    googleAuth(req: any): Promise<void>;
+    googleAuthRedirect(req: any, res: any): Promise<{
+        message: string;
+
     }>;
 }

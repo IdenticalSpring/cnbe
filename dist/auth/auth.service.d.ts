@@ -7,7 +7,11 @@ export declare class AuthService {
     private jwtService;
     constructor(usersService: UsersService, jwtService: JwtService);
     validateUser(username: string, pass: string): Promise<any>;
+
     validateOAuthLoginGithub(profile: any): Promise<any>;
+
+    validateGoogleUser(profile: any): Promise<any>;
+
     login(user: any): Promise<{
         access_token: string;
     }>;
