@@ -5,8 +5,6 @@ export class CreateUserDto {
     username: string;
     @ApiProperty({ description: 'The name of the user' })
     name: string;
-    @ApiProperty({ description: 'The username of the user' })
-    username: string;
 
     @ApiProperty({ description: 'The email of the user' })
     email: string;

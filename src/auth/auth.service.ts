@@ -37,6 +37,7 @@ export class AuthService {
         username,
         email: emails[0].value,
         password: null,
+        isActive:true
       });
     }
 

@@ -23,10 +23,6 @@ __decorate([
     __metadata("design:type", String)
 ], CreateUserDto.prototype, "name", void 0);
 __decorate([
-    (0, swagger_1.ApiProperty)({ description: 'The username of the user' }),
-    __metadata("design:type", String)
-], CreateUserDto.prototype, "username", void 0);
-__decorate([
     (0, swagger_1.ApiProperty)({ description: 'The email of the user' }),
     __metadata("design:type", String)
 ], CreateUserDto.prototype, "email", void 0);

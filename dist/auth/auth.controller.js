@@ -58,21 +58,19 @@ let AuthController = class AuthController {
     changePassword(data) {
         return this.authService.changePassword(data);
     }
-
     async githubLogin() { }
     async githubLoginCallback(req, res) {
         const user = req.user;
         const { access_token } = await this.authService.login(user);
         res.cookie('jwt', access_token, { httpOnly: true, secure: process.env.NODE_ENV !== 'development' });
         return { message: 'Logged in successfully', access_token };
-
+    }
     async googleAuth(req) {
     }
     async googleAuthRedirect(req, res) {
         const { access_token } = req.user;
         res.cookie('jwt', access_token, { httpOnly: true, secure: process.env.NODE_ENV !== 'development' });
         return { message: 'Logged in successfully with Google' };
-
     }
 };
 exports.AuthController = AuthController;
@@ -166,7 +164,6 @@ __decorate([
     __metadata("design:returntype", void 0)
 ], AuthController.prototype, "changePassword", null);
 __decorate([
-
     (0, common_1.Get)('github'),
     (0, public_decorator_1.Public)(),
     (0, common_1.UseGuards)((0, passport_1.AuthGuard)('github')),
@@ -178,13 +175,14 @@ __decorate([
     (0, common_1.Get)('github/callback'),
     (0, common_1.UseGuards)((0, passport_1.AuthGuard)('github')),
     (0, public_decorator_1.Public)(),
+    (0, swagger_1.ApiExcludeEndpoint)(),
     __param(0, (0, common_1.Req)()),
     __param(1, (0, common_1.Res)({ passthrough: true })),
     __metadata("design:type", Function),
     __metadata("design:paramtypes", [Object, Object]),
     __metadata("design:returntype", Promise)
 ], AuthController.prototype, "githubLoginCallback", null);
-
+__decorate([
     (0, common_1.Get)('google'),
     (0, public_decorator_1.Public)(),
     (0, common_1.UseGuards)((0, passport_1.AuthGuard)('google')),
@@ -195,10 +193,9 @@ __decorate([
 ], AuthController.prototype, "googleAuth", null);
 __decorate([
     (0, common_1.Get)('google/callback'),
-    (0, swagger_1.ApiOperation)({ summary: 'Google OAuth Callback' }),
-    (0, swagger_1.ApiResponse)({ status: 200, description: 'Handles Google OAuth callback and logs user in.' }),
     (0, public_decorator_1.Public)(),
     (0, common_1.UseGuards)((0, passport_1.AuthGuard)('google')),
+    (0, swagger_1.ApiExcludeEndpoint)(),
     __param(0, (0, common_1.Req)()),
     __param(1, (0, common_1.Response)({ passthrough: true })),
     __metadata("design:type", Function),
