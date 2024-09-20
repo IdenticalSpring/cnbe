@@ -38,4 +38,5 @@ export declare class UsersService {
         success: boolean;
         message: string;
     }>;
+    findByEmail(email: string): Promise<User | null>;
 }

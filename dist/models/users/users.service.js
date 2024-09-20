@@ -180,6 +180,9 @@ let UsersService = class UsersService {
         });
         return { success: true, message: "Password changed successfully" };
     }
+    async findByEmail(email) {
+        return await this.userModel.findOne({ where: { email } });
+    }
 };
 exports.UsersService = UsersService;
 exports.UsersService = UsersService = __decorate([
