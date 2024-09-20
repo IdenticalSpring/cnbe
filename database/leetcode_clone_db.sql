@@ -90,9 +90,6 @@ CREATE TABLE `enrollments` (
 -- Đang đổ dữ liệu cho bảng `users`
 --
 
-INSERT INTO `users` (`id`, `username`, `email`, `password`, `role`, `createdAt`, `updatedAt`) VALUES
-(1, 'string', 'string', 'string', 'user', '2024-08-29 15:11:41', '2024-08-29 15:11:41'),
-(2, 'string', 'string', 'string', 'user', '2024-08-30 02:42:12', '2024-08-30 02:42:12');
 
 --
 -- Đang đổ dữ liệu cho bảng `subject`
