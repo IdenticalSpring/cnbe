@@ -58,21 +58,19 @@ let AuthController = class AuthController {
     changePassword(data) {
         return this.authService.changePassword(data);
     }
-
     async githubLogin() { }
     async githubLoginCallback(req, res) {
         const user = req.user;
         const { access_token } = await this.authService.login(user);
         res.cookie('jwt', access_token, { httpOnly: true, secure: process.env.NODE_ENV !== 'development' });
         return { message: 'Logged in successfully', access_token };
-
+    }
     async googleAuth(req) {
     }
     async googleAuthRedirect(req, res) {
         const { access_token } = req.user;
         res.cookie('jwt', access_token, { httpOnly: true, secure: process.env.NODE_ENV !== 'development' });
         return { message: 'Logged in successfully with Google' };
-
     }
 };
 exports.AuthController = AuthController;
@@ -166,7 +164,6 @@ __decorate([
     __metadata("design:returntype", void 0)
 ], AuthController.prototype, "changePassword", null);
 __decorate([
-
     (0, common_1.Get)('github'),
     (0, public_decorator_1.Public)(),
     (0, common_1.UseGuards)((0, passport_1.AuthGuard)('github')),
@@ -184,7 +181,7 @@ __decorate([
     __metadata("design:paramtypes", [Object, Object]),
     __metadata("design:returntype", Promise)
 ], AuthController.prototype, "githubLoginCallback", null);
-
+__decorate([
     (0, common_1.Get)('google'),
     (0, public_decorator_1.Public)(),
     (0, common_1.UseGuards)((0, passport_1.AuthGuard)('google')),

@@ -9,8 +9,8 @@ import { ChangePasswordAuthDto, codeAuthDto } from './dto/code-auth.dto';
 export class AuthService {
   constructor(
     private usersService: UsersService,
-    private jwtService: JwtService
-  ) { }
+    private jwtService: JwtService,
+  ) {}
 
   async validateUser(username: string, pass: string): Promise<any> {
     const user = await this.usersService.findByUsername(username);
@@ -25,25 +25,22 @@ export class AuthService {
   }
 
   async validateOAuthLoginGithub(profile: any): Promise<any> {
-    const { id, username, emails,name } = profile;
+    const { id, username, emails, name } = profile;
 
-    
     let user = await this.usersService.findByUsername(username);
 
     if (!user) {
-    
       user = await this.usersService.create({
-        name, 
+        name,
         username,
         email: emails[0].value,
         password: null,
+        isActive: false,
       });
     }
 
     return user;
   }
-
-
 
   async validateGoogleUser(profile: any): Promise<any> {
     let user = await this.usersService.findByEmail(profile.email);
@@ -53,7 +50,7 @@ export class AuthService {
         email: profile.email,
         name: `${profile.firstName} ${profile.lastName}`,
         isActive: true,
-        password: null,  
+        password: null,
       });
     }
     const payload = { username: user.username, sub: user.id };
@@ -74,18 +71,17 @@ export class AuthService {
   }
   handleRegister = async (registerDto: CreateAuthDto) => {
     return await this.usersService.handleRegister(registerDto);
-  }
+  };
   checkCode = async (data: codeAuthDto) => {
-    return await this.usersService.handleActive(data)
-  }
+    return await this.usersService.handleActive(data);
+  };
   retryActive = async (data: string) => {
-    return await this.usersService.retryActive(data)
-  }
+    return await this.usersService.retryActive(data);
+  };
   retryPassword = async (data: string) => {
-    return await this.usersService.retryPassword(data)
-  }
+    return await this.usersService.retryPassword(data);
+  };
   changePassword = async (data: ChangePasswordAuthDto) => {
-    return await this.usersService.changePassword(data)
-  }
-
+    return await this.usersService.changePassword(data);
+  };
 }
