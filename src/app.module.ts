@@ -11,9 +11,20 @@ import { JwtAuthGuard } from './auth/passport/jwt-auth.guard';
 import { HandlebarsAdapter } from '@nestjs-modules/mailer/dist/adapters/handlebars.adapter';
 import { MailerModule } from '@nestjs-modules/mailer';
 import { TransformInterceptor } from './core/transform.interceptor';
+import { Courses } from './models/courses/entities/courses.entity';
+import { Exercises } from './models/exercises/entitites/exercises.entity';
+import { Process } from './models/process/entities/process.entity';
+import { Enrollment } from './models/enrollments/entities/enrollments.entity';
+import { CoursesModule } from './models/courses/courses.module';
+import { ExercisesModule } from './models/exercises/exercises.module';
+import { ProcessModule } from './models/process/process.module';
+import { EnrollmentModule } from './models/enrollments/enrollments.module';
+import { MulterModule } from '@nestjs/platform-express';
+import { CloudinaryModule } from './models/cloudinary/cloudinary.module';
 
 @Module({
   imports: [
+    MulterModule.register({ dest: './images/' }),
     ConfigModule.forRoot({
       isGlobal: true,
     }),
@@ -26,7 +37,7 @@ import { TransformInterceptor } from './core/transform.interceptor';
         username: configService.get('DB_USERNAME'),
         password: configService.get('DB_PASSWORD'),
         database: configService.get('DB_DATABASE'),
-        models: [User],
+        models: [User, Courses, Exercises, Process, Enrollment],
         autoLoadModels: true,
         synchronize: true,
       }),
@@ -58,7 +69,12 @@ import { TransformInterceptor } from './core/transform.interceptor';
       inject: [ConfigService],
     }),
     UsersModule,
-    AuthModule
+    AuthModule,
+    CoursesModule,
+    ExercisesModule,
+    ProcessModule,
+    EnrollmentModule,
+    CloudinaryModule,
   ],
   controllers: [AppController],
   providers: [
@@ -73,4 +89,4 @@ import { TransformInterceptor } from './core/transform.interceptor';
     },
   ],
 })
-export class AppModule { }
+export class AppModule {}

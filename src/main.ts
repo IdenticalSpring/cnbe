@@ -18,13 +18,16 @@ async function bootstrap() {
     .build();
   const document = SwaggerModule.createDocument(app, config);
   SwaggerModule.setup('api/v1/docs', app, document);
-  app.useGlobalPipes(new ValidationPipe({
-    whitelist: true,        
-    forbidNonWhitelisted: true, 
-    transform: true,        
-    disableErrorMessages: false, 
-  }));
-  
+  app.useGlobalPipes(
+    new ValidationPipe({
+      whitelist: true,
+      forbidNonWhitelisted: true,
+      transform: true,
+      disableErrorMessages: false,
+    }),
+  );
+
+  SwaggerModule.setup('api', app, document);
   await app.listen(8080);
 }
 bootstrap();
