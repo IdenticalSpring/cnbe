@@ -17,7 +17,6 @@ export class ImagesController {
   @Post('upload')
   @ApiOperation({ summary: 'Can upload for Postman or Thunder Client' })
   @UseInterceptors(FileInterceptor('image'))
-  //   @UseInterceptors(FileInterceptor('video'))
   async uploadFile(@UploadedFile() file: Express.Multer.File) {
     try {
       const result = await this.cloudinaryService.uploadImage(file.path);
