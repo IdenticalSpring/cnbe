@@ -27,6 +27,7 @@ async function bootstrap() {
         transform: true,
         disableErrorMessages: false,
     }));
+    swagger_1.SwaggerModule.setup('api', app, document);
     await app.listen(8080);
 }
 bootstrap();
