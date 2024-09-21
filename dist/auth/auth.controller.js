@@ -31,8 +31,11 @@ let AuthController = class AuthController {
     }
     async login(req, res) {
         const { access_token } = await this.authService.login(req.user);
-        res.cookie('jwt', access_token, { httpOnly: true, secure: process.env.NODE_ENV !== 'development' });
-        return { message: 'Logged in successfully' };
+        res.cookie('jwt', access_token, {
+            httpOnly: true,
+            secure: process.env.NODE_ENV !== 'development',
+        });
+        return { message: 'Logged in successfully', access_token };
     }
     async logout(req, res) {
         const token = req.cookies['jwt'];
@@ -62,14 +65,19 @@ let AuthController = class AuthController {
     async githubLoginCallback(req, res) {
         const user = req.user;
         const { access_token } = await this.authService.login(user);
-        res.cookie('jwt', access_token, { httpOnly: true, secure: process.env.NODE_ENV !== 'development' });
+        res.cookie('jwt', access_token, {
+            httpOnly: true,
+            secure: process.env.NODE_ENV !== 'development',
+        });
         return { message: 'Logged in successfully', access_token };
     }
-    async googleAuth(req) {
-    }
+    async googleAuth(req) { }
     async googleAuthRedirect(req, res) {
         const { access_token } = req.user;
-        res.cookie('jwt', access_token, { httpOnly: true, secure: process.env.NODE_ENV !== 'development' });
+        res.cookie('jwt', access_token, {
+            httpOnly: true,
+            secure: process.env.NODE_ENV !== 'development',
+        });
         return { message: 'Logged in successfully with Google' };
     }
 };
@@ -150,7 +158,7 @@ __decorate([
             required: ['email'],
         },
     }),
-    __param(0, (0, common_1.Body)("email")),
+    __param(0, (0, common_1.Body)('email')),
     __metadata("design:type", Function),
     __metadata("design:paramtypes", [String]),
     __metadata("design:returntype", void 0)
@@ -193,6 +201,11 @@ __decorate([
 ], AuthController.prototype, "googleAuth", null);
 __decorate([
     (0, common_1.Get)('google/callback'),
+    (0, swagger_1.ApiOperation)({ summary: 'Google OAuth Callback' }),
+    (0, swagger_1.ApiResponse)({
+        status: 200,
+        description: 'Handles Google OAuth callback and logs user in.',
+    }),
     (0, public_decorator_1.Public)(),
     (0, common_1.UseGuards)((0, passport_1.AuthGuard)('google')),
     (0, swagger_1.ApiExcludeEndpoint)(),

@@ -17,6 +17,7 @@ const common_1 = require("@nestjs/common");
 const cloudinary_service_1 = require("./cloudinary.service");
 const platform_express_1 = require("@nestjs/platform-express");
 const swagger_1 = require("@nestjs/swagger");
+const jwt_auth_guard_1 = require("../../auth/passport/jwt-auth.guard");
 let ImagesController = class ImagesController {
     constructor(cloudinaryService) {
         this.cloudinaryService = cloudinaryService;
@@ -34,7 +35,8 @@ let ImagesController = class ImagesController {
 };
 exports.ImagesController = ImagesController;
 __decorate([
-    (0, common_1.Post)('upload'),
+    (0, common_1.Post)(),
+    (0, common_1.UseGuards)(jwt_auth_guard_1.JwtAuthGuard),
     (0, swagger_1.ApiOperation)({ summary: 'Can upload for Postman or Thunder Client' }),
     (0, common_1.UseInterceptors)((0, platform_express_1.FileInterceptor)('image')),
     __param(0, (0, common_1.UploadedFile)()),
@@ -63,7 +65,8 @@ let VideosController = class VideosController {
 };
 exports.VideosController = VideosController;
 __decorate([
-    (0, common_1.Post)('upload'),
+    (0, common_1.Post)(),
+    (0, common_1.UseGuards)(jwt_auth_guard_1.JwtAuthGuard),
     (0, swagger_1.ApiOperation)({ summary: 'Upload video via Postman or Thunder Client' }),
     (0, common_1.UseInterceptors)((0, platform_express_1.FileInterceptor)('video')),
     __param(0, (0, common_1.UploadedFile)()),

@@ -20,6 +20,7 @@ exports.CoursesModule = CoursesModule = __decorate([
         imports: [sequelize_1.SequelizeModule.forFeature([courses_entity_1.Courses])],
         controllers: [courses_controller_1.CoursesController],
         providers: [courses_service_1.CoursesService],
+        exports: [courses_service_1.CoursesService],
     })
 ], CoursesModule);
 //# sourceMappingURL=courses.module.js.map
