@@ -12,13 +12,7 @@ import {
 } from '@nestjs/common';
 import { AuthService } from './auth.service';
 import { CreateAuthDto } from './dto/create-auth.dto';
-import {
-  ApiBearerAuth,
-  ApiBody,
-  ApiOperation,
-  ApiResponse,
-  ApiTags,
-} from '@nestjs/swagger';
+import { ApiBearerAuth, ApiBody, ApiExcludeEndpoint, ApiOperation, ApiResponse, ApiTags } from '@nestjs/swagger';
 import { LocalAuthGuard } from './passport/local-auth.guard';
 import { JwtAuthGuard } from './passport/jwt-auth.guard';
 import { Public, ResponseMassage } from 'src/decorator/public.decorator';
@@ -124,6 +118,7 @@ export class AuthController {
   @Get('github/callback')
   @UseGuards(AuthGuard('github'))
   @Public()
+  @ApiExcludeEndpoint()
   async githubLoginCallback(@Req() req, @Res({ passthrough: true }) res) {
     const user = req.user;
     const { access_token } = await this.authService.login(user);
@@ -145,8 +140,10 @@ export class AuthController {
     status: 200,
     description: 'Handles Google OAuth callback and logs user in.',
   })
+
   @Public()
   @UseGuards(AuthGuard('google'))
+  @ApiExcludeEndpoint()
   async googleAuthRedirect(@Req() req, @Response({ passthrough: true }) res) {
     const { access_token } = req.user;
     res.cookie('jwt', access_token, {
