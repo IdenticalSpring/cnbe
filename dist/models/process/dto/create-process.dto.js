@@ -12,6 +12,7 @@ Object.defineProperty(exports, "__esModule", { value: true });
 exports.CreateProcessDto = void 0;
 const class_validator_1 = require("@nestjs/class-validator");
 const swagger_1 = require("@nestjs/swagger");
+const class_validator_2 = require("class-validator");
 class CreateProcessDto {
     constructor() {
         this.status = 'pending';
@@ -20,10 +21,12 @@ class CreateProcessDto {
 exports.CreateProcessDto = CreateProcessDto;
 __decorate([
     (0, swagger_1.ApiProperty)({ description: 'The id of the user' }),
+    (0, class_validator_2.IsNotEmpty)({ message: 'UserId cannot be empty' }),
     __metadata("design:type", Number)
 ], CreateProcessDto.prototype, "userId", void 0);
 __decorate([
     (0, swagger_1.ApiProperty)({ description: 'The exerciseId of the user' }),
+    (0, class_validator_2.IsNotEmpty)({ message: 'ExerciseId cannot be empty' }),
     __metadata("design:type", Number)
 ], CreateProcessDto.prototype, "exerciseId", void 0);
 __decorate([

@@ -1,11 +1,14 @@
 import { IsEnum, IsOptional } from '@nestjs/class-validator';
 import { ApiProperty, ApiPropertyOptional } from '@nestjs/swagger';
+import { IsNotEmpty } from 'class-validator';
 
 export class CreateProcessDto {
   @ApiProperty({ description: 'The id of the user' })
+  @IsNotEmpty({ message: 'UserId cannot be empty' })
   userId: number;
 
   @ApiProperty({ description: 'The exerciseId of the user' })
+  @IsNotEmpty({ message: 'ExerciseId cannot be empty' })
   exerciseId: number;
 
   @ApiPropertyOptional({

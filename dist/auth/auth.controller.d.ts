@@ -8,6 +8,7 @@ export declare class AuthController {
     constructor(authService: AuthService, mailerService: MailerService);
     login(req: any, res: any): Promise<{
         message: string;
+        access_token: string;
     }>;
     logout(req: any, res: any): Promise<{
         message: string;

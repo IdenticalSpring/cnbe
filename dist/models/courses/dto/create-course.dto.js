@@ -11,15 +11,18 @@ var __metadata = (this && this.__metadata) || function (k, v) {
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.CreateCoursesDto = void 0;
 const swagger_1 = require("@nestjs/swagger");
+const class_validator_1 = require("class-validator");
 class CreateCoursesDto {
 }
 exports.CreateCoursesDto = CreateCoursesDto;
 __decorate([
     (0, swagger_1.ApiProperty)({ description: 'The title of the course' }),
+    (0, class_validator_1.IsNotEmpty)({ message: 'Title cannot be empty' }),
     __metadata("design:type", String)
 ], CreateCoursesDto.prototype, "title", void 0);
 __decorate([
     (0, swagger_1.ApiProperty)({ description: 'The description of the course' }),
+    (0, class_validator_1.IsNotEmpty)({ message: 'Description cannot be empty' }),
     __metadata("design:type", String)
 ], CreateCoursesDto.prototype, "description", void 0);
 //# sourceMappingURL=create-course.dto.js.map
