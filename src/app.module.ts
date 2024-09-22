@@ -83,6 +83,7 @@ import { CloudinaryModule } from './models/cloudinary/cloudinary.module';
       provide: APP_GUARD,
       useClass: JwtAuthGuard,
     },
+    
     {
       provide: APP_INTERCEPTOR,
       useClass: TransformInterceptor,

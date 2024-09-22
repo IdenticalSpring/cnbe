@@ -24,9 +24,12 @@ import {
   RetryActiveDto,
 } from './dto/code-auth.dto';
 import { AuthGuard } from '@nestjs/passport';
+import { Roles } from 'src/decorator/admin.decorator';
+import { RolesGuard } from './passport/roles.guard';
 
 @ApiTags('auth')
 @Controller('auth')
+@UseGuards(RolesGuard)
 export class AuthController {
   constructor(
     private readonly authService: AuthService,
@@ -57,6 +60,7 @@ export class AuthController {
     return result;
   }
 
+  @Roles('admin')
   @Get('profile')
   @UseGuards(JwtAuthGuard)
   @ApiBearerAuth()
