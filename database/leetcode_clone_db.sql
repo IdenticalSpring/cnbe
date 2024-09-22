@@ -44,6 +44,7 @@ CREATE TABLE `courses` (
   `id` int(11) NOT NULL AUTO_INCREMENT,
   `title` varchar(255) NOT NULL,
   `description` text DEFAULT NULL,
+  `imageUrl` VARCHAR(255) DEFAULT NULL;
   `createdAt` datetime DEFAULT NULL,
   `updatedAt` datetime DEFAULT NULL,
   PRIMARY KEY (`id`)
