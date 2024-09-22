@@ -21,6 +21,8 @@ import { ProcessModule } from './models/process/process.module';
 import { EnrollmentModule } from './models/enrollments/enrollments.module';
 import { MulterModule } from '@nestjs/platform-express';
 import { CloudinaryModule } from './models/cloudinary/cloudinary.module';
+import { AdminCoursesController } from './admin/courses/courses.controller';
+import { AdminCoursesModule } from './admin/courses/courses.module';
 
 @Module({
   imports: [
@@ -75,6 +77,7 @@ import { CloudinaryModule } from './models/cloudinary/cloudinary.module';
     ProcessModule,
     EnrollmentModule,
     CloudinaryModule,
+    AdminCoursesModule,
   ],
   controllers: [AppController],
   providers: [
