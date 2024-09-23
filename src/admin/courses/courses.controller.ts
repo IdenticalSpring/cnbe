@@ -1,6 +1,6 @@
-import { Controller, Get, Post, Body, Patch, Param, Delete, UseInterceptors, UploadedFile, UseGuards } from '@nestjs/common';
+import { Controller, Get, Post, Body, Patch, Param, Delete, UseInterceptors, UploadedFile, UseGuards, Query } from '@nestjs/common';
 import { CreateCoursesDto } from 'src/models/courses/dto/create-course.dto';
-import { ApiBody, ApiConsumes, ApiOperation, ApiResponse, ApiTags } from '@nestjs/swagger';
+import { ApiBody, ApiConsumes, ApiOperation, ApiQuery, ApiResponse, ApiTags } from '@nestjs/swagger';
 import { CloudinaryService } from 'src/models/cloudinary/cloudinary.service';
 import { Courses } from 'src/models/courses/entities/courses.entity';
 import { FileInterceptor } from '@nestjs/platform-express';
@@ -8,15 +8,20 @@ import { CoursesService } from 'src/models/courses/courses.service';
 import { UpdateCourseDto } from 'src/models/courses/dto/update-course.dto';
 import { RolesGuard } from 'src/auth/passport/roles.guard';
 import { Roles } from 'src/decorator/admin.decorator';
+import { ConfigService } from '@nestjs/config';
 
 @ApiTags('admin/courses')
 @Controller('admin/courses')
 @UseGuards(RolesGuard)
 export class AdminCoursesController {
+  private readonly defaultLimit: number;
   constructor(
     private readonly coursesService: CoursesService,
     private readonly cloudinaryService: CloudinaryService,
-  ) { }
+    private readonly configService: ConfigService, 
+  ) { 
+    this.defaultLimit = parseInt(this.configService.get<string>('COURSE_LIMIT'), 10) || 10;
+  }
   @Roles('admin')
   @Get()
   @ApiOperation({ summary: 'Get all courses' })
@@ -28,6 +33,19 @@ export class AdminCoursesController {
   @Get(':id')
   findOne(@Param('id') id: string) {
     return this.coursesService.findOne(+id);
+  }
+
+  @Roles('admin')
+  @Get('page/:page')
+  @ApiQuery({ name: 'limit', required: false, type: Number, description: 'Limit number of courses per page' })
+  @ApiOperation({ summary: 'Get courses with pagination' })
+  @ApiResponse({ status: 200, description: 'Successfully retrieved paginated courses.' })
+  async findPaginated(
+    @Param('page') page: number,
+    @Query('limit') limit?: number, 
+  ): Promise<Courses[]> {
+    const finalLimit = limit ? +limit : this.defaultLimit;
+    return this.coursesService.findPaginated(+page, finalLimit);
   }
   @Roles('admin')
   @Post()
