@@ -7,5 +7,6 @@ import { MulterModule } from '@nestjs/platform-express';
   imports: [MulterModule.register({ dest: './uploads' })],
   controllers: [ImagesController, VideosController],
   providers: [CloudinaryService],
+  exports: [CloudinaryService],
 })
 export class CloudinaryModule {}

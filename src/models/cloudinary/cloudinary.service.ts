@@ -13,29 +13,39 @@ export class CloudinaryService {
   }
 
   async uploadImage(
-    fileName: string,
+    file: Express.Multer.File,
   ): Promise<UploadApiResponse | UploadApiErrorResponse> {
     return new Promise((resolve, reject) => {
-      v2.uploader.upload(
-        fileName,
-        { folder: 'MasterCoding' },
-        (error, result) => {
-          if (error) return reject(error);
-          resolve(result);
-        },
-      );
+      v2.uploader.upload_stream({ folder: 'MasterCoding' }, (error, result) => {
+        if (error) return reject(error);
+        resolve(result);
+      }).end(file.buffer);  
     });
   }
-  async uploadVideo(filePath: string): Promise<UploadApiResponse> {
+
+  async uploadVideo(file: Express.Multer.File): Promise<UploadApiResponse> {
     return new Promise((resolve, reject) => {
-      v2.uploader.upload(
-        filePath,
-        { resource_type: 'video', folder: 'MasterCoding' }, // Specify resource type as 'video'
-        (error, result) => {
-          if (error) reject(error);
-          resolve(result);
-        },
-      );
+      v2.uploader.upload_stream({ resource_type: 'video', folder: 'MasterCoding' }, (error, result) => {
+        if (error) reject(error);
+        resolve(result);
+      }).end(file.buffer);  
     });
   }
+  async deleteImage(imageUrl: string): Promise<void> {
+    const publicId = this.getPublicIdFromUrl(imageUrl);  
+    return new Promise((resolve, reject) => {
+      v2.uploader.destroy(publicId, (error, result) => {
+        if (error) return reject(error);
+        resolve(result);
+      });
+    });
+  }
+
+ 
+  private getPublicIdFromUrl(url: string): string {
+    const parts = url.split('/');
+    const publicIdWithExtension = parts[parts.length - 1];  
+    return publicIdWithExtension.split('.')[0];  
+  }
+
 }

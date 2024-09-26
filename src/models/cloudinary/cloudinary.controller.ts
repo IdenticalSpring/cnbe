@@ -10,19 +10,17 @@ import { FileInterceptor } from '@nestjs/platform-express';
 import { ApiOperation } from '@nestjs/swagger';
 import { JwtAuthGuard } from 'src/auth/passport/jwt-auth.guard';
 
-// http://localhost:8080/images/upload [POST]
-// [FormData] => Key:image [File]
+
 @Controller('images')
 export class ImagesController {
   constructor(private readonly cloudinaryService: CloudinaryService) {}
-
   @Post()
   @UseGuards(JwtAuthGuard)
   @ApiOperation({ summary: 'Can upload for Postman or Thunder Client' })
   @UseInterceptors(FileInterceptor('image'))
   async uploadFile(@UploadedFile() file: Express.Multer.File) {
     try {
-      const result = await this.cloudinaryService.uploadImage(file.path);
+      const result = await this.cloudinaryService.uploadImage(file);
       return result;
     } catch (error) {
       console.error('Error uploading file: ', error);
@@ -31,8 +29,7 @@ export class ImagesController {
   }
 }
 
-// http://localhost:8080/videos/upload [POST]
-// [FormData] => Key:videos [File]
+
 @Controller('videos')
 export class VideosController {
   constructor(private readonly cloudinaryService: CloudinaryService) {}
@@ -40,10 +37,10 @@ export class VideosController {
   @Post()
   @UseGuards(JwtAuthGuard)
   @ApiOperation({ summary: 'Upload video via Postman or Thunder Client' })
-  @UseInterceptors(FileInterceptor('video')) // Handle video file uploads
+  @UseInterceptors(FileInterceptor('video'))
   async uploadVideo(@UploadedFile() file: Express.Multer.File) {
     try {
-      const result = await this.cloudinaryService.uploadVideo(file.path); // Adjust to upload video
+      const result = await this.cloudinaryService.uploadVideo(file);
       return result;
     } catch (error) {
       console.error('Error uploading video: ', error);

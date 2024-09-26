@@ -9,6 +9,8 @@
   import { JwtStrategy } from './passport/jwt.strategy';
   import { GitHubStrategy } from './passport/github.strategy';
   import { GoogleStrategy } from './passport/google.strategy';
+import { RolesGuard } from './passport/roles.guard';
+import { JwtAuthGuard } from './passport/jwt-auth.guard';
 
 
   @Module({
@@ -27,6 +29,6 @@
       PassportModule
     ],
     controllers: [AuthController],
-    providers: [AuthService, LocalStrategy, JwtStrategy, GitHubStrategy,GoogleStrategy],
+    providers: [AuthService, LocalStrategy, JwtStrategy, GitHubStrategy, GoogleStrategy, RolesGuard, JwtAuthGuard],
   })
   export class AuthModule {}

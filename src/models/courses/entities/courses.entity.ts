@@ -20,7 +20,11 @@ export class Courses extends Model<Courses> {
     allowNull: false,
   })
   description: string;
-
+  @Column({
+    type: DataType.STRING(255),
+    allowNull: true, 
+  })
+  imageUrl: string;
   @Column({
     type: DataType.DATE,
     defaultValue: DataType.NOW,
