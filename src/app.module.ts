@@ -23,6 +23,10 @@ import { MulterModule } from '@nestjs/platform-express';
 import { CloudinaryModule } from './models/cloudinary/cloudinary.module';
 import { AdminCoursesController } from './admin/courses/courses.controller';
 import { AdminCoursesModule } from './admin/courses/courses.module';
+import { Orders } from './models/orders/entities/orders.entites';
+import { OrdersModule } from './models/orders/orders.module';
+import { Coupons } from './models/coupons/entities/coupons.entites';
+import { CouponsModule } from './models/coupons/coupons.module';
 
 @Module({
   imports: [
@@ -39,7 +43,15 @@ import { AdminCoursesModule } from './admin/courses/courses.module';
         username: configService.get('DB_USERNAME'),
         password: configService.get('DB_PASSWORD'),
         database: configService.get('DB_DATABASE'),
-        models: [User, Courses, Exercises, Process, Enrollment],
+        models: [
+          User,
+          Courses,
+          Exercises,
+          Process,
+          Enrollment,
+          Orders,
+          Coupons,
+        ],
         autoLoadModels: true,
         synchronize: true,
       }),
@@ -75,8 +87,10 @@ import { AdminCoursesModule } from './admin/courses/courses.module';
     CoursesModule,
     ExercisesModule,
     ProcessModule,
+    CouponsModule,
     EnrollmentModule,
     CloudinaryModule,
+    OrdersModule,
     AdminCoursesModule,
   ],
   controllers: [AppController],
@@ -86,7 +100,7 @@ import { AdminCoursesModule } from './admin/courses/courses.module';
       provide: APP_GUARD,
       useClass: JwtAuthGuard,
     },
-    
+
     {
       provide: APP_INTERCEPTOR,
       useClass: TransformInterceptor,
