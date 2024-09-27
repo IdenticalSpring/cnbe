@@ -1,4 +1,5 @@
-import { Column, Model, Table, DataType } from 'sequelize-typescript';
+import { Column, Model, Table, DataType, HasMany } from 'sequelize-typescript';
+import { CourseIntroductions } from 'src/models/course_introductions/entities/course_introduction.entity';
 
 @Table
 export class Courses extends Model<Courses> {
@@ -36,4 +37,7 @@ export class Courses extends Model<Courses> {
     defaultValue: DataType.NOW,
   })
   updatedAt: Date;
+
+  @HasMany(() => CourseIntroductions)
+  introductions: CourseIntroductions[];
 }

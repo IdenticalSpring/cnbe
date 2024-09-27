@@ -23,6 +23,14 @@ import { MulterModule } from '@nestjs/platform-express';
 import { CloudinaryModule } from './models/cloudinary/cloudinary.module';
 import { AdminCoursesController } from './admin/courses/courses.controller';
 import { AdminCoursesModule } from './admin/courses/courses.module';
+import { CourseIntroductions } from './models/course_introductions/entities/course_introduction.entity';
+import { IntroductionDetails } from './models/introduction_details/entities/introduction_detail.entity';
+import { CourseIntroductionsModule } from './models/course_introductions/course_introductions.module';
+import { IntroductionDetailsModule } from './models/introduction_details/introduction_details.module';
+import { AdminCourseIntroductionsController } from './admin/course_introductions/course-introductions.controller';
+import { AdminIntroductionDetailsController } from './admin/introduction_details/introduction-details.controller';
+import { AdminCourseIntroductionsModule } from './admin/course_introductions/course-introductions.module';
+import { AdminIntroductionDetailsModule } from './admin/introduction_details/introduction-details.module';
 
 @Module({
   imports: [
@@ -39,7 +47,7 @@ import { AdminCoursesModule } from './admin/courses/courses.module';
         username: configService.get('DB_USERNAME'),
         password: configService.get('DB_PASSWORD'),
         database: configService.get('DB_DATABASE'),
-        models: [User, Courses, Exercises, Process, Enrollment],
+        models: [User, Courses, Exercises, Process, Enrollment, CourseIntroductions, IntroductionDetails], // Thêm hai entity mới ở đây
         autoLoadModels: true,
         synchronize: true,
       }),
@@ -78,6 +86,11 @@ import { AdminCoursesModule } from './admin/courses/courses.module';
     EnrollmentModule,
     CloudinaryModule,
     AdminCoursesModule,
+    CourseIntroductionsModule,
+    IntroductionDetailsModule,
+    AdminCourseIntroductionsModule,
+    AdminIntroductionDetailsModule
+  
   ],
   controllers: [AppController],
   providers: [
@@ -86,11 +99,11 @@ import { AdminCoursesModule } from './admin/courses/courses.module';
       provide: APP_GUARD,
       useClass: JwtAuthGuard,
     },
-    
+
     {
       provide: APP_INTERCEPTOR,
       useClass: TransformInterceptor,
     },
   ],
 })
-export class AppModule {}
+export class AppModule { }
