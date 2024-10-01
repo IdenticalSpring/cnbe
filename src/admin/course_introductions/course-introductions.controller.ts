@@ -4,8 +4,8 @@ import { Roles } from 'src/decorator/admin.decorator';
 import { RolesGuard } from 'src/auth/passport/roles.guard';
 import { CreateCourseIntroductionDto } from 'src/models/course_introductions/dto/create-course_introduction.dto';
 import { UpdateCourseIntroductionDto } from 'src/models/course_introductions/dto/update-course_introduction.dto';
-import { CourseIntroductions } from 'src/models/course_introductions/entities/course_introduction.entity';
 import { CourseIntroductionsService } from 'src/models/course_introductions/course_introductions.service';
+import { CourseIntroductions } from 'src/models/course_introductions/entities/course_introduction.entity';
 
 @ApiTags('admin/course-introductions')
 @Controller('admin/course-introductions')
@@ -17,17 +17,17 @@ export class AdminCourseIntroductionsController {
     @Get()
     @ApiOperation({ summary: 'Get all course introductions' })
     @ApiResponse({ status: 200, description: 'Successfully retrieved course introductions.', type: [CourseIntroductions] })
-    findAll(): Promise<CourseIntroductions[]> {
-        return this.courseIntroductionsService.findAll();
+    async findAll(): Promise<CourseIntroductions[]> {
+        return await this.courseIntroductionsService.findAll();
     }
 
     @Roles('admin')
     @Get(':id')
     @ApiOperation({ summary: 'Get a course introduction by id' })
-    @ApiParam({ name: 'id', type: 'number', description: 'ID of the course introduction' })
+    @ApiParam({ name: 'id', type: Number, description: 'ID of the course introduction' })
     @ApiResponse({ status: 200, description: 'Successfully retrieved a course introduction.', type: CourseIntroductions })
-    findOne(@Param('id') id: string): Promise<CourseIntroductions> {
-        return this.courseIntroductionsService.findOne(+id);
+    async findOne(@Param('id') id: number): Promise<CourseIntroductions> {
+        return await this.courseIntroductionsService.findOne(id);
     }
 
     @Roles('admin')
@@ -52,14 +52,14 @@ export class AdminCourseIntroductionsController {
         description: 'The course introduction has been successfully created.',
         type: CourseIntroductions,
     })
-    create(@Body() createCourseIntroductionDto: CreateCourseIntroductionDto): Promise<CourseIntroductions> {
-        return this.courseIntroductionsService.create(createCourseIntroductionDto);
+    async create(@Body() createCourseIntroductionDto: CreateCourseIntroductionDto): Promise<CourseIntroductions> {
+        return await this.courseIntroductionsService.create(createCourseIntroductionDto);
     }
 
     @Roles('admin')
     @Patch(':id')
     @ApiOperation({ summary: 'Update an existing course introduction' })
-    @ApiParam({ name: 'id', type: 'number', description: 'ID of the course introduction' })
+    @ApiParam({ name: 'id', type: Number, description: 'ID of the course introduction' })
     @ApiBody({
         description: 'Updated Course Introduction Data',
         type: UpdateCourseIntroductionDto,
@@ -78,16 +78,16 @@ export class AdminCourseIntroductionsController {
         description: 'Successfully updated course introduction.',
         type: CourseIntroductions,
     })
-    update(@Param('id') id: string, @Body() updateCourseIntroductionDto: UpdateCourseIntroductionDto): Promise<CourseIntroductions> {
-        return this.courseIntroductionsService.update(+id, updateCourseIntroductionDto);
+    async update(@Param('id') id: number, @Body() updateCourseIntroductionDto: UpdateCourseIntroductionDto): Promise<CourseIntroductions> {
+        return await this.courseIntroductionsService.update(id, updateCourseIntroductionDto);
     }
 
     @Roles('admin')
     @Delete(':id')
     @ApiOperation({ summary: 'Delete a course introduction by id' })
-    @ApiParam({ name: 'id', type: 'number', description: 'ID of the course introduction' })
+    @ApiParam({ name: 'id', type: Number, description: 'ID of the course introduction' })
     @ApiResponse({ status: 200, description: 'Successfully deleted course introduction.' })
-    remove(@Param('id') id: string): Promise<void> {
-        return this.courseIntroductionsService.remove(+id);
+    async remove(@Param('id') id: number): Promise<void> {
+        return await this.courseIntroductionsService.remove(id);
     }
 }

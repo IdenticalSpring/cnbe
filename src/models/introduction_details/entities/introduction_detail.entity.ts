@@ -1,5 +1,7 @@
-import { Column, Model, Table, DataType, ForeignKey, BelongsTo } from 'sequelize-typescript';
+import { Column, Model, Table, DataType, BelongsToMany } from 'sequelize-typescript';
 import { CourseIntroductions } from 'src/models/course_introductions/entities/course_introduction.entity';
+
+import { Courses } from 'src/models/courses/entities/courses.entity';
 
 
 @Table
@@ -10,13 +12,6 @@ export class IntroductionDetails extends Model<IntroductionDetails> {
         primaryKey: true,
     })
     id: number;
-
-    @ForeignKey(() => CourseIntroductions)
-    @Column({
-        type: DataType.INTEGER,
-        allowNull: false,
-    })
-    introductionId: number;
 
     @Column({
         type: DataType.STRING(255),
@@ -41,7 +36,7 @@ export class IntroductionDetails extends Model<IntroductionDetails> {
         defaultValue: DataType.NOW,
     })
     updatedAt: Date;
-    
-    @BelongsTo(() => CourseIntroductions)
-    introduction: CourseIntroductions;
+
+    @BelongsToMany(() => Courses, () => CourseIntroductions)
+    courses: Courses[];
 }
