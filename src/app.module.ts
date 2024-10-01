@@ -27,6 +27,8 @@ import { Orders } from './models/orders/entities/orders.entites';
 import { OrdersModule } from './models/orders/orders.module';
 import { Coupons } from './models/coupons/entities/coupons.entites';
 import { CouponsModule } from './models/coupons/coupons.module';
+import { SubmissionModule } from './models/submission/submission.module';
+import { Submission } from './models/submission/entities/submission.model';
 
 @Module({
   imports: [
@@ -51,6 +53,7 @@ import { CouponsModule } from './models/coupons/coupons.module';
           Enrollment,
           Orders,
           Coupons,
+          Submission,
         ],
         autoLoadModels: true,
         synchronize: true,
@@ -91,6 +94,7 @@ import { CouponsModule } from './models/coupons/coupons.module';
     EnrollmentModule,
     CloudinaryModule,
     OrdersModule,
+    SubmissionModule,
     AdminCoursesModule,
   ],
   controllers: [AppController],

@@ -1,5 +1,5 @@
 import { SequelizeModule } from '@nestjs/sequelize';
-import { CouponsController } from './coupons.controller.dto';
+import { CouponsController } from './coupons.controller';
 import { Coupons } from './entities/coupons.entites';
 import { Module } from '@nestjs/common';
 import { CouponsService } from './coupons.service';
