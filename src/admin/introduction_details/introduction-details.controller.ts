@@ -40,8 +40,8 @@ export class AdminIntroductionDetailsController {
             example1: {
                 value: {
                     title: 'Detail Title',
-                    detail: 'Detail description...',
-                    introductionId: 1, // Thay đổi theo bảng mà bạn cần tham chiếu
+                    detail: 'Detail description...'
+                 
                 },
                 description: 'An example of creating a new introduction detail',
             },

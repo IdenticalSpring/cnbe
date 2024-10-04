@@ -31,6 +31,7 @@ import { AdminCourseIntroductionsController } from './admin/course_introductions
 import { AdminIntroductionDetailsController } from './admin/introduction_details/introduction-details.controller';
 import { AdminCourseIntroductionsModule } from './admin/course_introductions/course-introductions.module';
 import { AdminIntroductionDetailsModule } from './admin/introduction_details/introduction-details.module';
+import { AdminUserModule } from './admin/users/user.module';
 
 @Module({
   imports: [
@@ -89,7 +90,8 @@ import { AdminIntroductionDetailsModule } from './admin/introduction_details/int
     CourseIntroductionsModule,
     IntroductionDetailsModule,
     AdminCourseIntroductionsModule,
-    AdminIntroductionDetailsModule
+    AdminIntroductionDetailsModule,
+    AdminUserModule
   
   ],
   controllers: [AppController],

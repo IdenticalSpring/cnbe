@@ -3,7 +3,8 @@ import { InjectModel } from '@nestjs/sequelize';
 import { CourseIntroductions } from './entities/course_introduction.entity';
 import { CreateCourseIntroductionDto } from './dto/create-course_introduction.dto';
 import { UpdateCourseIntroductionDto } from './dto/update-course_introduction.dto';
-
+import { Courses } from 'src/models/courses/entities/courses.entity';
+import { IntroductionDetails } from 'src/models/introduction_details/entities/introduction_detail.entity';
 
 @Injectable()
 export class CourseIntroductionsService {
@@ -17,11 +18,15 @@ export class CourseIntroductionsService {
   }
 
   async findAll(): Promise<CourseIntroductions[]> {
-    return this.courseIntroductionsModel.findAll();
+    return this.courseIntroductionsModel.findAll({
+      include: [Courses, IntroductionDetails], // Include để lấy thông tin liên quan
+    });
   }
 
   async findOne(id: number): Promise<CourseIntroductions> {
-    const courseIntroduction = await this.courseIntroductionsModel.findByPk(id);
+    const courseIntroduction = await this.courseIntroductionsModel.findByPk(id, {
+      include: [Courses, IntroductionDetails], // Include để lấy thông tin liên quan
+    });
     if (!courseIntroduction) {
       throw new NotFoundException(`CourseIntroduction with ID ${id} not found`);
     }
