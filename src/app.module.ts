@@ -23,6 +23,12 @@ import { MulterModule } from '@nestjs/platform-express';
 import { CloudinaryModule } from './models/cloudinary/cloudinary.module';
 import { AdminCoursesController } from './admin/courses/courses.controller';
 import { AdminCoursesModule } from './admin/courses/courses.module';
+import { Orders } from './models/orders/entities/orders.entites';
+import { OrdersModule } from './models/orders/orders.module';
+import { Coupons } from './models/coupons/entities/coupons.entites';
+import { CouponsModule } from './models/coupons/coupons.module';
+import { SubmissionModule } from './models/submission/submission.module';
+import { Submission } from './models/submission/entities/submission.model';
 import { CourseIntroductions } from './models/course_introductions/entities/course_introduction.entity';
 import { IntroductionDetails } from './models/introduction_details/entities/introduction_detail.entity';
 import { CourseIntroductionsModule } from './models/course_introductions/course_introductions.module';
@@ -48,7 +54,18 @@ import { AdminUserModule } from './admin/users/user.module';
         username: configService.get('DB_USERNAME'),
         password: configService.get('DB_PASSWORD'),
         database: configService.get('DB_DATABASE'),
-        models: [User, Courses, Exercises, Process, Enrollment, CourseIntroductions, IntroductionDetails], // Thêm hai entity mới ở đây
+        models: [
+          User,
+          Courses,
+          Exercises,
+          Process,
+          Enrollment,
+          Orders,
+          Coupons,
+          Submission,
+          CourseIntroductions,
+          IntroductionDetails,
+        ],
         autoLoadModels: true,
         synchronize: true,
       }),
@@ -84,15 +101,17 @@ import { AdminUserModule } from './admin/users/user.module';
     CoursesModule,
     ExercisesModule,
     ProcessModule,
+    CouponsModule,
     EnrollmentModule,
     CloudinaryModule,
+    OrdersModule,
+    SubmissionModule,
     AdminCoursesModule,
     CourseIntroductionsModule,
     IntroductionDetailsModule,
     AdminCourseIntroductionsModule,
     AdminIntroductionDetailsModule,
-    AdminUserModule
-  
+    AdminUserModule,
   ],
   controllers: [AppController],
   providers: [
@@ -108,4 +127,4 @@ import { AdminUserModule } from './admin/users/user.module';
     },
   ],
 })
-export class AppModule { }
+export class AppModule {}
