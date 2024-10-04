@@ -29,6 +29,15 @@ import { Coupons } from './models/coupons/entities/coupons.entites';
 import { CouponsModule } from './models/coupons/coupons.module';
 import { SubmissionModule } from './models/submission/submission.module';
 import { Submission } from './models/submission/entities/submission.model';
+import { CourseIntroductions } from './models/course_introductions/entities/course_introduction.entity';
+import { IntroductionDetails } from './models/introduction_details/entities/introduction_detail.entity';
+import { CourseIntroductionsModule } from './models/course_introductions/course_introductions.module';
+import { IntroductionDetailsModule } from './models/introduction_details/introduction_details.module';
+import { AdminCourseIntroductionsController } from './admin/course_introductions/course-introductions.controller';
+import { AdminIntroductionDetailsController } from './admin/introduction_details/introduction-details.controller';
+import { AdminCourseIntroductionsModule } from './admin/course_introductions/course-introductions.module';
+import { AdminIntroductionDetailsModule } from './admin/introduction_details/introduction-details.module';
+import { AdminUserModule } from './admin/users/user.module';
 
 @Module({
   imports: [
@@ -54,6 +63,8 @@ import { Submission } from './models/submission/entities/submission.model';
           Orders,
           Coupons,
           Submission,
+          CourseIntroductions,
+          IntroductionDetails,
         ],
         autoLoadModels: true,
         synchronize: true,
@@ -96,6 +107,11 @@ import { Submission } from './models/submission/entities/submission.model';
     OrdersModule,
     SubmissionModule,
     AdminCoursesModule,
+    CourseIntroductionsModule,
+    IntroductionDetailsModule,
+    AdminCourseIntroductionsModule,
+    AdminIntroductionDetailsModule,
+    AdminUserModule,
   ],
   controllers: [AppController],
   providers: [

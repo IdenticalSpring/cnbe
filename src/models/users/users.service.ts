@@ -200,4 +200,23 @@ export class UsersService {
   async findByEmail(email: string): Promise<User | null> {
     return await this.userModel.findOne({ where: { email } });
   }
+ 
+  async updateUser(id: number, updateUserDto: Partial<CreateUserDto>): Promise<User> {
+    const user = await this.userModel.findByPk(id);
+    if (!user) {
+      throw new BadRequestException(`User with ID ${id} not found`);
+    }
+    await user.update(updateUserDto);
+    return user;
+  }
+
+  async removeUser(id: number): Promise<{ success: boolean; message: string }> {
+    const user = await this.userModel.findByPk(id);
+    if (!user) {
+      throw new BadRequestException(`User with ID ${id} not found`);
+    }
+    await user.destroy();
+    return { success: true, message: `User with ID ${id} deleted successfully` };
+  }
+
 }

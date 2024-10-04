@@ -37,4 +37,11 @@ export class CoursesService {
     const course = await this.findOne(id);
     await course.destroy();
   }
+  async findPaginated(page: number, limit: number = 10): Promise<Courses[]> {
+    const offset = (page - 1) * limit;
+    return this.coursesModel.findAll({
+      limit,
+      offset,
+    });
+  }
 }
