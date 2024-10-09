@@ -7,33 +7,30 @@ import { UpdateUserDto } from 'src/models/users/dto/update-user.dto';
 import { UsersService } from 'src/models/users/users.service';
 
 @ApiTags('admin/users')
-    @Controller('admin/users')
+@Controller('admin/users')
 @UseGuards(RolesGuard)
 export class AdminUsersController {
     constructor(private readonly usersService: UsersService) { }
 
-
-    @Get('users')
+    @Get('list')
     @Roles('admin')
     async findAllUsers() {
         return this.usersService.findAll();
     }
 
-    @Get('users/:id')
+    @Get('detail/:id')
     @Roles('admin')
     async findUserById(@Param('id') id: number) {
         return this.usersService.findOne(id);
     }
 
-    @Put('users/:id')
+    @Put('update/:id')
     async updateUser(@Param('id') id: number, @Body() updateUserDto: UpdateUserDto) {
         return this.usersService.updateUser(id, updateUserDto);
     }
 
-    
-    @Delete('users/:id')
+    @Delete('delete/:id')
     async removeUser(@Param('id') id: number) {
         return this.usersService.removeUser(id);
     }
-
 }
