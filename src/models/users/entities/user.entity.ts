@@ -44,6 +44,7 @@ export class User extends Model<User> {
     @Column({
         type: DataType.BOOLEAN,
         allowNull: true,
+        defaultValue: false,
     })
     isActive: boolean;
     @Column({

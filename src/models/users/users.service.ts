@@ -51,13 +51,23 @@ export class UsersService {
 
   async handleRegister(registerDto: CreateAuthDto) {
     const { name, username, password, email } = registerDto;
-    const isExist = await this.isUsernameExist(username);
-    if (isExist === true) {
+
+    // Kiểm tra username đã tồn tại chưa
+    const isUsernameExist = await this.isUsernameExist(username);
+    if (isUsernameExist) {
       throw new BadRequestException(`Username already exists: ${username}. Please use a different username.`);
+    }
+
+    // Kiểm tra email đã tồn tại chưa
+    const isEmailExist = await this.isEmailExist(email);
+    if (isEmailExist) {
+      throw new BadRequestException(`Email already exists: ${email}. Please use a different email.`);
     }
 
     const hashPassword = await hashPasswordHelper(password);
     const codeId = uuidv4();
+
+    // Tạo user mới
     const user = await this.userModel.create({
       name,
       username,
@@ -72,6 +82,11 @@ export class UsersService {
 
     return { success: true, message: "User registered successfully", id: user.id };
   }
+  async isEmailExist(email: string): Promise<boolean> {
+    const user = await this.userModel.findOne({ where: { email } });
+    return !!user;
+  }
+
 
   private async sendActivationEmail(user: User, name: string, activationCode: string) {
     try {

@@ -14,7 +14,7 @@ export class AdminCourseIntroductionsController {
     constructor(private readonly courseIntroductionsService: CourseIntroductionsService) { }
 
     @Roles('admin')
-    @Get()
+    @Get('list')
     @ApiOperation({ summary: 'Get all course introductions' })
     @ApiResponse({ status: 200, description: 'Successfully retrieved course introductions.', type: [CourseIntroductions] })
     async findAll(): Promise<CourseIntroductions[]> {
@@ -22,7 +22,7 @@ export class AdminCourseIntroductionsController {
     }
 
     @Roles('admin')
-    @Get(':id')
+    @Get('detail/:id')
     @ApiOperation({ summary: 'Get a course introduction by id' })
     @ApiParam({ name: 'id', type: Number, description: 'ID of the course introduction' })
     @ApiResponse({ status: 200, description: 'Successfully retrieved a course introduction.', type: CourseIntroductions })
@@ -31,7 +31,7 @@ export class AdminCourseIntroductionsController {
     }
 
     @Roles('admin')
-    @Post()
+    @Post('create')
     @ApiOperation({ summary: 'Create a new course introduction' })
     @ApiBody({
         description: 'Course Introduction Data',
@@ -57,7 +57,7 @@ export class AdminCourseIntroductionsController {
     }
 
     @Roles('admin')
-    @Patch(':id')
+    @Patch('update/:id')
     @ApiOperation({ summary: 'Update an existing course introduction' })
     @ApiParam({ name: 'id', type: Number, description: 'ID of the course introduction' })
     @ApiBody({
@@ -83,7 +83,7 @@ export class AdminCourseIntroductionsController {
     }
 
     @Roles('admin')
-    @Delete(':id')
+    @Delete('delete/:id')
     @ApiOperation({ summary: 'Delete a course introduction by id' })
     @ApiParam({ name: 'id', type: Number, description: 'ID of the course introduction' })
     @ApiResponse({ status: 200, description: 'Successfully deleted course introduction.' })
