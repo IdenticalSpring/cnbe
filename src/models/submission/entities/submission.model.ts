@@ -1,4 +1,12 @@
-import { Column, DataType, Model, Table } from 'sequelize-typescript';
+import {
+  Column,
+  DataType,
+  Model,
+  Table,
+  ForeignKey,
+  BelongsTo,
+} from 'sequelize-typescript';
+import { User } from 'src/models/users/entities/user.entity';
 
 @Table
 export class Submission extends Model {
@@ -9,11 +17,15 @@ export class Submission extends Model {
   })
   id: number;
 
+  @ForeignKey(() => User)
   @Column({
     type: DataType.INTEGER,
     allowNull: false,
   })
   userId: number;
+
+  @BelongsTo(() => User)
+  user: User; // Thêm quan hệ thuộc về User
 
   @Column({
     type: DataType.STRING,
@@ -35,5 +47,7 @@ export class Submission extends Model {
 
   @Column(DataType.TEXT)
   output: string;
+
+  @Column(DataType.TEXT) // Cần thêm kiểu dữ liệu cho trường error
   error: string;
 }

@@ -10,7 +10,7 @@ import {
   BeforeUpdate,
 } from 'sequelize-typescript';
 import { User } from 'src/models/users/entities/user.entity';
-import { Exercises } from '../../exercises/entitites/exercises.entity';
+import { Problems } from '../../problems/entitites/problems.entity';
 
 @Table({
   tableName: 'process',
@@ -34,15 +34,15 @@ export class Process extends Model<Process> {
   @BelongsTo(() => User)
   user!: User;
 
-  @ForeignKey(() => Exercises)
+  @ForeignKey(() => Problems)
   @Column({
     type: DataType.INTEGER,
     allowNull: false,
   })
   exerciseId!: number;
 
-  @BelongsTo(() => Exercises)
-  exercise!: Exercises;
+  @BelongsTo(() => Problems)
+  exercise!: Problems;
 
   @Column({
     type: DataType.ENUM('pending', 'in-progress', 'completed'),
