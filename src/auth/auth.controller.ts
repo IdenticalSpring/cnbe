@@ -45,12 +45,20 @@ export class AuthController {
   @ResponseMassage('User logged in successfully')
   async login(@Request() req, @Response({ passthrough: true }) res) {
     const { access_token } = await this.authService.login(req.user);
+
+   
     res.cookie('jwt', access_token, {
-      httpOnly: true,
-      secure: process.env.NODE_ENV !== 'development',
+      httpOnly: true,         
+      secure: process.env.NODE_ENV !== 'development', 
+      sameSite: 'strict',     
     });
+
+   
+    res.setHeader('Authorization', `Bearer ${access_token}`);
+
     return { message: 'Logged in successfully', access_token };
   }
+
   @UseGuards(JwtAuthGuard)
   @Delete('logout')
   async logout(@Request() req, @Response({ passthrough: true }) res) {
