@@ -1,4 +1,4 @@
-import { Injectable } from '@nestjs/common';
+import { BadRequestException, Injectable } from '@nestjs/common';
 import { UsersService } from '../models/users/users.service';
 import { comparePasswordHelper } from 'src/helper/utils';
 import { JwtService } from '@nestjs/jwt';
@@ -27,32 +27,53 @@ export class AuthService {
   async validateOAuthLoginGithub(profile: any): Promise<any> {
     const { id, username, emails, name } = profile;
 
-    let user = await this.usersService.findByUsername(username);
+    // Kiểm tra nếu email hoặc username đã tồn tại trong database
+    const existingEmailUser = await this.usersService.findByEmail(emails[0].value);
+    const existingUsernameUser = await this.usersService.findByUsername(username);
 
-    if (!user) {
-      user = await this.usersService.create({
-        name,
-        username,
-        email: emails[0].value,
-        password: null,
-        isActive:true
-      });
+    if (existingEmailUser) {
+      throw new BadRequestException('Email already exists in the system.');
     }
+
+    if (existingUsernameUser) {
+      throw new BadRequestException('Username already exists in the system.');
+    }
+
+    let user = await this.usersService.create({
+      name,
+      username,
+      email: emails[0].value,
+      password: null,
+      isActive: true
+    });
 
     return user;
   }
 
   async validateGoogleUser(profile: any): Promise<any> {
-    let user = await this.usersService.findByEmail(profile.email);
-    if (!user) {
-      user = await this.usersService.create({
-        username: profile.email.split('@')[0],
-        email: profile.email,
-        name: `${profile.firstName} ${profile.lastName}`,
-        isActive: true,
-        password: null,
-      });
+    const email = profile.email;
+    const username = profile.email.split('@')[0];
+
+    // Kiểm tra nếu email hoặc username đã tồn tại trong database
+    const existingEmailUser = await this.usersService.findByEmail(email);
+    const existingUsernameUser = await this.usersService.findByUsername(username);
+
+    if (existingEmailUser) {
+      throw new BadRequestException('Email already exists in the system.');
     }
+
+    if (existingUsernameUser) {
+      throw new BadRequestException('Username already exists in the system.');
+    }
+
+    let user = await this.usersService.create({
+      username,
+      email,
+      name: `${profile.firstName} ${profile.lastName}`,
+      isActive: true,
+      password: null,
+    });
+
     const payload = { username: user.username, sub: user.id };
     return {
       access_token: this.jwtService.sign(payload),
