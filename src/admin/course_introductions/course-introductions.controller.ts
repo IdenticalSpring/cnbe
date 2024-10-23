@@ -1,15 +1,17 @@
 import { Controller, Get, Post, Body, Patch, Param, Delete, UseGuards } from '@nestjs/common';
-import { ApiOperation, ApiResponse, ApiTags, ApiParam, ApiBody } from '@nestjs/swagger';
+import { ApiOperation, ApiResponse, ApiTags, ApiParam, ApiBody, ApiBearerAuth } from '@nestjs/swagger';
 import { Roles } from 'src/decorator/admin.decorator';
 import { RolesGuard } from 'src/auth/passport/roles.guard';
 import { CreateCourseIntroductionDto } from 'src/models/course_introductions/dto/create-course_introduction.dto';
 import { UpdateCourseIntroductionDto } from 'src/models/course_introductions/dto/update-course_introduction.dto';
 import { CourseIntroductionsService } from 'src/models/course_introductions/course_introductions.service';
 import { CourseIntroductions } from 'src/models/course_introductions/entities/course_introduction.entity';
+import { JwtAuthGuard } from 'src/auth/passport/jwt-auth.guard';
 
 @ApiTags('admin/course-introductions')
 @Controller('admin/course-introductions')
-@UseGuards(RolesGuard)
+@UseGuards(JwtAuthGuard, RolesGuard)
+@ApiBearerAuth('JWT')
 export class AdminCourseIntroductionsController {
     constructor(private readonly courseIntroductionsService: CourseIntroductionsService) { }
 

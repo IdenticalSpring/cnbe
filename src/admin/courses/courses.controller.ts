@@ -1,6 +1,6 @@
 import { Controller, Get, Post, Body, Patch, Param, Delete, UseInterceptors, UploadedFile, UseGuards, Query } from '@nestjs/common';
 import { CreateCoursesDto } from 'src/models/courses/dto/create-course.dto';
-import { ApiBody, ApiConsumes, ApiOperation, ApiQuery, ApiResponse, ApiTags } from '@nestjs/swagger';
+import { ApiBearerAuth, ApiBody, ApiConsumes, ApiOperation, ApiQuery, ApiResponse, ApiTags } from '@nestjs/swagger';
 import { CloudinaryService } from 'src/models/cloudinary/cloudinary.service';
 import { Courses } from 'src/models/courses/entities/courses.entity';
 import { FileInterceptor } from '@nestjs/platform-express';
@@ -9,10 +9,12 @@ import { UpdateCourseDto } from 'src/models/courses/dto/update-course.dto';
 import { RolesGuard } from 'src/auth/passport/roles.guard';
 import { Roles } from 'src/decorator/admin.decorator';
 import { ConfigService } from '@nestjs/config';
+import { JwtAuthGuard } from 'src/auth/passport/jwt-auth.guard';
 
 @ApiTags('admin/courses')
 @Controller('admin/courses')
-@UseGuards(RolesGuard)
+@UseGuards(JwtAuthGuard, RolesGuard)
+@ApiBearerAuth('JWT')
 export class AdminCoursesController {
   private readonly defaultLimit: number;
 

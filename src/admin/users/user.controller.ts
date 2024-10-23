@@ -1,5 +1,6 @@
 import { Controller, Get, Param, Post, Body, UseGuards, Put, Delete } from '@nestjs/common';
-import { ApiTags } from '@nestjs/swagger';
+import { ApiBearerAuth, ApiTags } from '@nestjs/swagger';
+import { JwtAuthGuard } from 'src/auth/passport/jwt-auth.guard';
 import { RolesGuard } from 'src/auth/passport/roles.guard';
 import { Roles } from 'src/decorator/admin.decorator';
 import { CreateUserDto } from 'src/models/users/dto/create-user.dto';
@@ -8,7 +9,8 @@ import { UsersService } from 'src/models/users/users.service';
 
 @ApiTags('admin/users')
 @Controller('admin/users')
-@UseGuards(RolesGuard)
+@UseGuards(JwtAuthGuard, RolesGuard) 
+@ApiBearerAuth('JWT')
 export class AdminUsersController {
     constructor(private readonly usersService: UsersService) { }
 

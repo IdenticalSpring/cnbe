@@ -10,10 +10,11 @@ import {
 import { CouponsService } from './coupons.service';
 import { CreateCouponDto } from './dto/create-coupons.dto';
 import { UpdateCouponDto } from './dto/update-coupons.dto';
-import { ApiOperation, ApiTags } from '@nestjs/swagger';
+import { ApiBearerAuth, ApiOperation, ApiTags } from '@nestjs/swagger';
 
 @ApiTags('coupons')
 @Controller('coupons')
+@ApiBearerAuth('JWT')
 export class CouponsController {
   constructor(private readonly couponsService: CouponsService) {}
 

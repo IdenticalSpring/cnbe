@@ -1,10 +1,11 @@
 import { Controller, Post, Body, Param } from '@nestjs/common';
 import { SubmissionService } from './submission.service';
 import { CreateSubmissionDto } from './dto/submission.dto';
-import { ApiOperation, ApiTags } from '@nestjs/swagger';
+import { ApiBearerAuth, ApiOperation, ApiTags } from '@nestjs/swagger';
 
 @ApiTags('Submissions') // Để nhóm các API endpoints liên quan đến submission
 @Controller('submissions')
+@ApiBearerAuth('JWT')
 export class SubmissionController {
   constructor(private readonly submissionService: SubmissionService) {}
 
