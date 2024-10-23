@@ -7,7 +7,7 @@ import {
   Param,
   Delete,
 } from '@nestjs/common';
-import { ApiOperation, ApiResponse, ApiTags } from '@nestjs/swagger';
+import { ApiBearerAuth, ApiOperation, ApiResponse, ApiTags } from '@nestjs/swagger';
 import { ProcessService } from './process.service';
 import { Process } from './entities/process.entity';
 import { CreateProcessDto } from './dto/create-process.dto';
@@ -15,6 +15,7 @@ import { UpdateProcessDto } from './dto/update-process.dto';
 
 @ApiTags('process')
 @Controller('process')
+@ApiBearerAuth('JWT')
 export class ProcessController {
   constructor(private readonly processService: ProcessService) {}
 

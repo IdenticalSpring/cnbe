@@ -6,13 +6,14 @@ import {
   HttpStatus,
   HttpException,
 } from '@nestjs/common';
-import { ApiTags, ApiOperation, ApiResponse } from '@nestjs/swagger';
+import { ApiTags, ApiOperation, ApiResponse, ApiBearerAuth } from '@nestjs/swagger';
 import { DifficultiesService } from './difficulties.service';
 import { Difficulty } from './entities/difficulties.entites';
 import { CreateDifficultyDto } from './dto/create-difficulties.dto';
 
 @ApiTags('Difficulties')
 @Controller('difficulties')
+@ApiBearerAuth('JWT')
 export class DifficultiesController {
   constructor(private readonly difficultiesService: DifficultiesService) {}
 

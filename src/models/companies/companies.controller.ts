@@ -8,7 +8,7 @@ import {
   Patch,
   Param,
 } from '@nestjs/common';
-import { ApiTags, ApiOperation, ApiResponse } from '@nestjs/swagger';
+import { ApiTags, ApiOperation, ApiResponse, ApiBearerAuth } from '@nestjs/swagger';
 import { CompaniesService } from './companies.service';
 import { CreateCompanyDto } from './dto/create-company.dto';
 import { Companies } from './entities/companies.entities';
@@ -16,6 +16,7 @@ import { UpdateCompanyDto } from './dto/update-company.dto';
 
 @ApiTags('Companies')
 @Controller('companies')
+@ApiBearerAuth('JWT')
 export class CompaniesController {
   constructor(private readonly companiesService: CompaniesService) {}
 

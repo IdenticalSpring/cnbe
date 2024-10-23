@@ -45,27 +45,22 @@ export class AuthController {
   @ResponseMassage('User logged in successfully')
   async login(@Request() req, @Response({ passthrough: true }) res) {
     const { access_token } = await this.authService.login(req.user);
-
-   
     res.cookie('jwt', access_token, {
-      httpOnly: true,         
-      secure: process.env.NODE_ENV !== 'development', 
-      sameSite: 'strict',     
+      httpOnly: true,  // Chỉ cho phép cookie được sử dụng bởi backend
+      secure: process.env.NODE_ENV !== 'development',  // Chỉ gửi cookie qua HTTPS
+      sameSite: 'strict',  // Chặn cookie không gửi đến các trang khác
     });
 
-   
-    res.setHeader('Authorization', `Bearer ${access_token}`);
-
-    return { message: 'Logged in successfully', access_token };
+    return { message: 'Logged in successfully' };  // Không cần trả về token nữa
   }
+
+
 
   @UseGuards(JwtAuthGuard)
   @Delete('logout')
   async logout(@Request() req, @Response({ passthrough: true }) res) {
-    const token = req.cookies['jwt'];
-    const result = await this.authService.logout(token);
-    res.clearCookie('jwt');
-    return result;
+    res.clearCookie('jwt');  
+    return { message: 'Logged out successfully' };
   }
 
   @Roles('admin')

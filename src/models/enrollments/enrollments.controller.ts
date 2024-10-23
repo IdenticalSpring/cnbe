@@ -8,7 +8,7 @@ import {
   Param,
   Delete,
 } from '@nestjs/common';
-import { ApiOperation, ApiResponse, ApiTags } from '@nestjs/swagger';
+import { ApiBearerAuth, ApiOperation, ApiResponse, ApiTags } from '@nestjs/swagger';
 import { EnrollmentsService } from './enrollments.service';
 import { Enrollment } from './entities/enrollments.entity';
 import { UpdateEnrollmentsDto } from './dto/update-enrollments';
@@ -16,6 +16,7 @@ import { CreateEnrollmentsDto } from './dto/create-enrollments';
 
 @ApiTags('enrollments')
 @Controller('enrollments')
+@ApiBearerAuth('JWT')
 export class EnrollmentsController {
   constructor(private readonly enrollmentsService: EnrollmentsService) {}
 

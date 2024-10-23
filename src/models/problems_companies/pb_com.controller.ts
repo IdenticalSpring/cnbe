@@ -1,11 +1,12 @@
 import { Controller, Post, Body, Get, Delete, Param } from '@nestjs/common';
-import { ApiTags, ApiOperation } from '@nestjs/swagger';
+import { ApiTags, ApiOperation, ApiBearerAuth } from '@nestjs/swagger';
 import { ProblemCompaniesService } from './pb_com.service';
 import { CreateProblemCompanyDto } from './dto/problems_companies.dto';
 import { ProblemCompanies } from './entities/problems_companies.entits';
 
 @ApiTags('ProblemCompanies')
 @Controller('problem-companies')
+@ApiBearerAuth('JWT')
 export class ProblemCompaniesController {
   constructor(
     private readonly problemCompaniesService: ProblemCompaniesService,

@@ -7,7 +7,7 @@ import {
   Param,
   Delete,
 } from '@nestjs/common';
-import { ApiOperation, ApiResponse, ApiTags } from '@nestjs/swagger';
+import { ApiBearerAuth, ApiOperation, ApiResponse, ApiTags } from '@nestjs/swagger';
 import { PromblemsService } from './problems.service';
 import { Problems } from './entitites/problems.entity';
 import { CreateProblemsDto } from './dto/create-problems.dto';
@@ -15,6 +15,7 @@ import { UpdateProblemsDto } from './dto/update-problems.dto';
 
 @ApiTags('problems')
 @Controller('problems')
+@ApiBearerAuth('JWT')
 export class ProblemsController {
   constructor(private readonly exercisesService: PromblemsService) {}
 

@@ -1,5 +1,6 @@
 import { Controller, Get, Post, Body, Patch, Param, Delete, UseGuards } from '@nestjs/common';
-import { ApiOperation, ApiResponse, ApiTags, ApiParam, ApiBody } from '@nestjs/swagger';
+import { ApiOperation, ApiResponse, ApiTags, ApiParam, ApiBody, ApiBearerAuth } from '@nestjs/swagger';
+import { JwtAuthGuard } from 'src/auth/passport/jwt-auth.guard';
 import { RolesGuard } from 'src/auth/passport/roles.guard';
 import { Roles } from 'src/decorator/admin.decorator';
 import { CreateIntroductionDetailDto } from 'src/models/introduction_details/dto/create-introduction_detail.dto';
@@ -9,7 +10,8 @@ import { IntroductionDetailsService } from 'src/models/introduction_details/intr
 
 @ApiTags('admin/introduction-details')
 @Controller('admin/introduction-details')
-@UseGuards(RolesGuard)
+@UseGuards(JwtAuthGuard, RolesGuard)
+@ApiBearerAuth('JWT')
 export class AdminIntroductionDetailsController {
     constructor(private readonly introductionDetailsService: IntroductionDetailsService) { }
 
