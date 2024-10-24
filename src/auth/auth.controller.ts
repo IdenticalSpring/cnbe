@@ -51,7 +51,7 @@ export class AuthController {
       sameSite: 'strict',  // Chặn cookie không gửi đến các trang khác
     });
 
-    return { message: 'Logged in successfully' };  // Không cần trả về token nữa
+    return { message: 'Logged in successfully', access_token };
   }
 
 
