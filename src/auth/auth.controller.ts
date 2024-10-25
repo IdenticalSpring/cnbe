@@ -46,9 +46,9 @@ export class AuthController {
   async login(@Request() req, @Response({ passthrough: true }) res) {
     const { access_token } = await this.authService.login(req.user);
     res.cookie('jwt', access_token, {
-      httpOnly: false,  // Cho phép cookie được sử dụng bởi cả frontend và backend
-      secure: process.env.NODE_ENV !== 'development',  // Chỉ gửi cookie qua HTTPS nếu không phải môi trường phát triển
-      sameSite: 'none',  // Cho phép gửi cookie qua các trang khác nhau (cần thiết khi sử dụng trên nhiều miền)
+      httpOnly: false,  
+      secure: process.env.NODE_ENV !== 'development',  
+      sameSite: 'none',  
     });
 
     return { message: 'Logged in successfully', access_token };
