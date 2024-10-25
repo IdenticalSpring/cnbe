@@ -44,9 +44,12 @@ import { Companies } from './models/companies/entities/companies.entities';
 import { CompaniesModule } from './models/companies/companies.module';
 import { DifficultiesModule } from './models/difficulties/difficulties.module';
 import { ProblemCompaniesModule } from './models/problems_companies/pb_com.module';
+import { ScheduleModule } from '@nestjs/schedule';
+import { CronService } from './cron/cron.service';
 
 @Module({
   imports: [
+    ScheduleModule.forRoot(),
     MulterModule.register({ dest: './images/' }),
     ConfigModule.forRoot({
       isGlobal: true,
@@ -124,6 +127,7 @@ import { ProblemCompaniesModule } from './models/problems_companies/pb_com.modul
     AdminCourseIntroductionsModule,
     AdminIntroductionDetailsModule,
     AdminUserModule,
+    
   ],
   controllers: [AppController],
   providers: [
@@ -137,6 +141,7 @@ import { ProblemCompaniesModule } from './models/problems_companies/pb_com.modul
       provide: APP_INTERCEPTOR,
       useClass: TransformInterceptor,
     },
+    CronService,
   ],
 })
 export class AppModule {}
