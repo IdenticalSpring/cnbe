@@ -43,12 +43,14 @@ export class AuthService {
 
   async validateGoogleUser(profile: any): Promise<any> {
     const email = profile.email;
-    const username = profile.email.split('@')[0];
 
-    
-    const existingEmailUser = await this.usersService.findByEmail(email);
-    const existingUsernameUser = await this.usersService.findByUsername(username);
+    if (!email) {
+      throw new Error("Google profile does not contain an email");
+    }
 
+    const username = email.split('@')[0];  
+
+  
 
     let user = await this.usersService.create({
       username,
@@ -64,6 +66,7 @@ export class AuthService {
       user,
     };
   }
+
 
   async login(user: any) {
     const payload = { username: user.username, sub: user.id, role: user.role };
