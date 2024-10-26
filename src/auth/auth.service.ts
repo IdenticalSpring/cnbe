@@ -25,21 +25,38 @@ export class AuthService {
   }
 
   async validateOAuthLoginGithub(profile: any): Promise<any> {
-    const { id, username, emails, name } = profile;
+    const { username, emails, name } = profile;
 
-    const existingUsernameUser = await this.usersService.findByUsername(username);
+    // Kiểm tra email từ GitHub profile
+    const email = emails && emails.length > 0 ? emails[0].value : null;
+    if (!email) {
+      throw new Error("GitHub profile does not contain an email");
+    }
 
+    const existingUserByEmail = await this.usersService.findByEmail(email);
+    if (existingUserByEmail) {
 
-    let user = await this.usersService.create({
+      const payload = { username: existingUserByEmail.username, sub: existingUserByEmail.id };
+      return {
+        access_token: this.jwtService.sign(payload),
+        user: existingUserByEmail,
+      };
+    }
+    const newUser = await this.usersService.create({
       name,
       username,
-      email: emails[0].value,
+      email,
       password: null,
-      isActive: true
+      isActive: true,
     });
 
-    return user;
+    const payload = { username: newUser.username, sub: newUser.id };
+    return {
+      access_token: this.jwtService.sign(payload),
+      user: newUser,
+    };
   }
+
 
   async validateGoogleUser(profile: any): Promise<any> {
     const email = profile.email;
