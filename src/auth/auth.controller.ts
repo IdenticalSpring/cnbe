@@ -139,7 +139,7 @@ export class AuthController {
   @Get('google')
   @Public()
   @UseGuards(AuthGuard('google'))
-  async googleAuth(@Req() req) {}
+  async googleAuth(@Req() req) { }
 
   @Get('google/callback')
   @ApiOperation({ summary: 'Google OAuth Callback' })
@@ -150,16 +150,32 @@ export class AuthController {
   @Public()
   @UseGuards(AuthGuard('google'))
   @ApiExcludeEndpoint()
-  async googleAuthRedirect(@Req() req, @Response({ passthrough: true }) res) {
-    const user = await this.authService.validateGoogleUser(req.user);
-    const { access_token } = await this.authService.login(user); 
+  async googleAuthRedirect(
+    @Req() req,
+    @Response({ passthrough: true }) res
+  ) {
+    try {
+      // First, validate/create the user
+      const user = await this.authService.validateGoogleUser(req.user);
 
-    res.cookie('jwt', access_token, {
-      httpOnly: true,
-      secure: process.env.NODE_ENV !== 'development',
-    });
+      // Then, generate login credentials
+      const loginResult = await this.authService.login(user);
 
-    return { message: 'Logged in successfully with Google', access_token };
+      // Set JWT in HTTP-only cookie
+      res.cookie('jwt', loginResult.access_token, {
+        httpOnly: true,
+        secure: process.env.NODE_ENV !== 'development',
+      });
+
+      return {
+        message: 'Logged in successfully with Google',
+        access_token: loginResult.access_token,
+  
+      };
+
+    } catch (error) {
+      console.error('Google Auth Error:', error);
+      throw error;
+    }
   }
-
 }
