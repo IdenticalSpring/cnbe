@@ -27,14 +27,8 @@ export class AuthService {
   async validateOAuthLoginGithub(profile: any): Promise<any> {
     const { id, username, emails, name } = profile;
 
-    // Kiểm tra nếu email hoặc username đã tồn tại trong database
-    const existingEmailUser = await this.usersService.findByEmail(emails[0].value);
     const existingUsernameUser = await this.usersService.findByUsername(username);
 
-
-    if (existingUsernameUser) {
-      throw new BadRequestException('Username already exists in the system.');
-    }
 
     let user = await this.usersService.create({
       name,
@@ -51,14 +45,10 @@ export class AuthService {
     const email = profile.email;
     const username = profile.email.split('@')[0];
 
-    // Kiểm tra nếu email hoặc username đã tồn tại trong database
+    
     const existingEmailUser = await this.usersService.findByEmail(email);
     const existingUsernameUser = await this.usersService.findByUsername(username);
 
-
-    if (existingUsernameUser) {
-      throw new BadRequestException('Username already exists in the system.');
-    }
 
     let user = await this.usersService.create({
       username,
