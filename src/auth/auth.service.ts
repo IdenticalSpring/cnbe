@@ -58,40 +58,39 @@ export class AuthService {
   }
 
 
-  async validateGoogleUser(profile: any): Promise<any> {
-    const email = profile.email;
+  async validateGoogleUser(googleProfile: any) {
+    const { email, firstName, lastName } = googleProfile;
 
     if (!email) {
-      throw new Error("Google profile does not contain an email");
+      throw new BadRequestException('Email is required for Google authentication');
     }
 
-    const username = email.split('@')[0];
+    try {
+      // Try to find existing user
+      const existingUser = await this.usersService.findByEmail(email);
 
-    const existingUser = await this.usersService.findByEmail(email);
-    if (existingUser) {
-     
-      const payload = { username: existingUser.username, sub: existingUser.id };
-      return {
-        access_token: this.jwtService.sign(payload),
-        user: existingUser,
-      };
+      if (existingUser) {
+        return existingUser;
+      }
+
+      // Create new user if doesn't exist
+      const username = email.split('@')[0];
+      const newUser = await this.usersService.create({
+        username,
+        email,
+        name: `${firstName} ${lastName}`.trim(),
+        isActive: true,
+        password: null,
+      });
+
+      return newUser;
+    } catch (error) {
+      console.error('Error in validateGoogleUser:', error);
+      throw new BadRequestException('Failed to validate Google user');
     }
-
-
-    const newUser = await this.usersService.create({
-      username,
-      email,
-      name: `${profile.firstName} ${profile.lastName}`,
-      isActive: true,
-      password: null,
-    });
-
-    const payload = { username: newUser.username, sub: newUser.id };
-    return {
-      access_token: this.jwtService.sign(payload),
-      user: newUser,
-    };
   }
+
+  
 
 
 
