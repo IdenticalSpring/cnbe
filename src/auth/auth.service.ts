@@ -31,9 +31,6 @@ export class AuthService {
     const existingEmailUser = await this.usersService.findByEmail(emails[0].value);
     const existingUsernameUser = await this.usersService.findByUsername(username);
 
-    if (existingEmailUser) {
-      throw new BadRequestException('Email already exists in the system.');
-    }
 
     if (existingUsernameUser) {
       throw new BadRequestException('Username already exists in the system.');
@@ -58,9 +55,6 @@ export class AuthService {
     const existingEmailUser = await this.usersService.findByEmail(email);
     const existingUsernameUser = await this.usersService.findByUsername(username);
 
-    if (existingEmailUser) {
-      throw new BadRequestException('Email already exists in the system.');
-    }
 
     if (existingUsernameUser) {
       throw new BadRequestException('Username already exists in the system.');

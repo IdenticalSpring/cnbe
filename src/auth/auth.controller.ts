@@ -147,16 +147,19 @@ export class AuthController {
     status: 200,
     description: 'Handles Google OAuth callback and logs user in.',
   })
-
   @Public()
   @UseGuards(AuthGuard('google'))
   @ApiExcludeEndpoint()
   async googleAuthRedirect(@Req() req, @Response({ passthrough: true }) res) {
-    const { access_token } = req.user;
+    const user = await this.authService.validateGoogleUser(req.user);
+    const { access_token } = await this.authService.login(user); 
+
     res.cookie('jwt', access_token, {
       httpOnly: true,
       secure: process.env.NODE_ENV !== 'development',
     });
-    return { message: 'Logged in successfully with Google' };
+
+    return { message: 'Logged in successfully with Google', access_token };
   }
+
 }
