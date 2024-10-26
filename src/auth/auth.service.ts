@@ -48,11 +48,20 @@ export class AuthService {
       throw new Error("Google profile does not contain an email");
     }
 
-    const username = email.split('@')[0];  
+    const username = email.split('@')[0];
 
-  
+    const existingUser = await this.usersService.findByEmail(email);
+    if (existingUser) {
+     
+      const payload = { username: existingUser.username, sub: existingUser.id };
+      return {
+        access_token: this.jwtService.sign(payload),
+        user: existingUser,
+      };
+    }
 
-    let user = await this.usersService.create({
+
+    const newUser = await this.usersService.create({
       username,
       email,
       name: `${profile.firstName} ${profile.lastName}`,
@@ -60,12 +69,13 @@ export class AuthService {
       password: null,
     });
 
-    const payload = { username: user.username, sub: user.id };
+    const payload = { username: newUser.username, sub: newUser.id };
     return {
       access_token: this.jwtService.sign(payload),
-      user,
+      user: newUser,
     };
   }
+
 
 
   async login(user: any) {
