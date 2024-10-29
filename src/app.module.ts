@@ -80,6 +80,7 @@ import { CronService } from './cron/cron.service';
         ],
         autoLoadModels: true,
         synchronize: true,
+        alter: true,
       }),
       inject: [ConfigService],
     }),

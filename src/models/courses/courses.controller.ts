@@ -8,8 +8,9 @@ import {
   Delete,
   UseInterceptors,
   UploadedFile,
+  Query,
 } from '@nestjs/common';
-import { ApiBearerAuth, ApiBody, ApiConsumes, ApiOperation, ApiResponse, ApiTags } from '@nestjs/swagger';
+import { ApiBearerAuth, ApiBody, ApiConsumes, ApiOperation, ApiQuery, ApiResponse, ApiTags } from '@nestjs/swagger';
 import { CoursesService } from './courses.service';
 import { Courses } from './entities/courses.entity';
 import { CreateCoursesDto } from './dto/create-course.dto';
@@ -63,7 +64,17 @@ export class CoursesController {
     return this.coursesService.create(createCoursesDto);
   }
 
+  @Get('getPagination')
 
+  @ApiOperation({ summary: 'Get paginated list of courses' })
+  @ApiQuery({ name: 'page', required: false, type: Number, description: 'Page number', example: 1 })
+  @ApiResponse({ status: 200, description: 'Paginated courses retrieved successfully.' })
+  async findAllWithPagination(
+    @Query('page') page: string = '1',
+  ): Promise<{ data: Courses[], currentPage: number, totalPages: number, totalItems: number }> {
+    const pageNumber = parseInt(page, 10);
+    return this.coursesService.findAllWithPagination(isNaN(pageNumber) || pageNumber < 1 ? 1 : pageNumber);
+  }
 
   @Get(':id')
   findOne(@Param('id') id: string) {

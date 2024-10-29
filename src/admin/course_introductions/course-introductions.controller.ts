@@ -16,7 +16,20 @@ export class AdminCourseIntroductionsController {
     constructor(private readonly courseIntroductionsService: CourseIntroductionsService) { }
 
     @Roles('admin')
-    @Get('list')
+    @Post()
+    @ApiOperation({ summary: 'Create a new course introduction' })
+    @ApiBody({ type: CreateCourseIntroductionDto }) 
+    @ApiResponse({
+        status: 201,
+        description: 'The course introduction has been successfully created.',
+        type: CourseIntroductions,
+    })
+    async create(@Body() createCourseIntroductionDto: CreateCourseIntroductionDto): Promise<CourseIntroductions> {
+        return await this.courseIntroductionsService.create(createCourseIntroductionDto);
+    }
+
+    @Roles('admin')
+    @Get()
     @ApiOperation({ summary: 'Get all course introductions' })
     @ApiResponse({ status: 200, description: 'Successfully retrieved course introductions.', type: [CourseIntroductions] })
     async findAll(): Promise<CourseIntroductions[]> {
@@ -33,48 +46,10 @@ export class AdminCourseIntroductionsController {
     }
 
     @Roles('admin')
-    @Post('create')
-    @ApiOperation({ summary: 'Create a new course introduction' })
-    @ApiBody({
-        description: 'Course Introduction Data',
-        type: CreateCourseIntroductionDto,
-        examples: {
-            example1: {
-                value: {
-                    title: 'Introduction to NestJS',
-                    content: 'This is an introduction to NestJS...',
-                    courseId: 1,
-                },
-                description: 'An example of creating a new course introduction',
-            },
-        },
-    })
-    @ApiResponse({
-        status: 201,
-        description: 'The course introduction has been successfully created.',
-        type: CourseIntroductions,
-    })
-    async create(@Body() createCourseIntroductionDto: CreateCourseIntroductionDto): Promise<CourseIntroductions> {
-        return await this.courseIntroductionsService.create(createCourseIntroductionDto);
-    }
-
-    @Roles('admin')
     @Patch('update/:id')
     @ApiOperation({ summary: 'Update an existing course introduction' })
     @ApiParam({ name: 'id', type: Number, description: 'ID of the course introduction' })
-    @ApiBody({
-        description: 'Updated Course Introduction Data',
-        type: UpdateCourseIntroductionDto,
-        examples: {
-            example1: {
-                value: {
-                    title: 'Updated Title',
-                    content: 'Updated content for the course introduction...',
-                },
-                description: 'An example of updating a course introduction',
-            },
-        },
-    })
+    @ApiBody({ type: UpdateCourseIntroductionDto })  // Thêm ApiBody để hiển thị trong Swagger
     @ApiResponse({
         status: 200,
         description: 'Successfully updated course introduction.',

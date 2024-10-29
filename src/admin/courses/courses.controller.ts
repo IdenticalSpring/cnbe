@@ -1,66 +1,53 @@
-import { Controller, Get, Post, Body, Patch, Param, Delete, UseInterceptors, UploadedFile, UseGuards, Query } from '@nestjs/common';
-import { CreateCoursesDto } from 'src/models/courses/dto/create-course.dto';
-import { ApiBearerAuth, ApiBody, ApiConsumes, ApiOperation, ApiQuery, ApiResponse, ApiTags } from '@nestjs/swagger';
-import { CloudinaryService } from 'src/models/cloudinary/cloudinary.service';
-import { Courses } from 'src/models/courses/entities/courses.entity';
-import { FileInterceptor } from '@nestjs/platform-express';
-import { CoursesService } from 'src/models/courses/courses.service';
-import { UpdateCourseDto } from 'src/models/courses/dto/update-course.dto';
-import { RolesGuard } from 'src/auth/passport/roles.guard';
-import { Roles } from 'src/decorator/admin.decorator';
-import { ConfigService } from '@nestjs/config';
-import { JwtAuthGuard } from 'src/auth/passport/jwt-auth.guard';
+import { BadRequestException, Body, Controller, Delete, Get, Param, ParseIntPipe, Patch, Post, Query, UploadedFile, UseGuards, UseInterceptors } from "@nestjs/common";
+import { FileInterceptor } from "@nestjs/platform-express";
+import { ApiBearerAuth, ApiBody, ApiConsumes, ApiOperation, ApiQuery, ApiResponse, ApiTags } from "@nestjs/swagger";
+import { JwtAuthGuard } from "src/auth/passport/jwt-auth.guard";
+import { RolesGuard } from "src/auth/passport/roles.guard";
+import { Roles } from "src/decorator/admin.decorator";
+import { CloudinaryService } from "src/models/cloudinary/cloudinary.service";
+import { CoursesService } from "src/models/courses/courses.service";
+import { CreateCoursesDto } from "src/models/courses/dto/create-course.dto";
+import { UpdateCourseDto } from "src/models/courses/dto/update-course.dto";
+import { Courses } from "src/models/courses/entities/courses.entity";
+
 
 @ApiTags('admin/courses')
 @Controller('admin/courses')
 @UseGuards(JwtAuthGuard, RolesGuard)
 @ApiBearerAuth('JWT')
 export class AdminCoursesController {
-  private readonly defaultLimit: number;
-
   constructor(
     private readonly coursesService: CoursesService,
     private readonly cloudinaryService: CloudinaryService,
-    private readonly configService: ConfigService,
-  ) {
-    this.defaultLimit = parseInt(this.configService.get<string>('COURSE_LIMIT'), 10) || 10;
+  ) { }
+  @Get('getPagination')
+  @Roles('admin')
+  @ApiOperation({ summary: 'Get paginated list of courses' })
+  @ApiQuery({ name: 'page', required: false, type: Number, description: 'Page number', example: 1 })
+  @ApiResponse({ status: 200, description: 'Paginated courses retrieved successfully.' })
+  async findAllWithPagination(
+    @Query('page') page: string = '1',
+  ): Promise<{ data: Courses[], currentPage: number, totalPages: number, totalItems: number }> {
+    const pageNumber = parseInt(page, 10);
+    return this.coursesService.findAllWithPagination(isNaN(pageNumber) || pageNumber < 1 ? 1 : pageNumber);
   }
 
-  @Roles('admin')
   @Get('list')
+  @Roles('admin')
   @ApiOperation({ summary: 'Get all courses' })
   @ApiResponse({ status: 200, description: 'Successfully retrieved courses.' })
   findAll(): Promise<Courses[]> {
     return this.coursesService.findAll();
   }
 
-  @Roles('admin')
   @Get('detail/:id')
-  @ApiOperation({ summary: 'Get course by id' })
-  @ApiResponse({ status: 200, description: 'Successfully retrieved the course.' })
-  async findOne(@Param('id') id: string): Promise<Courses> {
-    const course = await this.coursesService.findOne(+id);
-    if (!course) {
-      throw new Error(`Course with ID ${id} not found`);
-    }
-    return course;
+  @Roles('admin')
+  async findOne(@Param('id', ParseIntPipe) id: number) {
+    return this.coursesService.findOne(id);
   }
 
-  @Roles('admin')
-  @Get('list/page/:page')
-  @ApiQuery({ name: 'limit', required: false, type: Number, description: 'Limit number of courses per page' })
-  @ApiOperation({ summary: 'Get courses with pagination' })
-  @ApiResponse({ status: 200, description: 'Successfully retrieved paginated courses.' })
-  async findPaginated(
-    @Param('page') page: number,
-    @Query('limit') limit?: number,
-  ): Promise<Courses[]> {
-    const finalLimit = limit ? +limit : this.defaultLimit;
-    return this.coursesService.findPaginated(+page, finalLimit);
-  }
-
-  @Roles('admin')
   @Post('create')
+  @Roles('admin')
   @ApiOperation({ summary: 'Create a new course with image upload' })
   @ApiConsumes('multipart/form-data')
   @ApiBody({
@@ -83,63 +70,33 @@ export class AdminCoursesController {
   })
   async create(@Body() createCoursesDto: CreateCoursesDto, @UploadedFile() file: Express.Multer.File) {
     if (!file) {
-      throw new Error('Missing required parameter - file');
+      throw new BadRequestException('Missing required parameter - file');
     }
     const uploadedImage = await this.cloudinaryService.uploadImage(file);
     createCoursesDto.imageUrl = uploadedImage.secure_url;
-    return this.coursesService.create(createCoursesDto as unknown as Courses);
+    return this.coursesService.create(createCoursesDto);
   }
 
-  @Roles('admin')
   @Patch('update/:id')
-  @ApiOperation({ summary: 'Update an existing course, including new image upload' })
+  @Roles('admin')
+  @ApiOperation({ summary: 'Update an existing course' })
   @ApiConsumes('multipart/form-data')
-  @ApiBody({
-    schema: {
-      type: 'object',
-      properties: {
-        title: { type: 'string' },
-        description: { type: 'string' },
-        image: {
-          type: 'string',
-          format: 'binary',
-        },
-      },
-    },
-  })
   @UseInterceptors(FileInterceptor('image'))
-  @ApiResponse({ status: 200, description: 'Successfully updated course.' })
   async update(
-    @Param('id') id: string,
+    @Param('id', ParseIntPipe) id: number,
     @Body() updateCourseDto: UpdateCourseDto,
     @UploadedFile() file: Express.Multer.File,
-  ): Promise<Courses> {
-    const course = await this.coursesService.findOne(+id);
-    if (!course) {
-      throw new Error(`Course with ID ${id} not found`);
-    }
-
+  ) {
     if (file) {
       const uploadedImage = await this.cloudinaryService.uploadImage(file);
       updateCourseDto.imageUrl = uploadedImage.secure_url;
-
-      if (course.imageUrl) {
-        await this.cloudinaryService.deleteImage(course.imageUrl);
-      }
     }
-
-    return this.coursesService.update(+id, updateCourseDto as unknown as Courses);
+    return this.coursesService.update(id, updateCourseDto);
   }
 
-  @Roles('admin')
   @Delete('delete/:id')
-  @ApiOperation({ summary: 'Delete course by id' })
-  @ApiResponse({ status: 200, description: 'Successfully deleted the course.' })
-  async remove(@Param('id') id: string) {
-    const course = await this.coursesService.findOne(+id);
-    if (!course) {
-      throw new Error(`Course with ID ${id} not found`);
-    }
-    return this.coursesService.remove(+id);
+  @Roles('admin')
+  async remove(@Param('id', ParseIntPipe) id: number) {
+    return this.coursesService.remove(id);
   }
 }

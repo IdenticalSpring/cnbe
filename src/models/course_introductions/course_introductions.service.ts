@@ -19,13 +19,13 @@ export class CourseIntroductionsService {
 
   async findAll(): Promise<CourseIntroductions[]> {
     return this.courseIntroductionsModel.findAll({
-      include: [Courses, IntroductionDetails], // Include để lấy thông tin liên quan
+      include: [Courses, IntroductionDetails],
     });
   }
 
   async findOne(id: number): Promise<CourseIntroductions> {
     const courseIntroduction = await this.courseIntroductionsModel.findByPk(id, {
-      include: [Courses, IntroductionDetails], // Include để lấy thông tin liên quan
+      include: [Courses, IntroductionDetails],
     });
     if (!courseIntroduction) {
       throw new NotFoundException(`CourseIntroduction with ID ${id} not found`);
