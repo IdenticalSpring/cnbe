@@ -11,5 +11,8 @@ export class CreateCoursesDto {
   description: string;
 
   @ApiProperty({ description: 'The image URL of the course', required: false })
-  imageUrl?: string;
+  imageUrl: string;
+  
+  @ApiProperty({ description: 'The type of the course', required: false })
+  type: string;
 }
