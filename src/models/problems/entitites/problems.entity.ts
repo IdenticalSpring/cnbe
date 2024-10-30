@@ -42,19 +42,14 @@ export class Problems extends Model<Problems> {
   })
   description!: string;
 
-  // @ForeignKey(() => Difficulty)
-  // @Column({
-  //   type: DataType.INTEGER,
-  //   allowNull: false,
-  // })
-  // difficultyId!: number;
-  // @BelongsTo(() => Difficulty)
-  // difficulty!: Difficulty;
+  @ForeignKey(() => Difficulty)
   @Column({
-    type: DataType.TEXT,
+    type: DataType.INTEGER,
     allowNull: false,
   })
-  difficulty!: string;
+  difficultyId!: number;
+  // @BelongsTo(() => Difficulty)
+  // difficulty!: Difficulty;
 
   @Column({
     type: DataType.INTEGER,
@@ -68,12 +63,12 @@ export class Problems extends Model<Problems> {
   })
   submissions: number;
 
-  // @ForeignKey(() => Courses)
-  // @Column({
-  //   type: DataType.INTEGER,
-  //   allowNull: false,
-  // })
-  // courseId!: number;
+  @ForeignKey(() => Courses)
+  @Column({
+    type: DataType.INTEGER,
+    allowNull: false,
+  })
+  courseId!: number;
 
   // @BelongsTo(() => Courses)
   // course!: Courses;
