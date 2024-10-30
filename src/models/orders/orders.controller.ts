@@ -7,13 +7,14 @@ import {
   Param,
   Delete,
 } from '@nestjs/common';
-import { ApiTags, ApiOperation } from '@nestjs/swagger';
+import { ApiTags, ApiOperation, ApiBearerAuth } from '@nestjs/swagger';
 import { CreateOrderDto } from './dto/create-orders.dto';
 import { UpdateOrderDto } from './dto/update-orders.dto';
 import { OrdersService } from './orders.service';
 
 @ApiTags('orders')
 @Controller('orders')
+@ApiBearerAuth('JWT')
 export class OrdersController {
   constructor(private readonly ordersService: OrdersService) {}
 

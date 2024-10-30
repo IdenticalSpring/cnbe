@@ -12,11 +12,11 @@ import { HandlebarsAdapter } from '@nestjs-modules/mailer/dist/adapters/handleba
 import { MailerModule } from '@nestjs-modules/mailer';
 import { TransformInterceptor } from './core/transform.interceptor';
 import { Courses } from './models/courses/entities/courses.entity';
-import { Exercises } from './models/exercises/entitites/exercises.entity';
+import { Problems } from './models/problems/entitites/problems.entity';
 import { Process } from './models/process/entities/process.entity';
 import { Enrollment } from './models/enrollments/entities/enrollments.entity';
 import { CoursesModule } from './models/courses/courses.module';
-import { ExercisesModule } from './models/exercises/exercises.module';
+import { ProblemsModule } from './models/problems/problems.module';
 import { ProcessModule } from './models/process/process.module';
 import { EnrollmentModule } from './models/enrollments/enrollments.module';
 import { MulterModule } from '@nestjs/platform-express';
@@ -38,9 +38,18 @@ import { AdminIntroductionDetailsController } from './admin/introduction_details
 import { AdminCourseIntroductionsModule } from './admin/course_introductions/course-introductions.module';
 import { AdminIntroductionDetailsModule } from './admin/introduction_details/introduction-details.module';
 import { AdminUserModule } from './admin/users/user.module';
+import { Difficulty } from './models/difficulties/entities/difficulties.entites';
+import { ProblemCompanies } from './models/problems_companies/entities/problems_companies.entits';
+import { Companies } from './models/companies/entities/companies.entities';
+import { CompaniesModule } from './models/companies/companies.module';
+import { DifficultiesModule } from './models/difficulties/difficulties.module';
+import { ProblemCompaniesModule } from './models/problems_companies/pb_com.module';
+import { ScheduleModule } from '@nestjs/schedule';
+import { CronService } from './cron/cron.service';
 
 @Module({
   imports: [
+    ScheduleModule.forRoot(),
     MulterModule.register({ dest: './images/' }),
     ConfigModule.forRoot({
       isGlobal: true,
@@ -57,10 +66,13 @@ import { AdminUserModule } from './admin/users/user.module';
         models: [
           User,
           Courses,
-          Exercises,
+          Problems,
           Process,
           Enrollment,
           Orders,
+          Difficulty,
+          ProblemCompanies,
+          Companies,
           Coupons,
           Submission,
           CourseIntroductions,
@@ -99,12 +111,15 @@ import { AdminUserModule } from './admin/users/user.module';
     UsersModule,
     AuthModule,
     CoursesModule,
-    ExercisesModule,
+    ProblemsModule,
     ProcessModule,
     CouponsModule,
     EnrollmentModule,
     CloudinaryModule,
     OrdersModule,
+    DifficultiesModule,
+    ProblemCompaniesModule,
+    CompaniesModule,
     SubmissionModule,
     AdminCoursesModule,
     CourseIntroductionsModule,
@@ -112,6 +127,7 @@ import { AdminUserModule } from './admin/users/user.module';
     AdminCourseIntroductionsModule,
     AdminIntroductionDetailsModule,
     AdminUserModule,
+    
   ],
   controllers: [AppController],
   providers: [
@@ -125,6 +141,7 @@ import { AdminUserModule } from './admin/users/user.module';
       provide: APP_INTERCEPTOR,
       useClass: TransformInterceptor,
     },
+    CronService,
   ],
 })
 export class AppModule {}

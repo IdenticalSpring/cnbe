@@ -1,20 +1,22 @@
 import { Controller, Get, Post, Body, Patch, Param, Delete, UseGuards } from '@nestjs/common';
-import { ApiOperation, ApiResponse, ApiTags, ApiParam, ApiBody } from '@nestjs/swagger';
+import { ApiOperation, ApiResponse, ApiTags, ApiParam, ApiBody, ApiBearerAuth } from '@nestjs/swagger';
 import { Roles } from 'src/decorator/admin.decorator';
 import { RolesGuard } from 'src/auth/passport/roles.guard';
 import { CreateCourseIntroductionDto } from 'src/models/course_introductions/dto/create-course_introduction.dto';
 import { UpdateCourseIntroductionDto } from 'src/models/course_introductions/dto/update-course_introduction.dto';
 import { CourseIntroductionsService } from 'src/models/course_introductions/course_introductions.service';
 import { CourseIntroductions } from 'src/models/course_introductions/entities/course_introduction.entity';
+import { JwtAuthGuard } from 'src/auth/passport/jwt-auth.guard';
 
 @ApiTags('admin/course-introductions')
 @Controller('admin/course-introductions')
-@UseGuards(RolesGuard)
+@UseGuards(JwtAuthGuard, RolesGuard)
+@ApiBearerAuth('JWT')
 export class AdminCourseIntroductionsController {
     constructor(private readonly courseIntroductionsService: CourseIntroductionsService) { }
 
     @Roles('admin')
-    @Get()
+    @Get('list')
     @ApiOperation({ summary: 'Get all course introductions' })
     @ApiResponse({ status: 200, description: 'Successfully retrieved course introductions.', type: [CourseIntroductions] })
     async findAll(): Promise<CourseIntroductions[]> {
@@ -22,7 +24,7 @@ export class AdminCourseIntroductionsController {
     }
 
     @Roles('admin')
-    @Get(':id')
+    @Get('detail/:id')
     @ApiOperation({ summary: 'Get a course introduction by id' })
     @ApiParam({ name: 'id', type: Number, description: 'ID of the course introduction' })
     @ApiResponse({ status: 200, description: 'Successfully retrieved a course introduction.', type: CourseIntroductions })
@@ -31,7 +33,7 @@ export class AdminCourseIntroductionsController {
     }
 
     @Roles('admin')
-    @Post()
+    @Post('create')
     @ApiOperation({ summary: 'Create a new course introduction' })
     @ApiBody({
         description: 'Course Introduction Data',
@@ -57,7 +59,7 @@ export class AdminCourseIntroductionsController {
     }
 
     @Roles('admin')
-    @Patch(':id')
+    @Patch('update/:id')
     @ApiOperation({ summary: 'Update an existing course introduction' })
     @ApiParam({ name: 'id', type: Number, description: 'ID of the course introduction' })
     @ApiBody({
@@ -83,7 +85,7 @@ export class AdminCourseIntroductionsController {
     }
 
     @Roles('admin')
-    @Delete(':id')
+    @Delete('delete/:id')
     @ApiOperation({ summary: 'Delete a course introduction by id' })
     @ApiParam({ name: 'id', type: Number, description: 'ID of the course introduction' })
     @ApiResponse({ status: 200, description: 'Successfully deleted course introduction.' })

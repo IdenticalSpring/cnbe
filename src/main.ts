@@ -8,13 +8,22 @@ async function bootstrap() {
   const app = await NestFactory.create(AppModule);
   app.use(cookieParser());
   app.setGlobalPrefix('api/v1');
-  app.enableCors();
+  app.enableCors({
+    origin: true,
+    credentials: true,
+    methods: 'GET,HEAD,PUT,PATCH,POST,DELETE,OPTIONS',
+    allowedHeaders: 'Content-Type, Authorization',
+  });
   // Swagger config
   const config = new DocumentBuilder()
     .setTitle('API Documentation')
     .setDescription('API description for the application')
     .setVersion('1.0')
-    .addBearerAuth()
+    .addBearerAuth({
+      type: 'http',
+      scheme: 'bearer',
+      bearerFormat: 'JWT',
+    }, 'JWT')
     .build();
   const document = SwaggerModule.createDocument(app, config);
   SwaggerModule.setup('api/v1/docs', app, document);
@@ -28,6 +37,8 @@ async function bootstrap() {
   );
 
   SwaggerModule.setup('api', app, document);
-  await app.listen(8080);
+
+  const port = process.env.PORT;
+  await app.listen(port);
 }
 bootstrap();

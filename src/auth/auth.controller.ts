@@ -46,18 +46,21 @@ export class AuthController {
   async login(@Request() req, @Response({ passthrough: true }) res) {
     const { access_token } = await this.authService.login(req.user);
     res.cookie('jwt', access_token, {
-      httpOnly: true,
-      secure: process.env.NODE_ENV !== 'development',
+      httpOnly: false,  
+      secure: process.env.NODE_ENV !== 'development',  
+      sameSite: 'none',  
     });
+
     return { message: 'Logged in successfully', access_token };
   }
+
+
+
   @UseGuards(JwtAuthGuard)
   @Delete('logout')
   async logout(@Request() req, @Response({ passthrough: true }) res) {
-    const token = req.cookies['jwt'];
-    const result = await this.authService.logout(token);
-    res.clearCookie('jwt');
-    return result;
+    res.clearCookie('jwt');  
+    return { message: 'Logged out successfully' };
   }
 
   @Roles('admin')
@@ -136,7 +139,7 @@ export class AuthController {
   @Get('google')
   @Public()
   @UseGuards(AuthGuard('google'))
-  async googleAuth(@Req() req) {}
+  async googleAuth(@Req() req) { }
 
   @Get('google/callback')
   @ApiOperation({ summary: 'Google OAuth Callback' })
@@ -144,16 +147,35 @@ export class AuthController {
     status: 200,
     description: 'Handles Google OAuth callback and logs user in.',
   })
-
   @Public()
   @UseGuards(AuthGuard('google'))
   @ApiExcludeEndpoint()
-  async googleAuthRedirect(@Req() req, @Response({ passthrough: true }) res) {
-    const { access_token } = req.user;
-    res.cookie('jwt', access_token, {
-      httpOnly: true,
-      secure: process.env.NODE_ENV !== 'development',
-    });
-    return { message: 'Logged in successfully with Google' };
+  async googleAuthRedirect(
+    @Req() req,
+    @Response({ passthrough: true }) res
+  ) {
+    try {
+      // First, validate/create the user
+      const user = await this.authService.validateGoogleUser(req.user);
+
+      // Then, generate login credentials
+      const loginResult = await this.authService.login(user);
+
+      // Set JWT in HTTP-only cookie
+      res.cookie('jwt', loginResult.access_token, {
+        httpOnly: true,
+        secure: process.env.NODE_ENV !== 'development',
+      });
+
+      return {
+        message: 'Logged in successfully with Google',
+        access_token: loginResult.access_token,
+  
+      };
+
+    } catch (error) {
+      console.error('Google Auth Error:', error);
+      throw error;
+    }
   }
 }

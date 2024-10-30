@@ -9,7 +9,7 @@ import {
   UseInterceptors,
   UploadedFile,
 } from '@nestjs/common';
-import { ApiBody, ApiConsumes, ApiOperation, ApiResponse, ApiTags } from '@nestjs/swagger';
+import { ApiBearerAuth, ApiBody, ApiConsumes, ApiOperation, ApiResponse, ApiTags } from '@nestjs/swagger';
 import { CoursesService } from './courses.service';
 import { Courses } from './entities/courses.entity';
 import { CreateCoursesDto } from './dto/create-course.dto';
@@ -19,6 +19,7 @@ import { FileInterceptor } from '@nestjs/platform-express';
 
 @ApiTags('courses')
 @Controller('courses')
+@ApiBearerAuth('JWT')
 export class CoursesController {
   constructor(
     private readonly coursesService: CoursesService,
