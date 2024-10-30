@@ -94,6 +94,38 @@ export class CoursesService {
       totalItems: count,
     };
   }
+  async getByType(
+    type: string,
+    page: number = 1
+  ): Promise<{ data: Courses[]; currentPage: number; totalPages: number; totalItems: number }> {
+    const limit = this.defaultLimit; // Đảm bảo `limit` là số nguyên
+    const offset = (page - 1) * limit; // Đảm bảo `offset` là số nguyên
+
+    // Kiểm tra type hợp lệ
+    const validTypes = ['learn', 'featured', 'interview'];
+    if (!validTypes.includes(type)) {
+      throw new BadRequestException(`Invalid course type: ${type}. Valid types are ${validTypes.join(', ')}`);
+    }
+
+    try {
+      // Truy vấn với các giá trị `limit` và `offset` là số nguyên
+      const { rows, count } = await this.coursesModel.findAndCountAll({
+        where: { type },
+        limit: Number(limit), // Đảm bảo là số nguyên
+        offset: Number(offset), // Đảm bảo là số nguyên
+      });
+
+      return {
+        data: rows,
+        currentPage: page,
+        totalPages: Math.ceil(count / limit),
+        totalItems: count,
+      };
+    } catch (error) {
+      console.error(`Error fetching courses by type: ${type}`, error);
+      throw new BadRequestException('Failed to fetch courses due to a database error');
+    }
+  }
 
 
 }
