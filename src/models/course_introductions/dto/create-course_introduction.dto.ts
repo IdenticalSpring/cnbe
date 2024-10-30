@@ -11,4 +11,9 @@ export class CreateCourseIntroductionDto {
     @IsNotEmpty()
     @ApiProperty()
     introductionDetailId: number;
+
+    
+    @IsNotEmpty()
+    @ApiProperty()
+    description: string;
 }

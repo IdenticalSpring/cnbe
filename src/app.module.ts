@@ -79,7 +79,6 @@ import { CronService } from './cron/cron.service';
           IntroductionDetails,
         ],
         autoLoadModels: true,
-        synchronize: true,
       }),
       inject: [ConfigService],
     }),

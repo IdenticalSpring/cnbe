@@ -11,4 +11,9 @@ export class UpdateCourseIntroductionDto {
     @IsOptional()
     @ApiProperty()
     introductionDetailId?: number;
+
+    @ApiProperty()
+    @IsOptional()
+    @IsString()
+    description?: string;
 }

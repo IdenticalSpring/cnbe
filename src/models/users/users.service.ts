@@ -8,14 +8,19 @@ import { v4 as uuidv4 } from 'uuid';
 import dayjs from 'dayjs';
 import { MailerService } from '@nestjs-modules/mailer';
 import { ChangePasswordAuthDto, codeAuthDto } from 'src/auth/dto/code-auth.dto';
+import { ConfigService } from '@nestjs/config';
 
 @Injectable()
 export class UsersService {
+  private readonly defaultLimit: number;
   constructor(
     @InjectModel(User)
     private userModel: typeof User,
-    private readonly mailerService: MailerService
-  ) { }
+    private readonly mailerService: MailerService,
+    private configService: ConfigService
+  ) { 
+    this.defaultLimit = this.configService.get<number>('DEFAULT_LIMIT') || 20;
+  }
 
   async create(createUserDto: CreateUserDto): Promise<User> {
     try {
@@ -47,6 +52,23 @@ export class UsersService {
 
   remove(id: number) {
     return `This action removes a #${id} user`;
+  }
+  async findAllWithPagination(page: number) {
+    const limit = parseInt(this.defaultLimit.toString(), 10); 
+    const pageNumber = parseInt(page.toString(), 10) || 1; 
+    const offset = (pageNumber - 1) * limit;
+
+    const { rows, count } = await this.userModel.findAndCountAll({
+      offset,
+      limit,
+    });
+
+    return {
+      data: rows,
+      currentPage: pageNumber,
+      totalPages: Math.ceil(count / limit),
+      totalItems: count,
+    };
   }
 
   async handleRegister(registerDto: CreateAuthDto) {
