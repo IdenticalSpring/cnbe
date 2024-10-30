@@ -14,7 +14,8 @@ import { CreateProblemsDto } from './dto/create-problems.dto';
 import { UpdateProblemsDto } from './dto/update-problems.dto';
 import { PromblemsService } from './problems.service';
 import { Problems } from './entitites/problems.entity';
-
+import { Public } from 'src/decorator/public.decorator';
+@Public()
 @ApiTags('problems')
 @Controller('problems')
 @ApiBearerAuth('JWT')

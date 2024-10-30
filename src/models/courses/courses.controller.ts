@@ -17,7 +17,8 @@ import { CreateCoursesDto } from './dto/create-course.dto';
 import { UpdateCourseDto } from './dto/update-course.dto';
 import { CloudinaryService } from '../cloudinary/cloudinary.service';
 import { FileInterceptor } from '@nestjs/platform-express';
-
+import { Public } from 'src/decorator/public.decorator';
+@Public()
 @ApiTags('courses')
 @Controller('courses')
 @ApiBearerAuth('JWT')
