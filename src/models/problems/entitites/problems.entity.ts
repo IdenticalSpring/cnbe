@@ -68,15 +68,15 @@ export class Problems extends Model<Problems> {
   })
   submissions: number;
 
-  // @ForeignKey(() => Courses)
-  // @Column({
-  //   type: DataType.INTEGER,
-  //   allowNull: false,
-  // })
-  // courseId!: number;
+  @ForeignKey(() => Courses)
+  @Column({
+    type: DataType.INTEGER,
+    allowNull: false,
+  })
+  courseId!: number;
 
-  // @BelongsTo(() => Courses)
-  // course!: Courses;
+  @BelongsTo(() => Courses)
+  course!: Courses;
 
   @BelongsToMany(() => Companies, () => ProblemCompanies)
   companies!: Companies[];

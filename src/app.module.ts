@@ -86,6 +86,7 @@ import { ProblemTopicsModule } from './models/problems_topics/problems_topics.mo
         ],
         autoLoadModels: true,
         synchronize: true,
+        // alter: true,
       }),
       inject: [ConfigService],
     }),
