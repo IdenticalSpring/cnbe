@@ -27,7 +27,11 @@ export class Courses extends Model<Courses> {
     allowNull: true,
   })
   imageUrl: string;
-
+  @Column({
+    type: DataType.STRING(255),
+    allowNull: true,
+  })
+  type: string;
   @Column({
     type: DataType.DATE,
     defaultValue: DataType.NOW,
