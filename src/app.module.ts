@@ -47,6 +47,11 @@ import { ProblemCompaniesModule } from './models/problems_companies/pb_com.modul
 import { ScheduleModule } from '@nestjs/schedule';
 import { CronService } from './cron/cron.service';
 import { AdminProblemModule } from './admin/problem/problem.module';
+import { Topics } from './models/topics/entities/topics.entities';
+import { TopicsModule } from './models/topics/topics.module';
+import { ProblemTopics } from './models/problems_topics/entities/problems_topics.entities';
+import { ProblemTopicsModule } from './models/problems_topics/problems_topics.module';
+
 
 @Module({
   imports: [
@@ -71,6 +76,8 @@ import { AdminProblemModule } from './admin/problem/problem.module';
           Process,
           Enrollment,
           Orders,
+          Topics,
+          ProblemTopics,
           Difficulty,
           ProblemCompanies,
           Companies,
@@ -80,6 +87,7 @@ import { AdminProblemModule } from './admin/problem/problem.module';
           IntroductionDetails,
         ],
         autoLoadModels: true,
+        synchronize: true,
       }),
       inject: [ConfigService],
     }),
@@ -110,6 +118,8 @@ import { AdminProblemModule } from './admin/problem/problem.module';
     }),
     UsersModule,
     AuthModule,
+    TopicsModule,
+    ProblemTopicsModule,
     CoursesModule,
     ProblemsModule,
     ProcessModule,

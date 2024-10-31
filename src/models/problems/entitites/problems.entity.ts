@@ -15,6 +15,8 @@ import { Companies } from 'src/models/companies/entities/companies.entities';
 import { ProblemCompanies } from 'src/models/problems_companies/entities/problems_companies.entits';
 import { Courses } from 'src/models/courses/entities/courses.entity';
 import { Difficulty } from 'src/models/difficulties/entities/difficulties.entites';
+import { Topics } from 'src/models/topics/entities/topics.entities';
+import { ProblemTopics } from 'src/models/problems_topics/entities/problems_topics.entities';
 
 @Table({
   tableName: 'problems',
@@ -46,9 +48,8 @@ export class Problems extends Model<Problems> {
     allowNull: false,
   })
   difficultyId!: number;
-
-  @BelongsTo(() => Difficulty)
-  difficulty!: Difficulty;
+  // @BelongsTo(() => Difficulty)
+  // difficulty!: Difficulty;
 
   @Column({
     type: DataType.INTEGER,
@@ -69,11 +70,14 @@ export class Problems extends Model<Problems> {
   })
   courseId!: number;
 
-  @BelongsTo(() => Courses)
-  course!: Courses;
+  // @BelongsTo(() => Courses)
+  // course!: Courses;
 
   @BelongsToMany(() => Companies, () => ProblemCompanies)
   companies!: Companies[];
+
+  @BelongsToMany(() => Topics, () => ProblemTopics)
+  topics!: Topics[];
 
   @Column({
     type: DataType.ENUM('active', 'inactive', 'archived'), 
@@ -81,6 +85,35 @@ export class Problems extends Model<Problems> {
     defaultValue: 'active', 
   })
   status!: string;
+
+  // New fields
+  @Column({
+    type: DataType.INTEGER,
+    allowNull: true,
+    defaultValue: 0,
+  })
+  likes!: number;
+
+  @Column({
+    type: DataType.INTEGER,
+    allowNull: true,
+    defaultValue: 0,
+  })
+  dislikes!: number;
+
+  @Column({
+    type: DataType.FLOAT,
+    allowNull: true,
+    defaultValue: 0,
+  })
+  rating!: number;
+
+  @Column({
+    type: DataType.FLOAT,
+    allowNull: true,
+    defaultValue: 0,
+  })
+  acceptance_rate!: number;
 
   @CreatedAt
   @Column({
