@@ -60,7 +60,7 @@ export class Problems extends Model<Problems> {
     type: DataType.INTEGER,
     allowNull: true,
   })
-  submission: number;
+  submissions: number;
 
   @ForeignKey(() => Courses)
   @Column({
@@ -76,9 +76,9 @@ export class Problems extends Model<Problems> {
   companies!: Companies[];
 
   @Column({
-    type: DataType.ENUM('active', 'inactive', 'archived'), // Thêm trường status với các giá trị ENUM
+    type: DataType.ENUM('active', 'inactive', 'archived'), 
     allowNull: false,
-    defaultValue: 'active', // Giá trị mặc định là 'active'
+    defaultValue: 'active', 
   })
   status!: string;
 

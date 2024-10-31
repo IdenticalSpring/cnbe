@@ -46,6 +46,7 @@ import { DifficultiesModule } from './models/difficulties/difficulties.module';
 import { ProblemCompaniesModule } from './models/problems_companies/pb_com.module';
 import { ScheduleModule } from '@nestjs/schedule';
 import { CronService } from './cron/cron.service';
+import { AdminProblemModule } from './admin/problem/problem.module';
 
 @Module({
   imports: [
@@ -126,7 +127,7 @@ import { CronService } from './cron/cron.service';
     AdminCourseIntroductionsModule,
     AdminIntroductionDetailsModule,
     AdminUserModule,
-    
+    AdminProblemModule,
   ],
   controllers: [AppController],
   providers: [
