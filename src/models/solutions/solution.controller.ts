@@ -24,12 +24,18 @@ export class SolutionController {
     return this.solutionService.updateSolution(id, updateSolutionDto);
   }
 
-
   @Get()
   @ApiOperation({ summary: 'Get all solutions' })
   @ApiResponse({ status: 200, description: 'List of solutions.' })
   findAllSolutions() {
     return this.solutionService.findAllSolutions();
+  }
+
+  @Get('paginated')
+  @ApiOperation({ summary: 'Retrieve solutions with pagination' })
+  @ApiResponse({ status: 200, description: 'Successfully retrieved paginated solutions.' })
+  getPaginatedSolutions(@Query('page') page: number = 1) {
+    return this.solutionService.findAllWithPagination(page);
   }
 
   @Get(':id')
@@ -38,11 +44,11 @@ export class SolutionController {
   findSolutionById(@Param('id') id: number) {
     return this.solutionService.findSolutionById(id);
   }
+
   @Delete(':id')
   @ApiOperation({ summary: 'Delete a solution' })
   @ApiResponse({ status: 200, description: 'Solution deleted successfully.' })
   deleteSolution(@Param('id') id: number) {
     return this.solutionService.deleteSolution(id);
   }
-
 }
