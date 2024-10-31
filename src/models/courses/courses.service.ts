@@ -98,21 +98,21 @@ export class CoursesService {
     type: string,
     page: number = 1
   ): Promise<{ data: Courses[]; currentPage: number; totalPages: number; totalItems: number }> {
-    const limit = this.defaultLimit; // Đảm bảo `limit` là số nguyên
-    const offset = (page - 1) * limit; // Đảm bảo `offset` là số nguyên
+    const limit = this.defaultLimit; 
+    const offset = (page - 1) * limit; 
 
-    // Kiểm tra type hợp lệ
+
     const validTypes = ['learn', 'featured', 'interview'];
     if (!validTypes.includes(type)) {
       throw new BadRequestException(`Invalid course type: ${type}. Valid types are ${validTypes.join(', ')}`);
     }
 
     try {
-      // Truy vấn với các giá trị `limit` và `offset` là số nguyên
+
       const { rows, count } = await this.coursesModel.findAndCountAll({
         where: { type },
-        limit: Number(limit), // Đảm bảo là số nguyên
-        offset: Number(offset), // Đảm bảo là số nguyên
+        limit: Number(limit),
+        offset: Number(offset), 
       });
 
       return {
