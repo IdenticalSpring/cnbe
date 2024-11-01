@@ -1,69 +1,72 @@
 import { Controller, Get, Post, Body, Param, Put, Delete, Query, ParseIntPipe } from '@nestjs/common';
-
 import { ApiTags, ApiOperation, ApiResponse, ApiBearerAuth, ApiQuery } from '@nestjs/swagger';
 import { SolutionCommentService } from './solution_comments.service';
 import { CreateSolutionCommentDto } from './dto/create-solution_comment.dto';
 import { UpdateSolutionCommentDto } from './dto/update-solution_comment.dto';
 import { Public } from 'src/decorator/public.decorator';
+
 @Public()
-@ApiTags('Solution Comments')
-@Controller('solution-comments')
+@ApiTags('Solution Feedback')
+@Controller('solution-feedback')
 @ApiBearerAuth('JWT')
-export class SolutionCommentController {
+export class SolutionFeedbackController {
   constructor(private readonly solutionCommentService: SolutionCommentService) { }
 
-  @Post()
-  @ApiOperation({ summary: 'Create a new comment on a solution' })
-  @ApiResponse({ status: 201, description: 'Comment created successfully.' })
-  createSolutionComment(@Body() createSolutionCommentDto: CreateSolutionCommentDto) {
+  @Post(`create`)
+  @ApiOperation({ summary: 'Create new feedback on a solution' })
+  @ApiResponse({ status: 201, description: 'Feedback created successfully.' })
+  createFeedback(@Body() createSolutionCommentDto: CreateSolutionCommentDto) {
     return this.solutionCommentService.createSolutionComment(createSolutionCommentDto);
   }
 
-  @Get()
-  @ApiOperation({ summary: 'Get all comments for solutions' })
-  @ApiResponse({ status: 200, description: 'List of comments.' })
-  findAllSolutionComments() {
+  @Get('listAll')
+  @ApiOperation({ summary: 'Get all feedback for solutions' })
+  @ApiResponse({ status: 200, description: 'List of feedback.' })
+  findAllFeedback() {
     return this.solutionCommentService.findAllSolutionComments();
   }
 
-  @Get(':id')
-  @ApiOperation({ summary: 'Get a comment by ID' })
-  @ApiResponse({ status: 200, description: 'Comment data.' })
-  findSolutionCommentById(@Param('id') id: number) {
-    return this.solutionCommentService.findSolutionCommentById(id);
+  @Get('findID:feedbackId')
+  @ApiOperation({ summary: 'Get feedback by ID' })
+  @ApiResponse({ status: 200, description: 'Feedback data.' })
+  getFeedbackById(@Param('feedbackId', ParseIntPipe) feedbackId: number) {
+    return this.solutionCommentService.findSolutionCommentById(feedbackId);
   }
 
-  @Put(':id')
-  @ApiOperation({ summary: 'Update a comment on a solution' })
-  @ApiResponse({ status: 200, description: 'Comment updated successfully.' })
-  updateSolutionComment(@Param('id') id: number, @Body() updateSolutionCommentDto: UpdateSolutionCommentDto) {
-    return this.solutionCommentService.updateSolutionComment(id, updateSolutionCommentDto);
+  @Put('update:feedbackId')
+  @ApiOperation({ summary: 'Update feedback on a solution' })
+  @ApiResponse({ status: 200, description: 'Feedback updated successfully.' })
+  updateFeedback(@Param('feedbackId', ParseIntPipe) feedbackId: number, @Body() updateSolutionCommentDto: UpdateSolutionCommentDto) {
+    return this.solutionCommentService.updateSolutionComment(feedbackId, updateSolutionCommentDto);
   }
 
-  @Delete(':id')
-  @ApiOperation({ summary: 'Delete a comment on a solution' })
-  @ApiResponse({ status: 200, description: 'Comment deleted successfully.' })
-  deleteSolutionComment(@Param('id') id: number) {
-    return this.solutionCommentService.deleteSolutionComment(id);
+  @Delete('delete:feedbackId')
+  @ApiOperation({ summary: 'Delete feedback on a solution' })
+  @ApiResponse({ status: 200, description: 'Feedback deleted successfully.' })
+  deleteFeedback(@Param('feedbackId', ParseIntPipe) feedbackId: number) {
+    return this.solutionCommentService.deleteSolutionComment(feedbackId);
   }
-  @Get('root')
-  @ApiOperation({ summary: 'Retrieve root comments (non-replies) with pagination' })
+
+  @Get('main')
+  @ApiOperation({ summary: 'Retrieve main feedback (non-replies) with pagination' })
   @ApiQuery({ name: 'page', required: false, type: Number, example: 1 })
-  @ApiResponse({ status: 200, description: 'Successfully retrieved root comments with pagination.' })
-  async getRootComments(
+  @ApiResponse({ status: 200, description: 'Successfully retrieved main feedback with pagination.' })
+  async getMainFeedback(
+    @Query('page') page: string = '1', 
+  ) {
+    const pageNumber = !isNaN(Number(page)) && Number(page) > 0 ? parseInt(page, 10) : 1; 
+    console.log(`API /solution-feedback/main called with page: ${pageNumber}`);
+    return this.solutionCommentService.findRootComments(pageNumber);
+  }
+
+  @Get('responses/:feedbackId')
+  @ApiOperation({ summary: 'Retrieve responses for a specific feedback with pagination' })
+  @ApiQuery({ name: 'page', required: false, type: Number, example: 1 })
+  @ApiResponse({ status: 200, description: 'Successfully retrieved responses with pagination.' })
+  async getResponsesForFeedback(
+    @Param('feedbackId', ParseIntPipe) feedbackId: number,
     @Query('page', ParseIntPipe) page: number = 1,
   ) {
-    return this.solutionCommentService.findRootComments(page);
-  }
-
-  @Get('replies/:commentId')
-  @ApiOperation({ summary: 'Retrieve replies for a specific comment with pagination' })
-  @ApiQuery({ name: 'page', required: false, type: Number, example: 1 })
-  @ApiResponse({ status: 200, description: 'Successfully retrieved replies with pagination.' })
-  async getRepliesForComment(
-    @Param('commentId', ParseIntPipe) commentId: number,
-    @Query('page', ParseIntPipe) page: number = 1,
-  ) {
-    return this.solutionCommentService.findRepliesForComment(commentId, page);
+    return this.solutionCommentService.findRepliesForComment(feedbackId, page);
   }
 }

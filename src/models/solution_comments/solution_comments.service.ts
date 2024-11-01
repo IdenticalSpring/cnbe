@@ -41,7 +41,6 @@ export class SolutionCommentService {
     const comment = await this.findSolutionCommentById(id);
     if (comment) await comment.destroy();
   }
-  // Lấy các bình luận gốc với phân trang
   async findRootComments(page: number = 1): Promise<{
     data: SolutionComments[];
     currentPage: number;
@@ -51,10 +50,12 @@ export class SolutionCommentService {
     const limit = this.defaultLimit;
     const offset = (page - 1) * limit;
 
+    console.log(`Executing root comments query with limit: ${limit}, offset: ${offset}`); 
+
     const { rows, count } = await this.solutionCommentModel.findAndCountAll({
-      where: { repliedToCommentId: null },
-      limit: Number(limit),  // Đảm bảo limit là số nguyên
-      offset: Number(offset), // Đảm bảo offset là số nguyên
+      where: { isReplied: 0 },
+      limit: Number(limit),
+      offset: Number(offset),
     });
 
     return {
@@ -65,7 +66,8 @@ export class SolutionCommentService {
     };
   }
 
-  // Lấy các bình luận reply cho một bình luận cụ thể với phân trang
+
+
   async findRepliesForComment(commentId: number, page: number = 1): Promise<{
     data: SolutionComments[];
     currentPage: number;
