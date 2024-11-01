@@ -8,15 +8,17 @@ import {
   Delete,
   UseInterceptors,
   UploadedFile,
+  Query,
 } from '@nestjs/common';
-import { ApiBearerAuth, ApiBody, ApiConsumes, ApiOperation, ApiResponse, ApiTags } from '@nestjs/swagger';
+import { ApiBearerAuth, ApiBody, ApiConsumes, ApiOperation, ApiQuery, ApiResponse, ApiTags } from '@nestjs/swagger';
 import { CoursesService } from './courses.service';
 import { Courses } from './entities/courses.entity';
 import { CreateCoursesDto } from './dto/create-course.dto';
 import { UpdateCourseDto } from './dto/update-course.dto';
 import { CloudinaryService } from '../cloudinary/cloudinary.service';
 import { FileInterceptor } from '@nestjs/platform-express';
-
+import { Public } from 'src/decorator/public.decorator';
+@Public()
 @ApiTags('courses')
 @Controller('courses')
 @ApiBearerAuth('JWT')
@@ -64,7 +66,26 @@ export class CoursesController {
   }
 
 
+  @Get('getByType')
+  @ApiQuery({ name: 'type', required: true, type: String, description: 'Course type' })
+  @ApiQuery({ name: 'page', required: false, type: Number, example: 1 })
+  async getByType(
+    @Query('type') type: string,
+    @Query('page') page: string = '1'
+  ): Promise<{ data: Courses[]; currentPage: number; totalPages: number; totalItems: number }> {
+    return this.coursesService.getByType(type, +page || 1);
+  }
 
+  @Get('getPagination')
+  @ApiOperation({ summary: 'Get paginated list of courses' })
+  @ApiQuery({ name: 'page', required: false, type: Number, description: 'Page number', example: 1 })
+  @ApiResponse({ status: 200, description: 'Paginated courses retrieved successfully.' })
+  async findAllWithPagination(
+    @Query('page') page: string = '1',
+  ): Promise<{ data: Courses[], currentPage: number, totalPages: number, totalItems: number }> {
+    const pageNumber = parseInt(page, 10);
+    return this.coursesService.findAllWithPagination(isNaN(pageNumber) || pageNumber < 1 ? 1 : pageNumber);
+  }
   @Get(':id')
   findOne(@Param('id') id: string) {
     return this.coursesService.findOne(+id);

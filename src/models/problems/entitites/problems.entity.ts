@@ -80,9 +80,9 @@ export class Problems extends Model<Problems> {
   topics!: Topics[];
 
   @Column({
-    type: DataType.ENUM('active', 'inactive', 'archived'), // Thêm trường status với các giá trị ENUM
+    type: DataType.ENUM('active', 'inactive', 'archived'), 
     allowNull: false,
-    defaultValue: 'active', // Giá trị mặc định là 'active'
+    defaultValue: 'active', 
   })
   status!: string;
 

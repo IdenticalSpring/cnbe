@@ -1,5 +1,5 @@
-import { Controller, Get, Param, Post, Body, UseGuards, Put, Delete } from '@nestjs/common';
-import { ApiBearerAuth, ApiTags } from '@nestjs/swagger';
+import { Controller, Get, Param, Post, Body, UseGuards, Put, Delete, Query } from '@nestjs/common';
+import { ApiBearerAuth, ApiQuery, ApiTags } from '@nestjs/swagger';
 import { JwtAuthGuard } from 'src/auth/passport/jwt-auth.guard';
 import { RolesGuard } from 'src/auth/passport/roles.guard';
 import { Roles } from 'src/decorator/admin.decorator';
@@ -34,5 +34,13 @@ export class AdminUsersController {
     @Delete('delete/:id')
     async removeUser(@Param('id') id: number) {
         return this.usersService.removeUser(id);
+    }
+    @Get(`getPagination`)
+    @Roles('admin')
+    @ApiQuery({ name: 'page', required: false, example: 1 })
+    async findAllWithPagination(
+        @Query('page') page = 1,
+    ) {
+        return this.usersService.findAllWithPagination(page);
     }
 }
