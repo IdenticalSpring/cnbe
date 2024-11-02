@@ -9,7 +9,6 @@ import {
   UpdatedAt,
   PrimaryKey,
   AutoIncrement,
-  BelongsTo,
 } from 'sequelize-typescript';
 import { Companies } from 'src/models/companies/entities/companies.entities';
 import { ProblemCompanies } from 'src/models/problems_companies/entities/problems_companies.entits';
@@ -80,9 +79,9 @@ export class Problems extends Model<Problems> {
   topics!: Topics[];
 
   @Column({
-    type: DataType.ENUM('active', 'inactive', 'archived'), 
+    type: DataType.ENUM('active', 'inactive', 'archived'),
     allowNull: false,
-    defaultValue: 'active', 
+    defaultValue: 'active',
   })
   status!: string;
 
