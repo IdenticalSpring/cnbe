@@ -53,7 +53,8 @@ import { ProblemTopics } from './models/problems_topics/entities/problems_topics
 import { ProblemTopicsModule } from './models/problems_topics/problems_topics.module';
 import { SolutionCommentsModule } from './models/solution_comments/solution_comments.module';
 import { SolutionModule } from './models/solutions/solution.module';
-
+import { AcceptanceSubmissionsModule } from './models/acceptance_submissions/acceptance_submissions.module';
+import { AcceptanceSubmission } from './models/acceptance_submissions/entities/acceptance_submissions.entity';
 
 @Module({
   imports: [
@@ -77,6 +78,7 @@ import { SolutionModule } from './models/solutions/solution.module';
           Problems,
           Process,
           Enrollment,
+          AcceptanceSubmission,
           Orders,
           Topics,
           ProblemTopics,
@@ -90,6 +92,7 @@ import { SolutionModule } from './models/solutions/solution.module';
         ],
         autoLoadModels: true,
         synchronize: true,
+        // alter: true,
       }),
       inject: [ConfigService],
     }),
@@ -124,6 +127,7 @@ import { SolutionModule } from './models/solutions/solution.module';
     ProblemTopicsModule,
     CoursesModule,
     ProblemsModule,
+    AcceptanceSubmissionsModule,
     ProcessModule,
     CouponsModule,
     EnrollmentModule,

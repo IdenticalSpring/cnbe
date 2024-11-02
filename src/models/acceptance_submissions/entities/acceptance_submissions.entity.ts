@@ -6,11 +6,11 @@ import {
   ForeignKey,
   BelongsTo,
 } from 'sequelize-typescript';
-import { Problems } from 'src/models/problems/entitites/problems.entity';
+import { Submission } from 'src/models/submission/entities/submission.model';
 import { User } from 'src/models/users/entities/user.entity';
 
 @Table
-export class Submission extends Model {
+export class AcceptanceSubmission extends Model {
   @Column({
     type: DataType.INTEGER,
     autoIncrement: true,
@@ -24,17 +24,19 @@ export class Submission extends Model {
     allowNull: false,
   })
   userId: number;
-  @BelongsTo(() => User)
-  user: User; // Thêm quan hệ thuộc về User
 
-  @ForeignKey(() => Problems) // Thiết lập khóa ngoại đến bảng Problem
+  @BelongsTo(() => User)
+  user: User;
+
+  @ForeignKey(() => Submission)
   @Column({
     type: DataType.INTEGER,
     allowNull: false,
   })
-  problemId: number;
-  @BelongsTo(() => Problems)
-  problem: Problems; // Thêm quan hệ thuộc về Problem
+  submissionId: number; // Change from problemId to submissionId
+
+  @BelongsTo(() => Submission)
+  submission: Submission; // Change from problem to submission
 
   @Column({
     type: DataType.STRING,
@@ -49,8 +51,8 @@ export class Submission extends Model {
   code: string;
 
   @Column({
-    type: DataType.ENUM('failed', 'completed'),
-    defaultValue: 'failed',
+    type: DataType.ENUM('pending', 'accepted', 'rejected'),
+    defaultValue: 'pending',
   })
   status: string;
 

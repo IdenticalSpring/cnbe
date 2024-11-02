@@ -1,5 +1,5 @@
 import { ApiProperty } from '@nestjs/swagger';
-import { IsNotEmpty } from 'class-validator';
+import { IsNotEmpty, IsOptional } from 'class-validator';
 
 export class CreateSubmissionDto {
   @ApiProperty({
@@ -16,6 +16,14 @@ export class CreateSubmissionDto {
   })
   @IsNotEmpty({ message: 'Source code cannot be empty' })
   code: string;
+
+  @ApiProperty({
+    description: 'Problem ID of the submission',
+    example: 1,
+  })
+  @IsOptional()
+  @IsNotEmpty({ message: 'ProblemId cannot be empty' })
+  problemId: number;
 
   @ApiProperty({
     description: 'Standard input for the submission',
