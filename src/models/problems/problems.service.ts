@@ -3,6 +3,7 @@ import {
   InternalServerErrorException,
   NotFoundException,
 } from '@nestjs/common';
+import { Op } from 'sequelize';
 import { InjectModel } from '@nestjs/sequelize';
 import { Problems } from './entitites/problems.entity';
 import { CreateProblemsDto } from './dto/create-problems.dto';
@@ -74,5 +75,46 @@ export class PromblemsService {
   async remove(id: number): Promise<void> {
     const exercise = await this.findOne(id);
     await exercise.destroy();
+  }
+  async findByDifficulty(
+    difficultyId: number,
+    page:number,
+  ): Promise<{ data: Problems[]; currentPage: number; totalPages: number; totalItems: number }> {
+    const limit = parseInt(this.defaultLimit.toString(), 10);
+    const offset = (page - 1) * limit;
+
+    const { rows, count } = await this.problemsModel.findAndCountAll({
+      where: { difficultyId },
+      limit,
+      offset,
+    });
+
+    return {
+      data: rows,
+      currentPage: page,
+      totalPages: Math.ceil(count / limit),
+      totalItems: count,
+    };
+  }
+  async findByTitle(
+    title: string,
+    page: number = 1,
+
+  ): Promise<{ data: Problems[]; currentPage: number; totalPages: number; totalItems: number }> {
+    const limit = parseInt(this.defaultLimit.toString(), 10);
+    const offset = (page - 1) * limit;
+
+    const { rows, count } = await this.problemsModel.findAndCountAll({
+      where: { title: { [Op.like]: `%${title}%` } },
+      limit,
+      offset,
+    });
+
+    return {
+      data: rows,
+      currentPage: page,
+      totalPages: Math.ceil(count / limit),
+      totalItems: count,
+    };
   }
 }

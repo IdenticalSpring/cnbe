@@ -84,4 +84,29 @@ export class ProblemsController {
   deleteProblem(@Param('id') id: string): Promise<void> {
     return this.problemsService.remove(+id);
   }
+  @Get('search-by-difficulty')
+  @ApiOperation({ summary: 'Search problems by difficulty' })
+  @ApiResponse({
+    status: 200,
+    description: 'Successfully retrieved problems by difficulty.',
+  })
+  searchByDifficulty(
+    @Query('difficultyId') difficultyId: number,
+    @Query('page') page: number = 1,
+  ): Promise<{ data: Problems[]; currentPage: number; totalPages: number; totalItems: number }> {
+    return this.problemsService.findByDifficulty(difficultyId, page);
+  }
+  @Get('search-by-title')
+  @ApiOperation({ summary: 'Search problems by title' })
+  @ApiResponse({
+    status: 200,
+    description: 'Successfully retrieved problems by title.',
+  })
+  searchByTitle(
+    @Query('title') title: string,
+    @Query('page') page: number = 1,
+  ): Promise<{ data: Problems[]; currentPage: number; totalPages: number; totalItems: number }> {
+    return this.problemsService.findByTitle(title, page);
+  }
+
 }
