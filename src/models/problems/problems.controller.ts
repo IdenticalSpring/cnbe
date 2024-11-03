@@ -92,9 +92,8 @@ export class ProblemsController {
   })
   searchByDifficulty(
     @Query('difficultyId') difficultyId: number,
-    @Query('page') page: number = 1,
-  ): Promise<{ data: Problems[]; currentPage: number; totalPages: number; totalItems: number }> {
-    return this.problemsService.findByDifficulty(difficultyId, page);
+  ): Promise<{ data: Problems[]}> {
+    return this.problemsService.findByDifficulty(difficultyId);
   }
   @Get('search-by-title')
   @ApiOperation({ summary: 'Search problems by title' })
@@ -104,9 +103,8 @@ export class ProblemsController {
   })
   searchByTitle(
     @Query('title') title: string,
-    @Query('page') page: number = 1,
-  ): Promise<{ data: Problems[]; currentPage: number; totalPages: number; totalItems: number }> {
-    return this.problemsService.findByTitle(title, page);
+  ): Promise<{ data: Problems[];}> {
+    return this.problemsService.findByTitle(title);
   }
 
 }
