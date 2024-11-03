@@ -78,43 +78,28 @@ export class PromblemsService {
   }
   async findByDifficulty(
     difficultyId: number,
-    page:number,
-  ): Promise<{ data: Problems[]; currentPage: number; totalPages: number; totalItems: number }> {
-    const limit = parseInt(this.defaultLimit.toString(), 10);
-    const offset = (page - 1) * limit;
-
+  ): Promise<{ data: Problems[]; totalItems: number }> {
     const { rows, count } = await this.problemsModel.findAndCountAll({
       where: { difficultyId },
-      limit,
-      offset,
     });
 
     return {
       data: rows,
-      currentPage: page,
-      totalPages: Math.ceil(count / limit),
       totalItems: count,
     };
   }
+
   async findByTitle(
     title: string,
-    page: number = 1,
-
-  ): Promise<{ data: Problems[]; currentPage: number; totalPages: number; totalItems: number }> {
-    const limit = parseInt(this.defaultLimit.toString(), 10);
-    const offset = (page - 1) * limit;
-
+  ): Promise<{ data: Problems[]; totalItems: number }> {
     const { rows, count } = await this.problemsModel.findAndCountAll({
       where: { title: { [Op.like]: `%${title}%` } },
-      limit,
-      offset,
     });
 
     return {
       data: rows,
-      currentPage: page,
-      totalPages: Math.ceil(count / limit),
       totalItems: count,
     };
   }
+
 }

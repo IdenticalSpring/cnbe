@@ -14,7 +14,9 @@ export class CreateAuthDto {
 
     @ApiProperty({ description: 'The name of the user' })
     @IsOptional()
-    @Matches(/^[^\s!@#$%^&*()_+=[\]{};':"\\|,.<>/?]+$/, { message: "Name cannot contain special characters or spaces" })
+    @Matches(/^[^\s!@#$%^&*()_+=[\]{};':"\\|,.<>/?]+(?: [^\s!@#$%^&*()_+=[\]{};':"\\|,.<>/?]+)*$/, {
+        message: "Name cannot contain special characters or have spaces at the beginning or end",
+    })
     name: string;
 
     @ApiProperty({ description: 'The email of the user' })
