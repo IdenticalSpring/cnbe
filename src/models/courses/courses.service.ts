@@ -93,11 +93,12 @@ export class CoursesService {
 
   async findAllWithPagination(page: number = 1): Promise<{ data: Courses[], currentPage: number, totalPages: number, totalItems: number }> {
     const limit = Number(this.defaultLimit);
-    const offset = (page - 1) * limit;      
+    const offset = (page - 1) * limit;
 
     const { rows, count } = await this.coursesModel.findAndCountAll({
       limit: limit,
       offset: offset,
+      include: { model: Types }, 
     });
 
     const totalPages = Math.ceil(count / limit);
@@ -109,5 +110,6 @@ export class CoursesService {
       totalItems: count,
     };
   }
+
 
 }
