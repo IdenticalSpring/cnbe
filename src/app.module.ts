@@ -58,6 +58,7 @@ import { AcceptanceSubmission } from './models/acceptance_submissions/entities/a
 import { Types } from './models/type/entities/types.entity';
 import { CourseTypes } from './models/typeCourse/course_types.entity';
 import { TypesModule } from './models/type/types.module';
+import { GeminiApiModule } from './models/gemini-api/gemini-api.module';
 
 @Module({
   imports: [
@@ -152,7 +153,7 @@ import { TypesModule } from './models/type/types.module';
     AdminIntroductionDetailsModule,
     AdminUserModule,
     AdminProblemModule,
-
+    GeminiApiModule,
   ],
   controllers: [AppController],
   providers: [
