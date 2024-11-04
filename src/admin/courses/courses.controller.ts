@@ -48,7 +48,21 @@ export class AdminCoursesController {
 
   @Post('create')
   @Roles('admin')
-  @ApiOperation({ summary: 'Create a new course with image upload' })
+  @UseInterceptors(FileInterceptor('image'))
+  @ApiResponse({
+    status: 201,
+    description: 'The course has been successfully created.',
+  })
+  async create(@Body() createCoursesDto: CreateCoursesDto, @UploadedFile() file: Express.Multer.File) {
+    if (file) {
+      const uploadedImage = await this.cloudinaryService.uploadImage(file);
+      createCoursesDto.imageUrl = uploadedImage.secure_url;
+    }
+    return this.coursesService.create(createCoursesDto);
+  }
+
+  @Patch(':id')
+  @ApiOperation({ summary: 'Update an existing course, including new image upload' })
   @ApiConsumes('multipart/form-data')
   @ApiBody({
     schema: {
@@ -56,44 +70,24 @@ export class AdminCoursesController {
       properties: {
         title: { type: 'string' },
         description: { type: 'string' },
-        image: {
-          type: 'string',
-          format: 'binary',
-        },
+        image: { type: 'string', format: 'binary' },
+        types: { type: 'array', items: { type: 'string' } },
       },
     },
   })
   @UseInterceptors(FileInterceptor('image'))
-  @ApiResponse({
-    status: 201,
-    description: 'The course has been successfully created.',
-  })
-  async create(@Body() createCoursesDto: CreateCoursesDto, @UploadedFile() file: Express.Multer.File) {
-    if (!file) {
-      throw new BadRequestException('Missing required parameter - file');
-    }
-    const uploadedImage = await this.cloudinaryService.uploadImage(file);
-    createCoursesDto.imageUrl = uploadedImage.secure_url;
-    return this.coursesService.create(createCoursesDto);
-  }
-
-  @Patch('update/:id')
-  @Roles('admin')
-  @ApiOperation({ summary: 'Update an existing course' })
-  @ApiConsumes('multipart/form-data')
-  @UseInterceptors(FileInterceptor('image'))
+  @ApiResponse({ status: 200, description: 'Successfully updated course.' })
   async update(
-    @Param('id', ParseIntPipe) id: number,
+    @Param('id') id: string,
     @Body() updateCourseDto: UpdateCourseDto,
     @UploadedFile() file: Express.Multer.File,
-  ) {
+  ): Promise<Courses> {
     if (file) {
       const uploadedImage = await this.cloudinaryService.uploadImage(file);
       updateCourseDto.imageUrl = uploadedImage.secure_url;
     }
-    return this.coursesService.update(id, updateCourseDto);
+    return this.coursesService.update(+id, updateCourseDto);
   }
-
   @Delete('delete/:id')
   @Roles('admin')
   async remove(@Param('id', ParseIntPipe) id: number) {
