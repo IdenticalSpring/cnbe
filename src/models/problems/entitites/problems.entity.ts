@@ -65,7 +65,7 @@ export class Problems extends Model<Problems> {
   @ForeignKey(() => Courses)
   @Column({
     type: DataType.INTEGER,
-    allowNull: false,
+    allowNull: true,
   })
   courseId!: number;
 
