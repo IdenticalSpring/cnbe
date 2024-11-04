@@ -3,6 +3,7 @@ import {
   InternalServerErrorException,
   NotFoundException,
 } from '@nestjs/common';
+import { Op } from 'sequelize';
 import { InjectModel } from '@nestjs/sequelize';
 import { Problems } from './entitites/problems.entity';
 import { CreateProblemsDto } from './dto/create-problems.dto';
@@ -75,4 +76,30 @@ export class PromblemsService {
     const exercise = await this.findOne(id);
     await exercise.destroy();
   }
+  async findByDifficulty(
+    difficultyId: number,
+  ): Promise<{ data: Problems[]; totalItems: number }> {
+    const { rows, count } = await this.problemsModel.findAndCountAll({
+      where: { difficultyId },
+    });
+
+    return {
+      data: rows,
+      totalItems: count,
+    };
+  }
+
+  async findByTitle(
+    title: string,
+  ): Promise<{ data: Problems[]; totalItems: number }> {
+    const { rows, count } = await this.problemsModel.findAndCountAll({
+      where: { title: { [Op.like]: `%${title}%` } },
+    });
+
+    return {
+      data: rows,
+      totalItems: count,
+    };
+  }
+
 }

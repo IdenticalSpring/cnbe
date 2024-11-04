@@ -1,5 +1,7 @@
-import { Column, Model, Table, DataType, HasMany } from 'sequelize-typescript';
+import { Column, Model, Table, DataType, HasMany, BelongsToMany } from 'sequelize-typescript';
 import { CourseIntroductions } from 'src/models/course_introductions/entities/course_introduction.entity';
+import { Types } from 'src/models/type/entities/types.entity';
+import { CourseTypes } from 'src/models/typeCourse/course_types.entity';
 
 @Table
 export class Courses extends Model<Courses> {
@@ -27,11 +29,7 @@ export class Courses extends Model<Courses> {
     allowNull: true,
   })
   imageUrl: string;
-  @Column({
-    type: DataType.STRING(255),
-    allowNull: true,
-  })
-  type: string;
+
   @Column({
     type: DataType.DATE,
     defaultValue: DataType.NOW,
@@ -46,4 +44,7 @@ export class Courses extends Model<Courses> {
 
   @HasMany(() => CourseIntroductions)
   courseIntroductions: CourseIntroductions[];
+
+  @BelongsToMany(() => Types, () => CourseTypes)
+  types: Types[];
 }

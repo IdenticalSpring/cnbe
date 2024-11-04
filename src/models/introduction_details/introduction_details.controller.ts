@@ -3,7 +3,8 @@ import { IntroductionDetailsService } from './introduction_details.service';
 import { CreateIntroductionDetailDto } from './dto/create-introduction_detail.dto';
 import { UpdateIntroductionDetailDto } from './dto/update-introduction_detail.dto';
 import { ApiBearerAuth, ApiTags } from '@nestjs/swagger';
-
+import { Public } from 'src/decorator/public.decorator';
+@Public()
 @Controller('introduction-details')
 @ApiTags('introduction-details')
 @ApiBearerAuth('JWT')
