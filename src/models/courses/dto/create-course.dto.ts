@@ -1,5 +1,5 @@
 import { ApiProperty } from '@nestjs/swagger';
-import { IsNotEmpty } from 'class-validator';
+import { IsNotEmpty, IsOptional } from 'class-validator';
 
 export class CreateCoursesDto {
   @ApiProperty({ description: 'The title of the course' })
@@ -11,8 +11,10 @@ export class CreateCoursesDto {
   description: string;
 
   @ApiProperty({ description: 'The image URL of the course', required: false })
-  imageUrl: string;
+  @IsOptional()
+  imageUrl?: string;
   
   @ApiProperty({ description: 'The type of the course', required: false })
-  type: string;
+  @IsOptional()
+  types?: number[];
 }
