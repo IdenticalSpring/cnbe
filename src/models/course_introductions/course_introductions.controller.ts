@@ -3,7 +3,8 @@ import { CourseIntroductionsService } from './course_introductions.service';
 import { CreateCourseIntroductionDto } from './dto/create-course_introduction.dto';
 import { UpdateCourseIntroductionDto } from './dto/update-course_introduction.dto';
 import { ApiBearerAuth, ApiTags } from '@nestjs/swagger';
-
+import { Public } from 'src/decorator/public.decorator';
+@Public()
 @Controller('course-introductions')
 @ApiTags('course-introductions')
 @ApiBearerAuth('JWT')
