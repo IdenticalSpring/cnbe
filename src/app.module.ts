@@ -55,6 +55,9 @@ import { SolutionCommentsModule } from './models/solution_comments/solution_comm
 import { SolutionModule } from './models/solutions/solution.module';
 import { AcceptanceSubmissionsModule } from './models/acceptance_submissions/acceptance_submissions.module';
 import { AcceptanceSubmission } from './models/acceptance_submissions/entities/acceptance_submissions.entity';
+import { Types } from './models/type/entities/types.entity';
+import { CourseTypes } from './models/typeCourse/course_types.entity';
+import { TypesModule } from './models/type/types.module';
 
 @Module({
   imports: [
@@ -89,6 +92,8 @@ import { AcceptanceSubmission } from './models/acceptance_submissions/entities/a
           Submission,
           CourseIntroductions,
           IntroductionDetails,
+           Types, 
+           CourseTypes,
         ],
         autoLoadModels: true,
         synchronize: true,
@@ -142,10 +147,12 @@ import { AcceptanceSubmission } from './models/acceptance_submissions/entities/a
     IntroductionDetailsModule,
     SolutionModule,
     SolutionCommentsModule,
+    TypesModule,
     AdminCourseIntroductionsModule,
     AdminIntroductionDetailsModule,
     AdminUserModule,
     AdminProblemModule,
+
   ],
   controllers: [AppController],
   providers: [
