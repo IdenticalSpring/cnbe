@@ -8,7 +8,12 @@ import {
   Delete,
   Query,
 } from '@nestjs/common';
-import { ApiBearerAuth, ApiOperation, ApiResponse, ApiTags } from '@nestjs/swagger';
+import {
+  ApiBearerAuth,
+  ApiOperation,
+  ApiResponse,
+  ApiTags,
+} from '@nestjs/swagger';
 
 import { CreateProblemsDto } from './dto/create-problems.dto';
 import { UpdateProblemsDto } from './dto/update-problems.dto';
@@ -20,7 +25,7 @@ import { Public } from 'src/decorator/public.decorator';
 @Controller('problems')
 @ApiBearerAuth('JWT')
 export class ProblemsController {
-  constructor(private readonly problemsService: PromblemsService) { }
+  constructor(private readonly problemsService: PromblemsService) {}
 
   @Get('all')
   @ApiOperation({ summary: 'Retrieve all problems' })
@@ -48,7 +53,9 @@ export class ProblemsController {
     status: 201,
     description: 'The problem has been successfully created.',
   })
-  createProblem(@Body() createProblemDto: CreateProblemsDto): Promise<Problems> {
+  createProblem(
+    @Body() createProblemDto: CreateProblemsDto,
+  ): Promise<Problems> {
     return this.problemsService.create(createProblemDto);
   }
 
@@ -92,7 +99,7 @@ export class ProblemsController {
   })
   searchByDifficulty(
     @Query('difficultyId') difficultyId: number,
-  ): Promise<{ data: Problems[]}> {
+  ): Promise<{ data: Problems[] }> {
     return this.problemsService.findByDifficulty(difficultyId);
   }
   @Get('search-by-title')
@@ -101,10 +108,7 @@ export class ProblemsController {
     status: 200,
     description: 'Successfully retrieved problems by title.',
   })
-  searchByTitle(
-    @Query('title') title: string,
-  ): Promise<{ data: Problems[];}> {
+  searchByTitle(@Query('title') title: string): Promise<{ data: Problems[] }> {
     return this.problemsService.findByTitle(title);
   }
-
 }
