@@ -31,6 +31,20 @@ export class Courses extends Model<Courses> {
   imageUrl: string;
 
   @Column({
+    type: DataType.DECIMAL(10, 2),
+    allowNull: false,
+    defaultValue: 0.00,
+  })
+  price: number;  
+
+  @Column({
+    type: DataType.ENUM('active', 'inactive', 'draft'),
+    allowNull: false,
+    defaultValue: 'draft',
+  })
+  status: string; 
+
+  @Column({
     type: DataType.DATE,
     defaultValue: DataType.NOW,
   })

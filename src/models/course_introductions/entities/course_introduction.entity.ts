@@ -27,7 +27,7 @@ export class CourseIntroductions extends Model<CourseIntroductions> {
 
     @Column({
         type: DataType.TEXT,
-        allowNull: true, 
+        allowNull: true,
     })
     description: string;
 
