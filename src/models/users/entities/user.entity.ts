@@ -1,6 +1,19 @@
+
 import { Column, Model, Table, DataType, HasMany } from 'sequelize-typescript';
 import { Progress } from 'src/models/progress/entities/progress.entity';
+import {
+  Column,
+  Model,
+  Table,
+  DataType,
+  HasMany,
+  BelongsToMany,
+} from 'sequelize-typescript';
+import { Comments } from 'src/models/comments/entities/comments.entity';
+import { UserComments } from 'src/models/comments_user/entities/commets_user.entity';
+import { Discussions } from 'src/models/discussion/entities/discussion.entity';
 import { Submission } from 'src/models/submission/entities/submission.model';
+import { UserDiscussion } from 'src/models/user_discussion/entities/user_discussion.entity';
 
 @Table
 export class User extends Model<User> {
@@ -64,6 +77,12 @@ export class User extends Model<User> {
 
   @HasMany(() => Submission)
   submissions: Submission[];
+
+  @BelongsToMany(() => Comments, () => UserComments)
+  comments: Comments[];
+
+  @BelongsToMany(() => Discussions, () => UserDiscussion)
+  discussions: Discussions[];
 
   @Column({
     type: DataType.DATE,
