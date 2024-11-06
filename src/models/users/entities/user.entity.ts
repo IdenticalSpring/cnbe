@@ -1,5 +1,4 @@
 
-import { Column, Model, Table, DataType, HasMany } from 'sequelize-typescript';
 import { Progress } from 'src/models/progress/entities/progress.entity';
 import {
   Column,
