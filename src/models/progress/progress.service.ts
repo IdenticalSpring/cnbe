@@ -39,4 +39,8 @@ export class ProgressService {
       await progress.destroy();
     }
   }
+  async findAllByUser(userId: number): Promise<Progress[]> {
+    return await this.progressModel.findAll({ where: { userId } });
+  }
+  
 }

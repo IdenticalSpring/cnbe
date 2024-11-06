@@ -1,9 +1,9 @@
-import { Column, Model, Table, DataType, ForeignKey, HasMany, BelongsTo } from 'sequelize-typescript';
-import { Chapter } from "src/models/chapter/entities/chapter.entity";
-import { Progress } from 'src/models/progress/entities/progress.entity';
+import { Column, Model, Table, DataType, ForeignKey, BelongsTo, HasMany } from 'sequelize-typescript';
+import { Courses } from "src/models/courses/entities/courses.entity";
+import { Lessons } from "src/models/course_lesson/entities/course_lesson.entity";
 
 @Table
-export class Lessons extends Model<Lessons> {
+export class Chapter extends Model<Chapter> {
     @Column({
         type: DataType.INTEGER,
         autoIncrement: true,
@@ -11,15 +11,15 @@ export class Lessons extends Model<Lessons> {
     })
     id: number;
 
-    @ForeignKey(() => Chapter)
+    @ForeignKey(() => Courses)
     @Column({
         type: DataType.INTEGER,
         allowNull: false,
     })
-    chapterId: number;
+    courseId: number;
 
-    @BelongsTo(() => Chapter)
-    chapter: Chapter;
+    @BelongsTo(() => Courses)
+    course: Courses;
 
     @Column({
         type: DataType.STRING(255),
@@ -31,7 +31,7 @@ export class Lessons extends Model<Lessons> {
         type: DataType.TEXT,
         allowNull: true,
     })
-    content: string;
+    description: string;
 
     @Column({
         type: DataType.INTEGER,
@@ -52,6 +52,6 @@ export class Lessons extends Model<Lessons> {
     })
     updatedAt: Date;
 
-    @HasMany(() => Progress)
-    progresses: Progress[];
+    @HasMany(() => Lessons)
+    lessons: Lessons[];
 }

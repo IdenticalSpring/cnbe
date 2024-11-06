@@ -78,6 +78,8 @@ import { ProgressModule } from './models/progress/progress.module';
 import { LessonsModule } from './models/course_lesson/course_lesson.module';
 import { Progress } from './models/progress/entities/progress.entity';
 import { Lessons } from './models/course_lesson/entities/course_lesson.entity';
+import { ChapterModule } from './models/chapter/chapter.module';
+import { Chapter } from './models/chapter/entities/chapter.entity';
 
 @Module({
   imports: [
@@ -116,6 +118,7 @@ import { Lessons } from './models/course_lesson/entities/course_lesson.entity';
           CourseTypes,
           Progress,
           Lessons,
+          Chapter,
         ],
         autoLoadModels: true,
         synchronize: true,
@@ -170,6 +173,7 @@ import { Lessons } from './models/course_lesson/entities/course_lesson.entity';
     SubmissionModule,
     ProgressModule,
     LessonsModule,
+    ChapterModule,
 
     // Các module quản trị
     AdminCoursesModule,

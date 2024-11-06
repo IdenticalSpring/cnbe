@@ -1,6 +1,6 @@
 import { Column, Model, Table, DataType, HasMany, BelongsToMany } from 'sequelize-typescript';
 import { CourseIntroductions } from 'src/models/course_introductions/entities/course_introduction.entity';
-import { Lessons } from 'src/models/course_lesson/entities/course_lesson.entity';
+import { Chapter } from 'src/models/chapter/entities/chapter.entity';
 import { Types } from 'src/models/type/entities/types.entity';
 import { CourseTypes } from 'src/models/typeCourse/course_types.entity';
 
@@ -36,14 +36,14 @@ export class Courses extends Model<Courses> {
     allowNull: false,
     defaultValue: 0.00,
   })
-  price: number;  
+  price: number;
 
   @Column({
     type: DataType.ENUM('active', 'inactive', 'draft'),
     allowNull: false,
     defaultValue: 'draft',
   })
-  status: string; 
+  status: string;
 
   @Column({
     type: DataType.DATE,
@@ -60,9 +60,9 @@ export class Courses extends Model<Courses> {
   @HasMany(() => CourseIntroductions)
   courseIntroductions: CourseIntroductions[];
 
+  @HasMany(() => Chapter)
+  chapters: Chapter[];
+
   @BelongsToMany(() => Types, () => CourseTypes)
   types: Types[];
-
-  @HasMany(() => Lessons)
-  lessons: Lessons[];
 }
