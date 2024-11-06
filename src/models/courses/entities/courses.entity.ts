@@ -1,5 +1,6 @@
 import { Column, Model, Table, DataType, HasMany, BelongsToMany } from 'sequelize-typescript';
 import { CourseIntroductions } from 'src/models/course_introductions/entities/course_introduction.entity';
+import { Lessons } from 'src/models/course_lesson/entities/course_lesson.entity';
 import { Types } from 'src/models/type/entities/types.entity';
 import { CourseTypes } from 'src/models/typeCourse/course_types.entity';
 
@@ -61,4 +62,7 @@ export class Courses extends Model<Courses> {
 
   @BelongsToMany(() => Types, () => CourseTypes)
   types: Types[];
+
+  @HasMany(() => Lessons)
+  lessons: Lessons[];
 }

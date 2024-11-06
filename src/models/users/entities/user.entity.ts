@@ -1,4 +1,5 @@
 import { Column, Model, Table, DataType, HasMany } from 'sequelize-typescript';
+import { Progress } from 'src/models/progress/entities/progress.entity';
 import { Submission } from 'src/models/submission/entities/submission.model';
 
 @Table
@@ -75,4 +76,8 @@ export class User extends Model<User> {
     defaultValue: DataType.NOW,
   })
   updatedAt: Date;
+  @HasMany(() => Progress)
+  progresses: Progress[];
+
 }
+

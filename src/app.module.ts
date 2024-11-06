@@ -74,6 +74,10 @@ import { ProblemCompanies } from './models/problems_companies/entities/problems_
 import { Companies } from './models/companies/entities/companies.entities';
 import { Types } from './models/type/entities/types.entity';
 import { CourseTypes } from './models/typeCourse/course_types.entity';
+import { ProgressModule } from './models/progress/progress.module';
+import { LessonsModule } from './models/course_lesson/course_lesson.module';
+import { Progress } from './models/progress/entities/progress.entity';
+import { Lessons } from './models/course_lesson/entities/course_lesson.entity';
 
 @Module({
   imports: [
@@ -110,6 +114,8 @@ import { CourseTypes } from './models/typeCourse/course_types.entity';
           Companies,
           Types,
           CourseTypes,
+          Progress,
+          Lessons,
         ],
         autoLoadModels: true,
         synchronize: true,
@@ -162,6 +168,8 @@ import { CourseTypes } from './models/typeCourse/course_types.entity';
     ProblemCompaniesModule,
     CompaniesModule,
     SubmissionModule,
+    ProgressModule,
+    LessonsModule,
 
     // Các module quản trị
     AdminCoursesModule,

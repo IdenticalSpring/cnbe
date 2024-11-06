@@ -48,4 +48,6 @@ export class CourseIntroductions extends Model<CourseIntroductions> {
 
     @BelongsTo(() => IntroductionDetails)
     introductionDetail: IntroductionDetails;
+
+    
 }

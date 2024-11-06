@@ -18,7 +18,7 @@ import { Courses } from '../../courses/entities/courses.entity';
   timestamps: true, 
 })
 @Table
-export class Enrollments extends Model<Enrollments> {
+export class Enrollment extends Model<Enrollment> {
   @Column({
     type: DataType.INTEGER,
     autoIncrement: true,
