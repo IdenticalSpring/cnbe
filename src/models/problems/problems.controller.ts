@@ -11,6 +11,7 @@ import {
 import {
   ApiBearerAuth,
   ApiOperation,
+  ApiQuery,
   ApiResponse,
   ApiTags,
 } from '@nestjs/swagger';
@@ -91,16 +92,19 @@ export class ProblemsController {
   deleteProblem(@Param('id') id: string): Promise<void> {
     return this.problemsService.remove(+id);
   }
-  @Get('search-by-difficulty')
-  @ApiOperation({ summary: 'Search problems by difficulty' })
+  @Get('search-by-difficulty-and-topic')
+  @ApiOperation({ summary: 'Search problems by difficulty and/or topic' })
+  @ApiQuery({ name: 'difficultyId', required: false, type: Number, description: 'Difficulty ID of the problem' })
+  @ApiQuery({ name: 'topicId', required: false, type: Number, description: 'Topic ID of the problem' })
   @ApiResponse({
     status: 200,
-    description: 'Successfully retrieved problems by difficulty.',
+    description: 'Successfully retrieved problems by difficulty and/or topic.',
   })
-  searchByDifficulty(
-    @Query('difficultyId') difficultyId: number,
-  ): Promise<{ data: Problems[] }> {
-    return this.problemsService.findByDifficulty(difficultyId);
+  searchByDifficultyAndTopic(
+    @Query('difficultyId') difficultyId?: number,
+    @Query('topicId') topicId?: number,
+  ): Promise<{ data: Problems[]; totalItems: number }> {
+    return this.problemsService.findByDifficultyAndTopic(difficultyId, topicId);
   }
   @Get('search-by-title')
   @ApiOperation({ summary: 'Search problems by title' })
@@ -110,5 +114,18 @@ export class ProblemsController {
   })
   searchByTitle(@Query('title') title: string): Promise<{ data: Problems[] }> {
     return this.problemsService.findByTitle(title);
+  }
+  
+
+  @Get('search-by-company')
+  @ApiOperation({ summary: 'Search problems by company' })
+  @ApiResponse({
+    status: 200,
+    description: 'Successfully retrieved problems by company.',
+  })
+  searchByCompany(
+    @Query('companyId') companyId: number,
+  ): Promise<{ data: Problems[]; totalItems: number }> {
+    return this.problemsService.findByCompany(companyId);
   }
 }

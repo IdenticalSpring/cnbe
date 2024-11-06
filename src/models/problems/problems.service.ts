@@ -9,6 +9,8 @@ import { Problems } from './entitites/problems.entity';
 import { CreateProblemsDto } from './dto/create-problems.dto';
 import { UpdateProblemsDto } from './dto/update-problems.dto';
 import { ConfigService } from '@nestjs/config';
+import { Companies } from '../companies/entities/companies.entities';
+import { Topics } from '../topics/entities/topics.entities';
 
 @Injectable()
 export class PromblemsService {
@@ -101,5 +103,55 @@ export class PromblemsService {
       totalItems: count,
     };
   }
+  async findByTopic(topicId: number): Promise<{ data: Problems[]; totalItems: number }> {
+    const { rows, count } = await this.problemsModel.findAndCountAll({
+      include: [{
+        model: Topics,
+        where: { id: topicId },
+      }],
+    });
 
+    return {
+      data: rows,
+      totalItems: count,
+    };
+  }
+
+  async findByCompany(companyId: number): Promise<{ data: Problems[]; totalItems: number }> {
+    const { rows, count } = await this.problemsModel.findAndCountAll({
+      include: [{
+        model: Companies,
+        where: { id: companyId },
+      }],
+    });
+
+    return {
+      data: rows,
+      totalItems: count,
+    };
+  }
+  async findByDifficultyAndTopic(difficultyId?: number, topicId?: number): Promise<{ data: Problems[]; totalItems: number }> {
+    const conditions: any = {};
+    if (difficultyId) {
+      conditions.difficultyId = difficultyId;
+    }
+
+    const include: any[] = [];
+    if (topicId) {
+      include.push({
+        model: Topics,
+        where: { id: topicId },
+      });
+    }
+
+    const { rows, count } = await this.problemsModel.findAndCountAll({
+      where: conditions,
+      include,
+    });
+
+    return {
+      data: rows,
+      totalItems: count,
+    };
+  }
 }
