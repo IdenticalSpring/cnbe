@@ -7,7 +7,6 @@ import { MailerModule } from '@nestjs-modules/mailer';
 import { APP_GUARD, APP_INTERCEPTOR } from '@nestjs/core';
 import { HandlebarsAdapter } from '@nestjs-modules/mailer/dist/adapters/handlebars.adapter';
 
-
 // Import các controller và service
 import { AppController } from './app.controller';
 import { AppService } from './app.service';
@@ -74,6 +73,24 @@ import { ProblemCompanies } from './models/problems_companies/entities/problems_
 import { Companies } from './models/companies/entities/companies.entities';
 import { Types } from './models/type/entities/types.entity';
 import { CourseTypes } from './models/typeCourse/course_types.entity';
+import { Discussions } from './models/discussion/entities/discussion.entity';
+import { DiscussModule } from './models/discussion/discussion.module';
+import { Tag } from './models/tags/entities/tags.entity';
+import { TagModule } from './models/tags/tags.module';
+import { TagDiscussion } from './models/tag_discussion/entities/tag_discussion.entity';
+import { TagDiscussionModule } from './models/tag_discussion/tag_discussion.module';
+import { Comments } from './models/comments/entities/comments.entity';
+import { CommentModule } from './models/comments/comments.module';
+import { UserComments } from './models/comments_user/entities/commets_user.entity';
+import { UserCommentsModule } from './models/comments_user/comments_user.module';
+import { DiscussionComment } from './models/comments_discussion/entities/comments_discussion.entity';
+import { DiscussionCommentModule } from './models/comments_discussion/comments_discussion.module';
+import { UserDiscussion } from './models/user_discussion/entities/user_discussion.entity';
+import { UserDiscussionModule } from './models/user_discussion/user_discussion.module';
+import { Category } from './models/categories/entities/categories.entity';
+import { CategoryModule } from './models/categories/categories.module';
+import { CategoryDiscussion } from './models/categories_discussion/entities/categories_discussion';
+import { CategoryDiscussionModule } from './models/categories_discussion/categories_discussion.module';
 
 @Module({
   imports: [
@@ -96,6 +113,15 @@ import { CourseTypes } from './models/typeCourse/course_types.entity';
           Courses,
           Problems,
           Process,
+          Discussions,
+          Tag,
+          TagDiscussion,
+          Comments,
+          UserComments,
+          DiscussionComment,
+          UserDiscussion,
+          Category,
+          CategoryDiscussion,
           Enrollment,
           Orders,
           Coupons,
@@ -113,6 +139,7 @@ import { CourseTypes } from './models/typeCourse/course_types.entity';
         ],
         autoLoadModels: true,
         synchronize: true,
+        // alter: true,
       }),
       inject: [ConfigService],
     }),
@@ -151,6 +178,15 @@ import { CourseTypes } from './models/typeCourse/course_types.entity';
     TopicsModule,
     ProblemTopicsModule,
     CoursesModule,
+    DiscussModule,
+    TagModule,
+    TagDiscussionModule,
+    CommentModule,
+    UserCommentsModule,
+    UserDiscussionModule,
+    CategoryModule,
+    CategoryDiscussionModule,
+    DiscussionCommentModule,
     ProblemsModule,
     AcceptanceSubmissionsModule,
     ProcessModule,
@@ -195,4 +231,4 @@ import { CourseTypes } from './models/typeCourse/course_types.entity';
     },
   ],
 })
-export class AppModule { }
+export class AppModule {}
