@@ -4,6 +4,7 @@ import { User } from 'src/models/users/entities/user.entity';
 
 @Table({
   tableName: 'UserDiscussions', // Tên bảng trung gian
+  timestamps: false, // Không dùng đặt timestamp cho bảng
 })
 export class UserDiscussion extends Model<UserDiscussion> {
   @ForeignKey(() => User)
