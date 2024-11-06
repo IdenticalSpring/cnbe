@@ -1,5 +1,6 @@
 import { Column, Model, Table, DataType, HasMany, BelongsToMany } from 'sequelize-typescript';
 import { CourseIntroductions } from 'src/models/course_introductions/entities/course_introduction.entity';
+import { Chapter } from 'src/models/chapter/entities/chapter.entity';
 import { Types } from 'src/models/type/entities/types.entity';
 import { CourseTypes } from 'src/models/typeCourse/course_types.entity';
 
@@ -31,6 +32,20 @@ export class Courses extends Model<Courses> {
   imageUrl: string;
 
   @Column({
+    type: DataType.DECIMAL(10, 2),
+    allowNull: false,
+    defaultValue: 0.00,
+  })
+  price: number;
+
+  @Column({
+    type: DataType.ENUM('active', 'inactive', 'draft'),
+    allowNull: false,
+    defaultValue: 'draft',
+  })
+  status: string;
+
+  @Column({
     type: DataType.DATE,
     defaultValue: DataType.NOW,
   })
@@ -44,6 +59,9 @@ export class Courses extends Model<Courses> {
 
   @HasMany(() => CourseIntroductions)
   courseIntroductions: CourseIntroductions[];
+
+  @HasMany(() => Chapter)
+  chapters: Chapter[];
 
   @BelongsToMany(() => Types, () => CourseTypes)
   types: Types[];

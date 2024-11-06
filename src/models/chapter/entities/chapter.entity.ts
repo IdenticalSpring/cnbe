@@ -1,9 +1,9 @@
-import { Column, Model, Table, DataType, ForeignKey, BelongsTo } from 'sequelize-typescript';
-import { Courses } from 'src/models/courses/entities/courses.entity';
-import { IntroductionDetails } from 'src/models/introduction_details/entities/introduction_detail.entity';
+import { Column, Model, Table, DataType, ForeignKey, BelongsTo, HasMany } from 'sequelize-typescript';
+import { Courses } from "src/models/courses/entities/courses.entity";
+import { Lessons } from "src/models/course_lesson/entities/course_lesson.entity";
 
 @Table
-export class CourseIntroductions extends Model<CourseIntroductions> {
+export class Chapter extends Model<Chapter> {
     @Column({
         type: DataType.INTEGER,
         autoIncrement: true,
@@ -18,18 +18,27 @@ export class CourseIntroductions extends Model<CourseIntroductions> {
     })
     courseId: number;
 
-    @ForeignKey(() => IntroductionDetails)
+    @BelongsTo(() => Courses)
+    course: Courses;
+
     @Column({
-        type: DataType.INTEGER,
+        type: DataType.STRING(255),
         allowNull: false,
     })
-    introductionDetailId: number;
+    title: string;
 
     @Column({
         type: DataType.TEXT,
         allowNull: true,
     })
     description: string;
+
+    @Column({
+        type: DataType.INTEGER,
+        allowNull: false,
+        defaultValue: 0,
+    })
+    order: number;
 
     @Column({
         type: DataType.DATE,
@@ -43,11 +52,6 @@ export class CourseIntroductions extends Model<CourseIntroductions> {
     })
     updatedAt: Date;
 
-    @BelongsTo(() => Courses)
-    course: Courses;
-
-    @BelongsTo(() => IntroductionDetails)
-    introductionDetail: IntroductionDetails;
-
-    
+    @HasMany(() => Lessons)
+    lessons: Lessons[];
 }

@@ -15,47 +15,40 @@ import { Courses } from '../../courses/entities/courses.entity';
 
 @Table({
   tableName: 'enrollments',
-  timestamps: true, // Sequelize will automatically manage `createdAt` and `updatedAt`
+  timestamps: true, 
 })
+@Table
 export class Enrollment extends Model<Enrollment> {
-  @PrimaryKey
-  @AutoIncrement
   @Column({
     type: DataType.INTEGER,
+    autoIncrement: true,
+    primaryKey: true,
   })
-  id!: number;
+  id: number;
 
   @ForeignKey(() => User)
   @Column({
     type: DataType.INTEGER,
     allowNull: false,
   })
-  userId!: number;
-
-  @BelongsTo(() => User)
-  user!: User;
+  userId: number;
 
   @ForeignKey(() => Courses)
   @Column({
     type: DataType.INTEGER,
     allowNull: false,
   })
-  courseId!: number;
+  courseId: number;
 
-  @BelongsTo(() => Courses)
-  course!: Courses;
-
-  @CreatedAt
   @Column({
     type: DataType.DATE,
-    field: 'createdAt',
+    defaultValue: DataType.NOW,
   })
-  createdAt!: Date;
+  enrolledAt: Date;
 
-  @UpdatedAt
   @Column({
-    type: DataType.DATE,
-    field: 'updatedAt',
+    type: DataType.BOOLEAN,
+    defaultValue: false,
   })
-  updatedAt!: Date;
+  completed: boolean;
 }

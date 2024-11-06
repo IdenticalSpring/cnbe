@@ -1,3 +1,6 @@
+
+import { Column, Model, Table, DataType, HasMany } from 'sequelize-typescript';
+import { Progress } from 'src/models/progress/entities/progress.entity';
 import {
   Column,
   Model,
@@ -20,17 +23,20 @@ export class User extends Model<User> {
     primaryKey: true,
   })
   id: number;
+
   @Column({
     type: DataType.STRING,
     allowNull: true,
   })
   name: string;
+
   @Column({
     type: DataType.STRING,
     allowNull: false,
     unique: true,
   })
   username: string;
+
   @Column({
     type: DataType.STRING,
     allowNull: false,
@@ -43,11 +49,13 @@ export class User extends Model<User> {
     allowNull: true,
   })
   password: string;
+
   @Column({
     type: DataType.STRING,
     allowNull: true,
   })
   codeId: string;
+
   @Column({
     type: DataType.DATE,
     allowNull: true,
@@ -60,13 +68,14 @@ export class User extends Model<User> {
     defaultValue: false,
   })
   isActive: boolean;
+
   @Column({
     type: DataType.ENUM('user', 'admin'),
     defaultValue: 'user',
   })
   role: string;
 
-  @HasMany(() => Submission) // Thêm quan hệ 1-nhiều
+  @HasMany(() => Submission)
   submissions: Submission[];
 
   @BelongsToMany(() => Comments, () => UserComments)
@@ -86,4 +95,8 @@ export class User extends Model<User> {
     defaultValue: DataType.NOW,
   })
   updatedAt: Date;
+  @HasMany(() => Progress)
+  progresses: Progress[];
+
 }
+

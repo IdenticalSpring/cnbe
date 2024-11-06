@@ -73,6 +73,12 @@ import { ProblemCompanies } from './models/problems_companies/entities/problems_
 import { Companies } from './models/companies/entities/companies.entities';
 import { Types } from './models/type/entities/types.entity';
 import { CourseTypes } from './models/typeCourse/course_types.entity';
+import { ProgressModule } from './models/progress/progress.module';
+import { LessonsModule } from './models/course_lesson/course_lesson.module';
+import { Progress } from './models/progress/entities/progress.entity';
+import { Lessons } from './models/course_lesson/entities/course_lesson.entity';
+import { ChapterModule } from './models/chapter/chapter.module';
+import { Chapter } from './models/chapter/entities/chapter.entity';
 import { Discussions } from './models/discussion/entities/discussion.entity';
 import { DiscussModule } from './models/discussion/discussion.module';
 import { Tag } from './models/tags/entities/tags.entity';
@@ -91,6 +97,7 @@ import { Category } from './models/categories/entities/categories.entity';
 import { CategoryModule } from './models/categories/categories.module';
 import { CategoryDiscussion } from './models/categories_discussion/entities/categories_discussion';
 import { CategoryDiscussionModule } from './models/categories_discussion/categories_discussion.module';
+
 
 @Module({
   imports: [
@@ -136,6 +143,9 @@ import { CategoryDiscussionModule } from './models/categories_discussion/categor
           Companies,
           Types,
           CourseTypes,
+          Progress,
+          Lessons,
+          Chapter,
         ],
         autoLoadModels: true,
         synchronize: true,
@@ -198,6 +208,9 @@ import { CategoryDiscussionModule } from './models/categories_discussion/categor
     ProblemCompaniesModule,
     CompaniesModule,
     SubmissionModule,
+    ProgressModule,
+    LessonsModule,
+    ChapterModule,
 
     // Các module quản trị
     AdminCoursesModule,
