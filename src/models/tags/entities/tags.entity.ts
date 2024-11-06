@@ -3,6 +3,7 @@ import { TagDiscussion } from 'src/models/tag_discussion/entities/tag_discussion
 
 @Table({
   tableName: 'tags',
+  timestamps: false,
 })
 export class Tag extends Model<Tag> {
   @Column({

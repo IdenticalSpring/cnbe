@@ -11,6 +11,7 @@ import { Discussions } from 'src/models/discussion/entities/discussion.entity';
 
 @Table({
   tableName: 'CategoryDiscussion',
+  timestamps: false,
 })
 export class CategoryDiscussion extends Model<CategoryDiscussion> {
   @PrimaryKey

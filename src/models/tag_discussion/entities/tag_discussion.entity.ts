@@ -10,6 +10,7 @@ import { Tag } from 'src/models/tags/entities/tags.entity';
 
 @Table({
   tableName: 'tag_discussion',
+  timestamps: false,
 })
 export class TagDiscussion extends Model<TagDiscussion> {
   @ForeignKey(() => Tag)
