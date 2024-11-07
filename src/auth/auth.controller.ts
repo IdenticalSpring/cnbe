@@ -126,14 +126,26 @@ export class AuthController {
   @UseGuards(AuthGuard('github'))
   @Public()
   @ApiExcludeEndpoint()
-  async githubLoginCallback(@Req() req, @Res({ passthrough: true }) res) {
-    const user = req.user;
-    const { access_token } = await this.authService.login(user);
-    res.cookie('jwt', access_token, {
-      httpOnly: true,
-      secure: process.env.NODE_ENV !== 'development',
-    });
-    return { message: 'Logged in successfully', access_token };
+  async githubLoginCallback(@Req() req, @Res() res) {
+    try {
+      // Validate or create the user using GitHub data
+      const user = await this.authService.validateOAuthLoginGithub(req.user);
+
+      // Generate login credentials (access token)
+      const loginResult = await this.authService.login(user);
+
+      // Define FE redirect URL (change this to your actual FE URL)
+      const frontendUrl = process.env.FRONTEND_URL || 'http://localhost:3000';
+
+      // Redirect user to FE with access token in query params
+      return res.redirect(
+        `${frontendUrl}/auth/callback?access_token=${loginResult.access_token}`
+      );
+
+    } catch (error) {
+      console.error('GitHub Auth Error:', error);
+      throw error;
+    }
   }
 
   @Get('google')
