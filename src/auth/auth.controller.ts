@@ -142,40 +142,29 @@ export class AuthController {
   async googleAuth(@Req() req) { }
 
   @Get('google/callback')
-  @ApiOperation({ summary: 'Google OAuth Callback' })
-  @ApiResponse({
-    status: 200,
-    description: 'Handles Google OAuth callback and logs user in.',
-  })
   @Public()
   @UseGuards(AuthGuard('google'))
   @ApiExcludeEndpoint()
-  async googleAuthRedirect(
-    @Req() req,
-    @Response({ passthrough: true }) res
-  ) {
+  async googleAuthRedirect(@Req() req, @Res() res) {
     try {
-      // First, validate/create the user
+      // Validate or create the user using Google data
       const user = await this.authService.validateGoogleUser(req.user);
 
-      // Then, generate login credentials
+      // Generate login credentials (access token)
       const loginResult = await this.authService.login(user);
 
-      // Set JWT in HTTP-only cookie
-      res.cookie('jwt', loginResult.access_token, {
-        httpOnly: true,
-        secure: process.env.NODE_ENV !== 'development',
-      });
+      // Define FE redirect URL (change this to your actual FE URL)
+      const frontendUrl = process.env.FRONTEND_URL || 'http://localhost:3000';
 
-      return {
-        message: 'Logged in successfully with Google',
-        access_token: loginResult.access_token,
-  
-      };
+      // Redirect user to FE with access token in query params
+      return res.redirect(
+        `${frontendUrl}/auth/callback?access_token=${loginResult.access_token}`
+      );
 
     } catch (error) {
       console.error('Google Auth Error:', error);
       throw error;
     }
   }
+
 }

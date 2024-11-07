@@ -13,6 +13,7 @@ import { CompaniesService } from './companies.service';
 import { CreateCompanyDto } from './dto/create-company.dto';
 import { Companies } from './entities/companies.entities';
 import { UpdateCompanyDto } from './dto/update-company.dto';
+import { Public } from 'src/decorator/public.decorator';
 
 @ApiTags('Companies')
 @Controller('companies')
@@ -41,7 +42,7 @@ export class CompaniesController {
       );
     }
   }
-
+  @Public()
   @Get()
   @ApiOperation({ summary: 'Get all companies' })
   @ApiResponse({

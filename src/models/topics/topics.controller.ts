@@ -11,6 +11,7 @@ import {
 import { TopicsService } from './topics.service';
 import { CreateTopicDto } from './dto/create-topics.dto';
 import { ApiBearerAuth, ApiTags } from '@nestjs/swagger';
+import { Public } from 'src/decorator/public.decorator';
 
 @ApiTags('topics')
 @Controller('topics')
@@ -22,7 +23,7 @@ export class TopicsController {
   create(@Body() createTopicDto: CreateTopicDto) {
     return this.topicsService.create(createTopicDto);
   }
-
+  @Public()
   @Get()
   findAll() {
     return this.topicsService.findAll();
