@@ -10,6 +10,7 @@ import { ApiTags, ApiOperation, ApiResponse, ApiBearerAuth } from '@nestjs/swagg
 import { DifficultiesService } from './difficulties.service';
 import { Difficulty } from './entities/difficulties.entites';
 import { CreateDifficultyDto } from './dto/create-difficulties.dto';
+import { Public } from 'src/decorator/public.decorator';
 
 @ApiTags('Difficulties')
 @Controller('difficulties')
@@ -29,7 +30,7 @@ export class DifficultiesController {
   ): Promise<Difficulty> {
     return this.difficultiesService.create(createDifficultyDto);
   }
-
+@Public()
   @Get()
   @ApiOperation({ summary: 'Get all difficulties' })
   @ApiResponse({
