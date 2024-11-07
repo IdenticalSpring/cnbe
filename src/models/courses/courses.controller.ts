@@ -18,6 +18,7 @@ import { UpdateCourseDto } from './dto/update-course.dto';
 import { CloudinaryService } from '../cloudinary/cloudinary.service';
 import { FileInterceptor } from '@nestjs/platform-express';
 import { Public } from 'src/decorator/public.decorator';
+import { CourseWithCounts } from './dto/CourseWithCounts.dto';
 
 @Public()
 @ApiTags('courses')
@@ -69,9 +70,10 @@ export class CoursesController {
   async getByType(
     @Query('type') type: string,
     @Query('page') page: string = '1'
-  ): Promise<{ data: Courses[]; currentPage: number; totalPages: number; totalItems: number }> {
+  ): Promise<{ data: CourseWithCounts[]; currentPage: number; totalPages: number; totalItems: number }> {
     return this.coursesService.getByType(type, +page || 1);
   }
+
 
   @Get(':id')
   findOne(@Param('id') id: string) {

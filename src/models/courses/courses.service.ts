@@ -5,6 +5,10 @@ import { CreateCoursesDto } from './dto/create-course.dto';
 import { UpdateCourseDto } from './dto/update-course.dto';
 import { ConfigService } from '@nestjs/config';
 import { Types } from '../type/entities/types.entity';
+import { CourseWithCounts } from './dto/CourseWithCounts.dto';
+import { Chapter } from '../course_chapter/entities/chapter.entity';
+import { Lessons } from '../course_lesson/entities/course_lesson.entity';
+import { Op } from 'sequelize';
 
 @Injectable()
 export class CoursesService {
@@ -61,8 +65,8 @@ export class CoursesService {
     return course;
   }
 
-  async getByType(typeName: string, page: number = 1): Promise<{ data: Courses[]; currentPage: number; totalPages: number; totalItems: number }> {
-    const limit = this.defaultLimit;
+  async getByType(typeName: string, page: number = 1): Promise<{ data: CourseWithCounts[]; currentPage: number; totalPages: number; totalItems: number }> {
+    const limit = Number(this.defaultLimit); 
     const offset = (page - 1) * limit;
 
     const type = await this.typesModel.findOne({
@@ -74,12 +78,38 @@ export class CoursesService {
       throw new NotFoundException(`Type '${typeName}' not found`);
     }
 
-    const courses = type.courses.slice(offset, offset + limit);
-    const totalItems = type.courses.length;
+    const courseIds = type.courses.map((course) => course.id);
+    const courses = await this.coursesModel.findAll({
+      where: { id: { [Op.in]: courseIds } },
+      limit,
+      offset,
+      include: [
+        {
+          model: Chapter,
+          include: [Lessons],
+        },
+      ],
+    });
+
+    // Calculate chapter and lesson counts for each course
+    const data: CourseWithCounts[] = courses.map((course) => ({
+      id: course.id,
+      title: course.title,
+      description: course.description,
+      imageUrl: course.imageUrl,
+      price: course.price,
+      status: course.status,
+      createdAt: course.createdAt,
+      updatedAt: course.updatedAt,
+      chapterCount: course.chapters.length,
+      itemCount: course.chapters.reduce((sum, chapter) => sum + chapter.lessons.length, 0),
+    }));
+
+    const totalItems = courseIds.length;
     const totalPages = Math.ceil(totalItems / limit);
 
     return {
-      data: courses,
+      data,
       currentPage: page,
       totalPages,
       totalItems,
