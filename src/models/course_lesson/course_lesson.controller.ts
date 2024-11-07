@@ -53,4 +53,11 @@ export class LessonsController {
   remove(@Param('id') id: string) {
     return this.lessonsService.remove(+id);
   }
+  @Get('chapter/:chapterId')
+  @ApiOperation({ summary: 'Get all lessons for a specific chapter' })
+  @ApiParam({ name: 'chapterId', description: 'ID of the chapter' })
+  @ApiResponse({ status: 200, description: 'List of lessons for the chapter.' })
+  async findByChapter(@Param('chapterId') chapterId: string) {
+    return this.lessonsService.findByChapterId(+chapterId);
+  }
 }
