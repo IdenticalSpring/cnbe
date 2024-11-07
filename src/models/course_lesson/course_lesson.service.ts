@@ -40,4 +40,10 @@ export class LessonsService {
       await lesson.destroy();
     }
   }
+  async findByChapterId(chapterId: number): Promise<Lessons[]> {
+    return this.lessonsModel.findAll({
+      where: { chapterId },
+      order: [['order', 'ASC']], 
+    });
+  }
 }

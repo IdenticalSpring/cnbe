@@ -8,6 +8,9 @@ import { InjectModel } from '@nestjs/sequelize';
 import { CreateCompanyDto } from './dto/create-company.dto';
 import { Companies } from './entities/companies.entities';
 import { UpdateCompanyDto } from './dto/update-company.dto';
+import { Problems } from '../problems/entitites/problems.entity';
+import { ProblemCompanies } from '../problems_companies/entities/problems_companies.entits';
+import { Sequelize } from 'sequelize';
 
 @Injectable()
 export class CompaniesService {
@@ -55,5 +58,35 @@ export class CompaniesService {
 
     // Cập nhật các trường
     return company.update(updateCompaniesDto);
+  }
+  async findAllWithProblemCount(): Promise<any[]> {
+    try {
+      const companies = await this.companiesModel.findAll({
+        include: [
+          {
+            model: Problems,
+            attributes: [],
+            through: { attributes: [] },
+          }
+        ],
+        attributes: {
+          include: [
+            [
+              Sequelize.fn("COUNT", Sequelize.col("problems.id")),
+              "problemCount"
+            ]
+          ]
+        },
+        group: ['Companies.id']
+      });
+
+      return companies;
+    } catch (error) {
+      console.error("Error in findAllWithProblemCount:", error);
+      throw new HttpException(
+        'Failed to retrieve companies with problem count',
+        HttpStatus.INTERNAL_SERVER_ERROR,
+      );
+    }
   }
 }

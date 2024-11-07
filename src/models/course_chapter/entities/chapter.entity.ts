@@ -1,6 +1,6 @@
 import { Column, Model, Table, DataType, ForeignKey, BelongsTo, HasMany } from 'sequelize-typescript';
-import { Lessons } from 'src/models/course_lesson/entities/course_lesson.entity';
-import { Courses } from 'src/models/courses/entities/courses.entity';
+import { Courses } from "src/models/courses/entities/courses.entity";
+import { Lessons } from "src/models/course_lesson/entities/course_lesson.entity";
 
 @Table
 export class Chapter extends Model<Chapter> {

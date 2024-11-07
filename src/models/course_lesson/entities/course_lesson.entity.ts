@@ -1,5 +1,5 @@
 import { Column, Model, Table, DataType, ForeignKey, HasMany, BelongsTo } from 'sequelize-typescript';
-import { Chapter } from "src/models/chapter/entities/chapter.entity";
+import { Chapter } from "src/models/course_chapter/entities/chapter.entity";
 import { Progress } from 'src/models/progress/entities/progress.entity';
 
 @Table

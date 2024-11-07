@@ -1,6 +1,6 @@
 import { Column, Model, Table, DataType, HasMany, BelongsToMany } from 'sequelize-typescript';
 import { CourseIntroductions } from 'src/models/course_introductions/entities/course_introduction.entity';
-import { Chapter } from 'src/models/chapter/entities/chapter.entity';
+import { Chapter } from 'src/models/course_chapter/entities/chapter.entity';
 import { Types } from 'src/models/type/entities/types.entity';
 import { CourseTypes } from 'src/models/typeCourse/course_types.entity';
 

@@ -1,10 +1,9 @@
 import { Controller, Get, Post, Body, Patch, Param, Delete } from '@nestjs/common';
-import { ApiBearerAuth, ApiBody, ApiOperation, ApiParam, ApiResponse, ApiTags } from '@nestjs/swagger';
+import { ChapterService } from './chapter.service';
+import { UpdateChapterDto } from './dto/update-chapter.dto';
+import { CreateChapterDto } from './dto/create-chapter.dto';
+import { ApiTags, ApiOperation, ApiResponse, ApiParam, ApiBody, ApiBearerAuth } from '@nestjs/swagger';
 import { Public } from 'src/decorator/public.decorator';
-import { CreateChapterDto } from '../course_chapter/dto/create-chapter.dto';
-import { ChapterService } from '../course_chapter/chapter.service';
-import { UpdateChapterDto } from '../course_chapter/dto/update-chapter.dto';
-
 
 @ApiTags('chapters')
 @Controller('chapters')

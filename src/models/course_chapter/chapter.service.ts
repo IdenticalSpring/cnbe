@@ -1,10 +1,9 @@
 import { Injectable, NotFoundException } from '@nestjs/common';
 import { InjectModel } from '@nestjs/sequelize';
-import { CreateChapterDto } from '../course_chapter/dto/create-chapter.dto';
-import { Chapter } from '../course_chapter/entities/chapter.entity';
+import { Chapter } from './entities/chapter.entity';
+import { CreateChapterDto } from './dto/create-chapter.dto';
+import { UpdateChapterDto } from './dto/update-chapter.dto';
 import { Lessons } from '../course_lesson/entities/course_lesson.entity';
-import { UpdateChapterDto } from '../course_chapter/dto/update-chapter.dto';
-
 
 
 @Injectable()
