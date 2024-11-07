@@ -70,4 +70,18 @@ export class CompaniesController {
   ): Promise<Companies> {
     return this.companiesService.update(id, updateCompaniesDto);
   }
+  @Public()
+  @Get('with-problem-count')
+  @ApiOperation({ summary: 'Get all companies with problem count' })
+  @ApiResponse({
+    status: HttpStatus.OK,
+    description: 'List of companies with the count of related problems retrieved successfully.',
+  })
+  @ApiResponse({
+    status: HttpStatus.NOT_FOUND,
+    description: 'No companies found.',
+  })
+  async findAllWithProblemCount(): Promise<any[]> {
+    return await this.companiesService.findAllWithProblemCount();
+  }
 }

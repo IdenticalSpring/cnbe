@@ -5,7 +5,10 @@ import {
   DataType,
   PrimaryKey,
   AutoIncrement,
+  BelongsToMany,
 } from 'sequelize-typescript';
+import { Problems } from 'src/models/problems/entitites/problems.entity';
+import { ProblemCompanies } from 'src/models/problems_companies/entities/problems_companies.entits';
 
 @Table({
   tableName: 'companies',
@@ -24,4 +27,7 @@ export class Companies extends Model<Companies> {
     allowNull: false,
   })
   name!: string;
+
+  @BelongsToMany(() => Problems, () => ProblemCompanies)
+  problems!: Problems[];
 }
