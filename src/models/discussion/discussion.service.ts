@@ -3,15 +3,20 @@ import { InjectModel } from '@nestjs/sequelize';
 import { Discussions } from './entities/discussion.entity';
 import { CreateDiscussDto } from './dto/create-discussion.dto';
 import { UserDiscussion } from '../user_discussion/entities/user_discussion.entity';
+import { ConfigService } from '@nestjs/config';
 
 @Injectable()
 export class DiscussService {
+  private readonly defaultLimit: number;
   constructor(
     @InjectModel(Discussions)
     private readonly discussModel: typeof Discussions,
     @InjectModel(UserDiscussion)
     private readonly userDiscussionModel: typeof UserDiscussion,
-  ) {}
+    private configService: ConfigService,
+  ) {
+    this.defaultLimit = this.configService.get<number>('DEFAULT_LIMIT') || 20;
+  }
 
   async create(data: CreateDiscussDto): Promise<Discussions> {
     // Tạo thảo luận mới
@@ -56,5 +61,27 @@ export class DiscussService {
     if (discuss) {
       await discuss.destroy();
     }
+  }
+  async findAllPagination(page: number): Promise<{
+    data: Discussions[];
+    currentPage: number;
+    totalPages: number;
+    totalItems: number;
+  }> {
+    const limit = parseInt(this.defaultLimit.toString(), 10);
+    const offset = (page - 1) * limit;
+
+    const { rows, count } = await this.discussModel.findAndCountAll({
+      offset,
+      limit,
+      order: [['createdAt', 'DESC']], 
+    });
+
+    return {
+      data: rows,
+      currentPage: page,
+      totalPages: Math.ceil(count / limit),
+      totalItems: count,
+    };
   }
 }
