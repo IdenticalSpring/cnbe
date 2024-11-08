@@ -97,6 +97,7 @@ import { Category } from './models/categories/entities/categories.entity';
 import { CategoryModule } from './models/categories/categories.module';
 import { CategoryDiscussion } from './models/categories_discussion/entities/categories_discussion';
 import { CategoryDiscussionModule } from './models/categories_discussion/categories_discussion.module';
+import { PayOSModule } from './models/payos/payos.module';
 
 
 @Module({
@@ -211,6 +212,7 @@ import { CategoryDiscussionModule } from './models/categories_discussion/categor
     ProgressModule,
     LessonsModule,
     ChapterModule,
+    PayOSModule,
 
     // Các module quản trị
     AdminCoursesModule,
