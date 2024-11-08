@@ -7,15 +7,19 @@ import {
   Param,
   Body,
   Patch,
+  Query,
 } from '@nestjs/common';
 import { DiscussService } from './discussion.service';
 import { CreateDiscussDto } from './dto/create-discussion.dto';
 import { Discussions } from './entities/discussion.entity';
-import { ApiBearerAuth, ApiOperation, ApiTags } from '@nestjs/swagger';
-
+import { ApiBearerAuth, ApiOperation, ApiQuery, ApiTags } from '@nestjs/swagger';
+import { Public } from 'src/decorator/public.decorator';
 @ApiTags('discuss')
 @Controller('discuss')
-@ApiBearerAuth('JWT')
+@ApiBearerAuth('JWT') 
+@Public()
+
+
 export class DiscussController {
   constructor(private readonly discussService: DiscussService) {}
 
@@ -26,16 +30,29 @@ export class DiscussController {
     return this.discussService.create(createDiscussDto);
   }
 
-  @Get()
+  @Get(`getAll`)
   async findAll(): Promise<Discussions[]> {
     return this.discussService.findAll();
   }
 
-  @Get(':id')
+  @Get('getOne:id')
   async findOne(@Param('id') id: number): Promise<Discussions> {
     return this.discussService.findOne(id);
   }
 
+  @Get(`getpaginated`)
+ 
+  @ApiQuery({ name: 'page', required: false, type: Number, description: 'Page number' })
+  async findAllPagination(
+    @Query('page') page: number = 1,
+  ): Promise<{
+    data: Discussions[];
+    currentPage: number;
+    totalPages: number;
+    totalItems: number;
+  }> {
+    return this.discussService.findAllPagination(page);
+  }
   @ApiOperation({ summary: 'Click Button Vote' })
   @Patch(':id/upvote')
   async upvote(@Param('id') id: number) {
