@@ -23,13 +23,13 @@ export class CreateProblemsDto {
   @IsOptional()
   @IsNumber()
   @Min(0, { message: 'Like count cannot be negative' })
-  like: number;
+  likes: number;
 
   @ApiProperty({ description: 'The number of dislikes', default: 0 })
   @IsOptional()
   @IsNumber()
   @Min(0, { message: 'Dislike count cannot be negative' })
-  dislike: number;
+  dislikes: number;
 
   @ApiProperty({ description: 'The rating of the Problem', default: 0 })
   @IsOptional()
@@ -44,5 +44,5 @@ export class CreateProblemsDto {
   @IsOptional()
   @IsNumber()
   @Min(0, { message: 'Acceptance rate cannot be negative' })
-  acceptanceRate: number;
+  acceptance_rate: number;
 }
