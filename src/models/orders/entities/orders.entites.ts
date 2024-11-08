@@ -53,7 +53,7 @@ export class Orders extends Model<Orders> {
   @ForeignKey(() => Coupons)
   @Column({
     type: DataType.INTEGER,
-    allowNull: false,
+    allowNull: true,
   })
   discountId!: number;
 
