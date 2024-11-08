@@ -27,6 +27,7 @@ export class PayOSService {
             const paymentLinkResponse = await this.payOSClient.createPaymentLink(orderData);
             return paymentLinkResponse.checkoutUrl; 
         } catch (error) {
+            console.error('Error creating payment link:', error.response ? error.response.data : error.message);
             throw new Error('Error creating payment link');
         }
     }

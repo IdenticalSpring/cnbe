@@ -6,6 +6,7 @@ import { Orders } from './entities/orders.entites';
 import { CouponsService } from '../coupons/coupons.service';
 import { CoursesModule } from '../courses/courses.module';
 import { CoursesService } from '../courses/courses.service';
+import { PayOSService } from '../payos/payos.service';
 
 @Injectable()
 export class OrdersService {
@@ -14,6 +15,7 @@ export class OrdersService {
     private orderModel: typeof Orders,
     private couponsService: CouponsService,
     private coursesService: CoursesService,
+    private payOSService: PayOSService,
   ) {}
 
   async findAll(): Promise<Orders[]> {
@@ -61,11 +63,34 @@ export class OrdersService {
     // Tính tổng số tiền sau khi áp dụng giảm giá (nếu có)
     const totalAmount = coursePrice - (coursePrice * discountAmount) / 100;
 
-    // Tạo đơn hàng với giá cuối cùng
-    return this.orderModel.create({
+    // Tạo đơn hàng ban đầu mà không có URL thanh toán
+    const order = await this.orderModel.create({
       ...createOrderDto,
       price: totalAmount,
     });
+
+    // Tạo link thanh toán với PayOS
+    const checkoutUrl = await this.payOSService.createPaymentLink({
+      orderCode: order.id,
+      amount: totalAmount,
+      description: `Đơn hàng ${order.id}`,
+      returnUrl: `${process.env.BACKEND_URL}/api/v1/payos/success`,
+      cancelUrl: `${process.env.BACKEND_URL}/api/v1/payos/cancel`,
+      items: [
+        {
+          name: `Khóa học ${course.title}`,
+          quantity: 1,
+          price: totalAmount,
+        },
+      ],
+    });
+
+    // Lưu URL thanh toán vào đơn hàng
+    order.checkoutUrl = checkoutUrl;
+    await order.save();
+
+    // Trả về đơn hàng với URL thanh toán
+    return order;
   }
 
 
@@ -101,5 +126,14 @@ export class OrdersService {
   async remove(id: number): Promise<void> {
     const order = await this.findOne(id);
     await order.destroy();
+  }
+  async findOrderByUserAndCourse(userId: number, courseId: number) {
+    return this.orderModel.findOne({
+      where: {
+        userId,
+        courseId,
+        paymentStatus: 'completed', 
+      },
+    });
   }
 }

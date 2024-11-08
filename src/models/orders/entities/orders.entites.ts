@@ -67,10 +67,11 @@ export class Orders extends Model<Orders> {
   paymentMethod: string;
 
   @Column({
-    type: DataType.ENUM('pending', 'in-progress', 'completed'),
+    type: DataType.ENUM('pending', 'in-progress', 'completed', 'cancelled'),
     allowNull: false,
   })
   paymentStatus: string;
+
 
   @Column({
     type: DataType.DATE,
@@ -89,4 +90,10 @@ export class Orders extends Model<Orders> {
     allowNull: true,
   })
   updatedAt: Date;
+  @Column({
+    type: DataType.STRING,
+    allowNull: true,
+  })
+  checkoutUrl: string;
+
 }

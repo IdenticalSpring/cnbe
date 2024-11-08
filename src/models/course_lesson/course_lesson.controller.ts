@@ -1,14 +1,15 @@
-import { Controller, Get, Post, Body, Param, Put, Delete } from '@nestjs/common';
+import { Controller, Get, Post, Body, Param, Put, Delete, UseGuards } from '@nestjs/common';
 import { LessonsService } from './course_lesson.service';
 
-import { ApiTags, ApiOperation, ApiResponse, ApiParam } from '@nestjs/swagger';
+import { ApiTags, ApiOperation, ApiResponse, ApiParam, ApiBearerAuth } from '@nestjs/swagger';
 import { CreateCourseLessonDto } from './dto/create-course_lesson.dto';
 import { UpdateCourseLessonDto } from './dto/update-course_lesson.dto';
 import { Public } from 'src/decorator/public.decorator';
+import { CourseAccessGuard } from 'src/guard/course-access.guard';
 
 @ApiTags('lessons')
 @Controller('lessons')
-@Public()
+@ApiBearerAuth('JWT')
 export class LessonsController {
   constructor(private readonly lessonsService: LessonsService) { }
 
@@ -27,12 +28,14 @@ export class LessonsController {
     return this.lessonsService.findAll();
   }
 
-  @Get(':id')
+  @Get(':courseId/:id')
   @ApiOperation({ summary: 'Get a specific lesson by ID' })
   @ApiParam({ name: 'id', description: 'ID of the lesson' })
   @ApiResponse({ status: 200, description: 'Details of the lesson.' })
   @ApiResponse({ status: 404, description: 'Lesson not found.' })
-  findOne(@Param('id') id: string) {
+  @UseGuards(CourseAccessGuard)
+  findOne(@Param('id') id: string, @Param('courseId') courseId: string) {
+   
     return this.lessonsService.findOne(+id);
   }
 
