@@ -18,13 +18,13 @@ export class DiscussService {
     this.defaultLimit = this.configService.get<number>('DEFAULT_LIMIT') || 20;
   }
 
-  async create(data: CreateDiscussDto): Promise<Discussions> {
+  async create(data: CreateDiscussDto, userId: number): Promise<Discussions> {
     // Tạo thảo luận mới
     const discussion = await this.discussModel.create(data);
 
     // Lưu thông tin vào bảng UserDiscussion
     await this.userDiscussionModel.create({
-      userId: data.userId,
+      userId: userId,
       discussionId: discussion.id,
     });
 
@@ -74,7 +74,7 @@ export class DiscussService {
     const { rows, count } = await this.discussModel.findAndCountAll({
       offset,
       limit,
-      order: [['createdAt', 'DESC']], 
+      order: [['createdAt', 'DESC']],
     });
 
     return {
