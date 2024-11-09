@@ -6,6 +6,7 @@ import {
   Patch,
   Param,
   Delete,
+  Req,
 } from '@nestjs/common';
 import { ApiTags, ApiOperation, ApiBearerAuth } from '@nestjs/swagger';
 import { CreateOrderDto } from './dto/create-orders.dto';
@@ -78,5 +79,14 @@ export class OrdersController {
     const orderId = parseInt(id, 10);
     if (isNaN(orderId)) throw new Error('Invalid order ID');
     return this.ordersService.remove(orderId);
+  }
+  @ApiOperation({ summary: 'Check if user has purchased the course' })
+  @Get('check-purchase-status/:userId/:courseId')
+  async checkPurchaseStatus(
+    @Param('userId') userId: number, 
+    @Param('courseId') courseId: number,
+  ) {
+    const hasPurchased = await this.ordersService.hasPurchasedCourse(userId, courseId);
+    return { hasPurchased };
   }
 }

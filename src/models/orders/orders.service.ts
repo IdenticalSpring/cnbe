@@ -158,4 +158,14 @@ export class OrdersService {
       },
     });
   }
+  async hasPurchasedCourse(userId: number, courseId: number): Promise<boolean> {
+    const order = await this.orderModel.findOne({
+      where: {
+        userId,
+        courseId,
+        paymentStatus: 'completed', 
+      },
+    });
+    return !!order; 
+  }
 }
