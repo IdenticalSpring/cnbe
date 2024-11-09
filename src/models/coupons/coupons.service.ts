@@ -10,7 +10,9 @@ export class CouponsService {
     @InjectModel(Coupons)
     private couponModel: typeof Coupons,
   ) {}
-
+  async findAll(): Promise<Coupons[]> {
+    return this.couponModel.findAll();
+  }
   // Create a new coupon
   async create(createCouponDto: CreateCouponDto): Promise<Coupons> {
     // Chuyển chuỗi ngày sang đối tượng Date

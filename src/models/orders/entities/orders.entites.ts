@@ -53,7 +53,7 @@ export class Orders extends Model<Orders> {
   @ForeignKey(() => Coupons)
   @Column({
     type: DataType.INTEGER,
-    allowNull: false,
+    allowNull: true,
   })
   discountId!: number;
 
@@ -61,16 +61,17 @@ export class Orders extends Model<Orders> {
   coupon!: Coupons;
 
   @Column({
-    type: DataType.ENUM('ZaloPay', 'paypal', 'Momo'),
+    type: DataType.ENUM('ZaloPay', 'PayOS', 'Momo'),
     allowNull: false,
   })
   paymentMethod: string;
 
   @Column({
-    type: DataType.ENUM('pending', 'in-progress', 'completed'),
+    type: DataType.ENUM('pending', 'in-progress', 'completed', 'cancelled'),
     allowNull: false,
   })
   paymentStatus: string;
+
 
   @Column({
     type: DataType.DATE,
@@ -89,4 +90,10 @@ export class Orders extends Model<Orders> {
     allowNull: true,
   })
   updatedAt: Date;
+  @Column({
+    type: DataType.STRING,
+    allowNull: true,
+  })
+  checkoutUrl: string;
+
 }

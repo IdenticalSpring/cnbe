@@ -15,7 +15,7 @@ import { Courses } from '../../courses/entities/courses.entity';
 
 @Table({
   tableName: 'enrollments',
-  timestamps: true, 
+  timestamps: false,
 })
 @Table
 export class Enrollment extends Model<Enrollment> {

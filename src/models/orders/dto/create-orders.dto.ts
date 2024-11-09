@@ -18,26 +18,26 @@ export class CreateOrderDto {
   @IsNumber()
   courseId: number;
 
-  @ApiProperty({ description: 'The amount of the course' })
-  @IsNotEmpty({ message: 'The amount cannot be empty' })
-  price: number;
-
-  @ApiProperty({ description: 'The discountId of the course' })
-  @IsNotEmpty({ message: 'The discountId cannot be empty' })
+  @ApiProperty({ description: 'The amount of the course', required: false })
+  @IsOptional()
   @IsNumber()
-  discountId: number;
+  price?: number; 
+
+  @ApiProperty({ description: 'The discountId of the course', required: false })
+  @IsOptional()
+  @IsNumber()
+  discountId?: number;
 
   @ApiProperty({
     description: 'The paymentMethod of the course',
-    enum: ['ZaloPay', 'Paypal', 'Momo'],
-    default: 'Paypal',
+    enum: ['ZaloPay', 'PayOS', 'Momo'],
+    default: 'PayOS',
   })
-  @IsEnum(['ZaloPay', 'Paypal', 'Momo'], {
-    message: 'paymentMethod must be either ZaloPay, Paypal, or Momo',
+  @IsEnum(['ZaloPay', 'PayOS', 'Momo'], {
+    message: 'paymentMethod must be either ZaloPay, PayOS, or Momo',
   })
-  @IsNotEmpty({ message: 'The paymentMethod cannot be empty' })
   @IsOptional()
-  paymentMethod: 'ZaloPay' | 'PayPal' | 'Momo';
+  paymentMethod: 'ZaloPay' | 'PayOS' | 'Momo' = 'PayOS';
 
   @ApiProperty({
     description: 'The paymentMethod of the course',

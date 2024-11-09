@@ -9,6 +9,7 @@ import {
   UseInterceptors,
   UploadedFile,
   Query,
+  UseGuards,
 } from '@nestjs/common';
 import { ApiBearerAuth, ApiBody, ApiConsumes, ApiOperation, ApiQuery, ApiResponse, ApiTags } from '@nestjs/swagger';
 import { CoursesService } from './courses.service';
@@ -19,6 +20,8 @@ import { CloudinaryService } from '../cloudinary/cloudinary.service';
 import { FileInterceptor } from '@nestjs/platform-express';
 import { Public } from 'src/decorator/public.decorator';
 import { CourseWithCounts } from './dto/CourseWithCounts.dto';
+import { CourseAccessGuard } from 'src/guard/course-access.guard';
+import { JwtAuthGuard } from 'src/auth/passport/jwt-auth.guard';
 
 @Public()
 @ApiTags('courses')
@@ -73,7 +76,6 @@ export class CoursesController {
   ): Promise<{ data: CourseWithCounts[]; currentPage: number; totalPages: number; totalItems: number }> {
     return this.coursesService.getByType(type, +page || 1);
   }
-
 
   @Get(':id')
   findOne(@Param('id') id: string) {
