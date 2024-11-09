@@ -1,9 +1,9 @@
-import { Controller, Post, Body, Param, Get, Query } from '@nestjs/common';
+import { Controller, Post, Body, Param, Get, Query, Redirect, Res } from '@nestjs/common';
 import { PayOSService } from './payos.service';
 import { ApiTags, ApiOperation, ApiParam, ApiBody, ApiResponse, ApiBearerAuth, ApiExcludeEndpoint } from '@nestjs/swagger';
 import { Public } from 'src/decorator/public.decorator';
 import { OrdersService } from '../orders/orders.service';
-
+import { Response } from 'express';
 @ApiTags('payos')
 @Controller('payos')
 @ApiBearerAuth('JWT')
@@ -103,18 +103,17 @@ export class PayOSController {
     @ApiExcludeEndpoint()
     @ApiOperation({ summary: 'Handle successful payment' })
     @Get('success')
-    async paymentSuccess(@Query('orderCode') orderCode: number) {
+    async paymentSuccess(@Query('orderCode') orderCode: number, @Res() response: Response) {
         const order = await this.ordersService.findOne(orderCode);
         order.paymentStatus = 'completed';
         order.paymentDate = new Date();
         await order.save();
 
-        return {
-            status: 'success',
-            message: 'Payment was successful',
-            timestamp: new Date().toISOString(),
-        };
+        const frontendCourseUrl = `${process.env.FRONTEND_URL}/users/course/${order.courseId}?status=${order.paymentStatus}&message=${order.paymentStatus === 'completed' ? 'Payment successful' : 'Payment cancelled'}`;
+        return response.redirect(frontendCourseUrl);
+
     }
+
     @Public()
     @ApiExcludeEndpoint()
     @ApiOperation({ summary: 'Handle payment cancellation' })
@@ -124,15 +123,14 @@ export class PayOSController {
         @Query('id') id: string,
         @Query('cancel') cancel: string,
         @Query('status') status: string,
-        @Query('orderCode') orderCode: string
+        @Query('orderCode') orderCode: string,
+        @Res() response: Response
     ) {
         const orderId = parseInt(orderCode, 10);
-
         if (isNaN(orderId)) {
             return { error: 'Invalid orderCode provided' };
         }
 
-        // Tìm đơn hàng theo orderId và cập nhật trạng thái thành "cancelled" nếu hợp lệ
         const order = await this.ordersService.findOne(orderId);
         if (!order) {
             return { error: 'Order not found' };
@@ -141,14 +139,8 @@ export class PayOSController {
         order.paymentStatus = 'cancelled';
         await order.save();
 
-        return {
-            status: 'cancelled',
-            message: 'Payment was cancelled by the user',
-            code,
-            id,
-            cancel,
-            orderCode,
-            timestamp: new Date().toISOString(),
-        };
+        const frontendCourseUrl = `${process.env.FRONTEND_URL}/users/course/${order.courseId}?status=${order.paymentStatus}&message=${order.paymentStatus === 'completed' ? 'Payment successful' : 'Payment cancelled'}`;
+        return response.redirect(frontendCourseUrl);
+
     }
 }

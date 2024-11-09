@@ -33,7 +33,6 @@ export class LessonsController {
   @ApiParam({ name: 'id', description: 'ID of the lesson' })
   @ApiResponse({ status: 200, description: 'Details of the lesson.' })
   @ApiResponse({ status: 404, description: 'Lesson not found.' })
-  @UseGuards(CourseAccessGuard)
   findOne(@Param('id') id: string, @Param('courseId') courseId: string) {
    
     return this.lessonsService.findOne(+id);
@@ -56,11 +55,11 @@ export class LessonsController {
   remove(@Param('id') id: string) {
     return this.lessonsService.remove(+id);
   }
-  @Get('chapter/:chapterId')
+  @Get('chapter/:chapterId/:courseId')
   @ApiOperation({ summary: 'Get all lessons for a specific chapter' })
   @ApiParam({ name: 'chapterId', description: 'ID of the chapter' })
   @ApiResponse({ status: 200, description: 'List of lessons for the chapter.' })
-  async findByChapter(@Param('chapterId') chapterId: string) {
+  async findByChapter(@Param('chapterId') chapterId: string, @Param('courseId') courseId: string,) {
     return this.lessonsService.findByChapterId(+chapterId);
   }
 }

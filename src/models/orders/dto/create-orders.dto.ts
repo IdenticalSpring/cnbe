@@ -30,14 +30,14 @@ export class CreateOrderDto {
 
   @ApiProperty({
     description: 'The paymentMethod of the course',
-    enum: ['ZaloPay', 'Paypal', 'Momo'],
-    default: 'Paypal',
+    enum: ['ZaloPay', 'PayOS', 'Momo'],
+    default: 'PayOS',
   })
-  @IsEnum(['ZaloPay', 'Paypal', 'Momo'], {
-    message: 'paymentMethod must be either ZaloPay, Paypal, or Momo',
+  @IsEnum(['ZaloPay', 'PayOS', 'Momo'], {
+    message: 'paymentMethod must be either ZaloPay, PayOS, or Momo',
   })
   @IsOptional()
-  paymentMethod: 'ZaloPay' | 'Paypal' | 'Momo' = 'Paypal';
+  paymentMethod: 'ZaloPay' | 'PayOS' | 'Momo' = 'PayOS';
 
   @ApiProperty({
     description: 'The paymentMethod of the course',

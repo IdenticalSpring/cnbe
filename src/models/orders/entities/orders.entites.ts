@@ -61,7 +61,7 @@ export class Orders extends Model<Orders> {
   coupon!: Coupons;
 
   @Column({
-    type: DataType.ENUM('ZaloPay', 'paypal', 'Momo'),
+    type: DataType.ENUM('ZaloPay', 'PayOS', 'Momo'),
     allowNull: false,
   })
   paymentMethod: string;

@@ -17,7 +17,11 @@ import { ApiBearerAuth, ApiOperation, ApiTags } from '@nestjs/swagger';
 @ApiBearerAuth('JWT')
 export class CouponsController {
   constructor(private readonly couponsService: CouponsService) {}
-
+  @Get()
+  @ApiOperation({ summary: 'Get all coupons' })
+  findAll() {
+    return this.couponsService.findAll();
+  }
   // Create a new coupon
   @Post()
   @ApiOperation({ summary: 'Add new coupon' })
