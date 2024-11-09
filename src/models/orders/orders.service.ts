@@ -1,4 +1,4 @@
-import { Injectable, NotFoundException } from '@nestjs/common';
+import { ConflictException, Injectable, NotFoundException } from '@nestjs/common';
 import { InjectModel } from '@nestjs/sequelize';
 import { CreateOrderDto } from './dto/create-orders.dto';
 import { UpdateOrderDto } from './dto/update-orders.dto';
@@ -38,6 +38,27 @@ export class OrdersService {
   }
 
   async create(createOrderDto: CreateOrderDto): Promise<Orders> {
+    // Kiểm tra xem đã có đơn hàng hoàn thành với userId và courseId chưa
+    const existingOrder = await this.orderModel.findOne({
+      where: {
+        userId: createOrderDto.userId,
+        courseId: createOrderDto.courseId,
+      },
+    });
+
+    if (existingOrder) {
+      if (existingOrder.paymentStatus === 'completed') {
+        // Nếu đã có đơn hàng hoàn tất thanh toán, trả về JSON lỗi
+        throw new ConflictException({
+          statusCode: 409,
+          message: 'User has already purchased this course',
+        });
+      } else {
+        // Nếu đã có đơn hàng nhưng chưa hoàn tất thanh toán, xóa đơn hàng đó
+        await existingOrder.destroy();
+      }
+    }
+
     // Lấy thông tin khóa học và giá của khóa học từ courseId
     const course = await this.coursesService.findOne(createOrderDto.courseId);
     if (!course) {
@@ -63,7 +84,7 @@ export class OrdersService {
     // Tính tổng số tiền sau khi áp dụng giảm giá (nếu có)
     const totalAmount = coursePrice - (coursePrice * discountAmount) / 100;
 
-    // Tạo đơn hàng ban đầu mà không có URL thanh toán
+    // Tạo đơn hàng mới mà không có URL thanh toán
     const order = await this.orderModel.create({
       ...createOrderDto,
       price: totalAmount,
@@ -89,9 +110,10 @@ export class OrdersService {
     order.checkoutUrl = checkoutUrl;
     await order.save();
 
-    // Trả về đơn hàng với URL thanh toán
+    // Trả về đơn hàng mới với URL thanh toán
     return order;
   }
+
 
 
 
