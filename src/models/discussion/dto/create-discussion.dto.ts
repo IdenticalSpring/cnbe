@@ -11,9 +11,4 @@ export class CreateDiscussDto {
   @IsString()
   @IsNotEmpty()
   content: string;
-
-  @ApiProperty({ description: 'The userId of the Discuss' })
-  @IsInt()
-  @IsNotEmpty()
-  userId: number;
 }

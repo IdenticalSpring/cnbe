@@ -12,22 +12,26 @@ import {
 import { DiscussService } from './discussion.service';
 import { CreateDiscussDto } from './dto/create-discussion.dto';
 import { Discussions } from './entities/discussion.entity';
-import { ApiBearerAuth, ApiOperation, ApiQuery, ApiTags } from '@nestjs/swagger';
+import {
+  ApiBearerAuth,
+  ApiOperation,
+  ApiQuery,
+  ApiTags,
+} from '@nestjs/swagger';
 import { Public } from 'src/decorator/public.decorator';
 @ApiTags('discuss')
 @Controller('discuss')
-@ApiBearerAuth('JWT') 
+@ApiBearerAuth('JWT')
 @Public()
-
-
 export class DiscussController {
   constructor(private readonly discussService: DiscussService) {}
 
-  @Post()
+  @Post(':userId')
   async create(
+    @Param('userId') userId: number,
     @Body() createDiscussDto: CreateDiscussDto,
   ): Promise<Discussions> {
-    return this.discussService.create(createDiscussDto);
+    return this.discussService.create(createDiscussDto, userId);
   }
 
   @Get(`getAll`)
@@ -41,11 +45,13 @@ export class DiscussController {
   }
 
   @Get(`getpaginated`)
- 
-  @ApiQuery({ name: 'page', required: false, type: Number, description: 'Page number' })
-  async findAllPagination(
-    @Query('page') page: number = 1,
-  ): Promise<{
+  @ApiQuery({
+    name: 'page',
+    required: false,
+    type: Number,
+    description: 'Page number',
+  })
+  async findAllPagination(@Query('page') page: number = 1): Promise<{
     data: Discussions[];
     currentPage: number;
     totalPages: number;
