@@ -9,6 +9,8 @@ import {
   Delete,
   Req,
   Res,
+  Query,
+  NotFoundException,
 } from '@nestjs/common';
 import { AuthService } from './auth.service';
 import { CreateAuthDto } from './dto/create-auth.dto';
@@ -116,7 +118,15 @@ export class AuthController {
   changePassword(@Body() data: ChangePasswordAuthDto) {
     return this.authService.changePassword(data);
   }
-
+  @Get('get-user-id')
+  @Public()
+  async getUserId(@Query('username') username: string) {
+    const user = await this.authService.findUserByUsername(username);
+    if (!user) {
+      throw new NotFoundException('User not found');
+    }
+    return { userId: user.id };
+  }
   @Get('github')
   @Public()
   @UseGuards(AuthGuard('github'))

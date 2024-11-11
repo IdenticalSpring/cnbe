@@ -119,4 +119,7 @@ export class AuthService {
   changePassword = async (data: ChangePasswordAuthDto) => {
     return await this.usersService.changePassword(data);
   };
+  async findUserByUsername(username: string) {
+    return this.usersService.findByUsername(username); 
+  }
 }

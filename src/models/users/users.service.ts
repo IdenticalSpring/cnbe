@@ -255,5 +255,4 @@ export class UsersService {
     await user.destroy();
     return { success: true, message: `User with ID ${id} deleted successfully` };
   }
-
 }
