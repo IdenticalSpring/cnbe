@@ -1,5 +1,5 @@
 // src/problem-topics/problem-topics.controller.ts
-import { Controller, Post, Delete, Body, Param } from '@nestjs/common';
+import { Controller, Post, Delete, Body, Param, Get } from '@nestjs/common';
 import { ProblemTopicsService } from './problems_topics.service';
 import { CreateProblemTopicDto } from './dto/problems_topics.dto';
 import { ApiBearerAuth, ApiTags } from '@nestjs/swagger';
@@ -21,5 +21,10 @@ export class ProblemTopicsController {
     @Param('topicId') topicId: number,
   ) {
     return this.problemTopicsService.remove(problemId, topicId);
+  }
+
+  @Get(':problemId/topics')
+  async getTopicsByProblemId(@Param('problemId') problemId: number) {
+    return this.problemTopicsService.findTopicsByProblemId(problemId);
   }
 }
