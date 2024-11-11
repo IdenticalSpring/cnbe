@@ -21,9 +21,31 @@ export class DiscussionCommentService {
     return this.discussionCommentModel.findAll();
   }
 
-  async findByDiscussionId(discussionId: number): Promise<DiscussionComment[]> {
-    return this.discussionCommentModel.findAll({
-      where: { discussionId },
-    });
+  async findPaginatedByDiscussionId(
+    discussionId: number,
+    page: number = 1,
+  ): Promise<{
+    data: DiscussionComment[];
+    total: number;
+    page: number;
+    limit: number;
+  }> {
+    const limit = 10; // Fixed to 10 comments per page
+    const offset = (page - 1) * limit; // Calculate offset based on page
+
+    // Fetch comments with pagination
+    const { rows: data, count: total } =
+      await this.discussionCommentModel.findAndCountAll({
+        where: { discussionId },
+        limit,
+        offset,
+      });
+
+    return {
+      data,
+      total,
+      page,
+      limit,
+    };
   }
 }
