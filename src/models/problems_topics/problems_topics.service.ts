@@ -22,4 +22,11 @@ export class ProblemTopicsService {
       where: { problemId, topicId },
     });
   }
+
+  // New method to find topics by problem ID
+  async findTopicsByProblemId(problemId: number): Promise<ProblemTopics[]> {
+    return this.problemTopicsModel.findAll({
+      where: { problemId },
+    });
+  }
 }

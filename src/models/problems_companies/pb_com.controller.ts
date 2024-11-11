@@ -34,4 +34,12 @@ export class ProblemCompaniesController {
   ): Promise<void> {
     return this.problemCompaniesService.delete(problemId, companyId);
   }
+  // New endpoint to get companies by problem ID
+  @Get(':problemId/companies')
+  @ApiOperation({ summary: 'Get companies linked to a specific problem' })
+  async getCompaniesByProblemId(
+    @Param('problemId') problemId: number,
+  ): Promise<ProblemCompanies[]> {
+    return this.problemCompaniesService.findCompaniesByProblemId(problemId);
+  }
 }

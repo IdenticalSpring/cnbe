@@ -28,4 +28,12 @@ export class ProblemCompaniesService {
       },
     });
   }
+  // New method to find companies by problem ID
+  async findCompaniesByProblemId(
+    problemId: number,
+  ): Promise<ProblemCompanies[]> {
+    return this.problemCompaniesModel.findAll({
+      where: { problemId },
+    });
+  }
 }
