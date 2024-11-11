@@ -4,6 +4,7 @@ import { comparePasswordHelper } from 'src/helper/utils';
 import { JwtService } from '@nestjs/jwt';
 import { CreateAuthDto } from './dto/create-auth.dto';
 import { ChangePasswordAuthDto, codeAuthDto } from './dto/code-auth.dto';
+import { User } from 'src/models/users/entities/user.entity';
 
 @Injectable()
 export class AuthService {
@@ -24,36 +25,30 @@ export class AuthService {
     return user;
   }
 
-  async validateOAuthLoginGithub(profile: any): Promise<any> {
-    const { username, emails, name } = profile;
+  async validateOAuthLoginGithub(profile: { username: string; email: string; name: string }): Promise<User> {
+    const { username, email, name } = profile;
 
-    // Kiểm tra email từ GitHub profile
-    const email = emails && emails.length > 0 ? emails[0].value : null;
-    if (!email) {
-      throw new Error("GitHub profile does not contain an email");
+    // Kiểm tra xem người dùng đã tồn tại chưa dựa trên email
+    let user = await this.usersService.findByEmail(email);
+    if (!user) {
+      // Nếu người dùng không tồn tại, tạo mới
+      user = await this.usersService.create({
+        username,
+        email,
+        name,
+        password: null,
+        isActive: true,
+      });
     }
 
-    const existingUserByEmail = await this.usersService.findByEmail(email);
-    if (existingUserByEmail) {
+    return user;
+  }
 
-      const payload = { username: existingUserByEmail.username, sub: existingUserByEmail.id };
-      return {
-        access_token: this.jwtService.sign(payload),
-        user: existingUserByEmail,
-      };
-    }
-    const newUser = await this.usersService.create({
-      name,
-      username,
-      email,
-      password: null,
-      isActive: true,
-    });
-
-    const payload = { username: newUser.username, sub: newUser.id };
+  async createJwtToken(user: any) {
+    const payload = { username: user.username, sub: user.id, role: user.role };
     return {
       access_token: this.jwtService.sign(payload),
-      user: newUser,
+      user,
     };
   }
 
