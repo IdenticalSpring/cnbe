@@ -11,6 +11,7 @@ import {
   Res,
   Query,
   NotFoundException,
+  BadRequestException,
 } from '@nestjs/common';
 import { AuthService } from './auth.service';
 import { CreateAuthDto } from './dto/create-auth.dto';
@@ -130,31 +131,24 @@ export class AuthController {
   @Get('github')
   @Public()
   @UseGuards(AuthGuard('github'))
-  async githubLogin() {}
+  async githubLogin() { }
 
   @Get('github/callback')
-  @UseGuards(AuthGuard('github'))
   @Public()
-  @ApiExcludeEndpoint()
+  @UseGuards(AuthGuard('github'))
   async githubLoginCallback(@Req() req, @Res() res) {
     try {
-      // Validate or create the user using GitHub data
-      const user = await this.authService.validateOAuthLoginGithub(req.user);
+      const user = req.user;
 
-      // Generate login credentials (access token)
-      const loginResult = await this.authService.login(user);
+      // Tạo token JWT cho người dùng
+      const { access_token } = await this.authService.createJwtToken(user);
 
-      // Define FE redirect URL (change this to your actual FE URL)
+      // Chuyển hướng đến frontend với access token
       const frontendUrl = process.env.FRONTEND_URL || 'http://localhost:3000';
-
-      // Redirect user to FE with access token in query params
-      return res.redirect(
-        `${frontendUrl}/auth/callback?access_token=${loginResult.access_token}`
-      );
-
+      return res.redirect(`${frontendUrl}/auth/callback?access_token=${access_token}`);
     } catch (error) {
       console.error('GitHub Auth Error:', error);
-      throw error;
+      throw new BadRequestException('Authentication failed');
     }
   }
 
