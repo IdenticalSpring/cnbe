@@ -1,8 +1,9 @@
 // discussion-comment.controller.ts
-import { Controller, Get, Post, Body, Param } from '@nestjs/common';
+import { Controller, Get, Post, Body, Param, Query } from '@nestjs/common';
 import { DiscussionCommentService } from './comments_disscussion.service';
 import { CreateDiscussionCommentDto } from './dto/comments_discusiion.dto';
 import { ApiBearerAuth, ApiTags } from '@nestjs/swagger';
+import { DiscussionComment } from './entities/comments_discussion.entity';
 
 @ApiTags('discussion-comments')
 @ApiBearerAuth('JWT')
@@ -23,7 +24,18 @@ export class DiscussionCommentController {
   }
 
   @Get(':discussionId')
-  findByDiscussionId(@Param('discussionId') discussionId: number) {
-    return this.discussionCommentService.findByDiscussionId(discussionId);
+  async findPaginatedComments(
+    @Param('discussionId') discussionId: number,
+    @Query('page') page: number = 1, // Default page to 1
+  ): Promise<{
+    data: DiscussionComment[];
+    total: number;
+    page: number;
+    limit: number;
+  }> {
+    return this.discussionCommentService.findPaginatedByDiscussionId(
+      discussionId,
+      page,
+    );
   }
 }
