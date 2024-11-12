@@ -4,6 +4,7 @@ import {
   Model,
   ForeignKey,
   DataType,
+  BelongsTo,
 } from 'sequelize-typescript';
 import { Comments } from 'src/models/comments/entities/comments.entity';
 import { User } from 'src/models/users/entities/user.entity';
@@ -26,4 +27,10 @@ export class UserComments extends Model<UserComments> {
     allowNull: false,
   })
   commentId: number;
+
+  @BelongsTo(() => Comments)
+  comment: Comments;
+
+  @BelongsTo(() => User)
+  user: User;
 }

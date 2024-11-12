@@ -4,6 +4,7 @@ import {
   Model,
   DataType,
   ForeignKey,
+  BelongsTo,
 } from 'sequelize-typescript';
 import { Discussions } from 'src/models/discussion/entities/discussion.entity';
 import { Tag } from 'src/models/tags/entities/tags.entity';
@@ -26,4 +27,10 @@ export class TagDiscussion extends Model<TagDiscussion> {
     primaryKey: true,
   })
   discussionId: number;
+
+  @BelongsTo(() => Tag)
+  tag: Tag;
+
+  @BelongsTo(() => Discussions)
+  discussion: Discussions;
 }

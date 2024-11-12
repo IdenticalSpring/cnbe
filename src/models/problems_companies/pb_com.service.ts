@@ -2,6 +2,7 @@ import { Injectable } from '@nestjs/common';
 import { InjectModel } from '@nestjs/sequelize';
 import { ProblemCompanies } from './entities/problems_companies.entits';
 import { CreateProblemCompanyDto } from './dto/problems_companies.dto';
+import { Companies } from '../companies/entities/companies.entities';
 
 @Injectable()
 export class ProblemCompaniesService {
@@ -34,6 +35,7 @@ export class ProblemCompaniesService {
   ): Promise<ProblemCompanies[]> {
     return this.problemCompaniesModel.findAll({
       where: { problemId },
+      include: [{ model: Companies, attributes: ['id', 'name'] }],
     });
   }
 }
