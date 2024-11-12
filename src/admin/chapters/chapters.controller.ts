@@ -9,6 +9,7 @@ import {
     UseInterceptors,
     UploadedFile,
     Query,
+    UseGuards,
 } from '@nestjs/common';
 import {
     ApiBearerAuth,
@@ -28,11 +29,14 @@ import { CloudinaryService } from 'src/models/cloudinary/cloudinary.service';
 import { Chapter } from 'src/models/course_chapter/entities/chapter.entity';
 import { CreateChapterDto } from 'src/models/course_chapter/dto/create-chapter.dto';
 import { UpdateChapterDto } from 'src/models/course_chapter/dto/update-chapter.dto';
+import { JwtAuthGuard } from 'src/auth/passport/jwt-auth.guard';
+import { RolesGuard } from 'src/auth/passport/roles.guard';
 
 @Public()
 @ApiTags('admin/chapters')
 @Controller('admin/chapters')
 @ApiBearerAuth('JWT')
+@UseGuards(JwtAuthGuard, RolesGuard)
 export class AdminChapterController {
     constructor(
         private readonly chapterService: ChapterService,

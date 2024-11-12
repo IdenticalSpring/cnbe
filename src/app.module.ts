@@ -99,6 +99,8 @@ import { CategoryDiscussion } from './models/categories_discussion/entities/cate
 import { CategoryDiscussionModule } from './models/categories_discussion/categories_discussion.module';
 import { PayOSModule } from './models/payos/payos.module';
 import { AdminChapterModule } from './admin/chapters/chapters.module';
+import { LessonsService } from './models/course_lesson/course_lesson.service';
+import { AdminLessonsModule } from './admin/lesson/course_lesson.module';
 
 
 @Module({
@@ -222,6 +224,7 @@ import { AdminChapterModule } from './admin/chapters/chapters.module';
     AdminUserModule,
     AdminProblemModule,
     AdminChapterModule,
+    AdminLessonsModule,
 
     // Các module AI API
     GeminiApiModule,
