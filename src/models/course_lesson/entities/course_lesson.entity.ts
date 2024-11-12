@@ -54,4 +54,8 @@ export class Lessons extends Model<Lessons> {
 
     @HasMany(() => Progress)
     progresses: Progress[];
+    
+    get courseId(): number | undefined {
+        return this.chapter ? this.chapter.courseId : undefined;
+    }
 }
