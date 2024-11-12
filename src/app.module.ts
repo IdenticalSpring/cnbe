@@ -98,6 +98,7 @@ import { CategoryModule } from './models/categories/categories.module';
 import { CategoryDiscussion } from './models/categories_discussion/entities/categories_discussion';
 import { CategoryDiscussionModule } from './models/categories_discussion/categories_discussion.module';
 import { PayOSModule } from './models/payos/payos.module';
+import { AdminChapterModule } from './admin/chapters/chapters.module';
 
 
 @Module({
@@ -220,6 +221,7 @@ import { PayOSModule } from './models/payos/payos.module';
     AdminIntroductionDetailsModule,
     AdminUserModule,
     AdminProblemModule,
+    AdminChapterModule,
 
     // Các module AI API
     GeminiApiModule,
