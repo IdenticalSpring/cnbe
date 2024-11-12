@@ -3,6 +3,7 @@ import { Injectable } from '@nestjs/common';
 import { InjectModel } from '@nestjs/sequelize';
 import { ProblemTopics } from './entities/problems_topics.entities';
 import { CreateProblemTopicDto } from './dto/problems_topics.dto';
+import { Topics } from '../topics/entities/topics.entities';
 
 @Injectable()
 export class ProblemTopicsService {
@@ -27,6 +28,12 @@ export class ProblemTopicsService {
   async findTopicsByProblemId(problemId: number): Promise<ProblemTopics[]> {
     return this.problemTopicsModel.findAll({
       where: { problemId },
+      include: [
+        {
+          model: Topics, // Bao gồm bảng Topic
+          attributes: ['id', 'name'], // Các trường cần lấy từ bảng Topic
+        },
+      ],
     });
   }
 }

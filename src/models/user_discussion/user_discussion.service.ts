@@ -2,6 +2,8 @@ import { Injectable, NotFoundException } from '@nestjs/common';
 import { InjectModel } from '@nestjs/sequelize';
 import { UserDiscussion } from './entities/user_discussion.entity';
 import { CreateUserDiscussionDto } from './dto/user_discussion.dto';
+import { User } from '../users/entities/user.entity';
+import { Discussions } from '../discussion/entities/discussion.entity';
 
 @Injectable()
 export class UserDiscussionService {
@@ -17,11 +19,21 @@ export class UserDiscussionService {
   }
 
   async findAll(): Promise<UserDiscussion[]> {
-    return this.userDiscussionModel.findAll();
+    return this.userDiscussionModel.findAll({
+      include: [
+        { model: User, attributes: ['id', 'name'] },
+        { model: Discussions, attributes: ['id', 'title'] },
+      ],
+    });
   }
 
   async findOne(id: number): Promise<UserDiscussion> {
-    const userDiscussion = await this.userDiscussionModel.findByPk(id);
+    const userDiscussion = await this.userDiscussionModel.findByPk(id, {
+      include: [
+        { model: User, attributes: ['id', 'name'] },
+        { model: Discussions, attributes: ['id', 'title'] },
+      ],
+    });
     if (!userDiscussion) {
       throw new NotFoundException('UserDiscussion not found');
     }

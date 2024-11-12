@@ -6,6 +6,7 @@ import {
   ForeignKey,
   PrimaryKey,
   DataType,
+  BelongsTo,
 } from 'sequelize-typescript';
 import { Problems } from 'src/models/problems/entitites/problems.entity';
 import { Topics } from 'src/models/topics/entities/topics.entities';
@@ -28,4 +29,10 @@ export class ProblemTopics extends Model<ProblemTopics> {
     type: DataType.INTEGER,
   })
   topicId!: number;
+
+  @BelongsTo(() => Topics)
+  topic: Topics;
+
+  @BelongsTo(() => Problems)
+  problem: Problems;
 }

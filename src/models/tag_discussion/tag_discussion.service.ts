@@ -1,6 +1,8 @@
 import { Injectable } from '@nestjs/common';
 import { InjectModel } from '@nestjs/sequelize';
 import { TagDiscussion } from './entities/tag_discussion.entity';
+import { Tag } from '../tags/entities/tags.entity';
+import { Discussions } from '../discussion/entities/discussion.entity';
 
 @Injectable()
 export class TagDiscussionService {
@@ -15,4 +17,13 @@ export class TagDiscussionService {
   }
 
   // Thêm các phương thức khác nếu cần
+
+  async findAll(): Promise<TagDiscussion[]> {
+    return this.tagDiscussionModel.findAll({
+      include: [
+        { model: Tag, attributes: ['id', 'name'] },
+        { model: Discussions, attributes: ['id', 'title'] },
+      ],
+    });
+  }
 }

@@ -1,4 +1,10 @@
-import { Table, Column, Model, ForeignKey } from 'sequelize-typescript';
+import {
+  Table,
+  Column,
+  Model,
+  ForeignKey,
+  BelongsTo,
+} from 'sequelize-typescript';
 import { Comments } from 'src/models/comments/entities/comments.entity';
 import { Discussions } from 'src/models/discussion/entities/discussion.entity';
 
@@ -13,4 +19,10 @@ export class DiscussionComment extends Model<DiscussionComment> {
   @ForeignKey(() => Comments)
   @Column
   commentId: number;
+
+  @BelongsTo(() => Comments)
+  comments: Comments;
+
+  @BelongsTo(() => Discussions)
+  discussions: Discussions;
 }
