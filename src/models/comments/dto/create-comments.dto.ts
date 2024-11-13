@@ -8,11 +8,6 @@ import {
 } from 'class-validator';
 
 export class CreateCommentDto {
-  @ApiProperty({ description: 'The discussionId of the comment' })
-  @IsNotEmpty()
-  @IsInt()
-  discussionId: number; // Thêm trường này
-
   @ApiProperty({ description: 'The content of the comment' })
   @IsNotEmpty()
   @IsString()
