@@ -101,6 +101,7 @@ import { PayOSModule } from './models/payos/payos.module';
 import { AdminChapterModule } from './admin/chapters/chapters.module';
 import { LessonsService } from './models/course_lesson/course_lesson.service';
 import { AdminLessonsModule } from './admin/lesson/course_lesson.module';
+import { AdminTopicsModule } from './admin/topics/topics.module';
 
 
 @Module({
@@ -225,6 +226,7 @@ import { AdminLessonsModule } from './admin/lesson/course_lesson.module';
     AdminProblemModule,
     AdminChapterModule,
     AdminLessonsModule,
+    AdminTopicsModule,
 
     // Các module AI API
     GeminiApiModule,
