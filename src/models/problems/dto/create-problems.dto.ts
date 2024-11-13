@@ -1,6 +1,6 @@
-import { ApiProperty } from '@nestjs/swagger';
-import { IsNotEmpty, IsNumber, IsOptional, Min } from 'class-validator';
 
+import { ApiProperty } from '@nestjs/swagger';
+import { IsNotEmpty, IsNumber, IsOptional, Min, IsArray } from 'class-validator';
 export class CreateProblemsDto {
   @ApiProperty({ description: 'The title of the Problem' })
   @IsNotEmpty({ message: 'Title cannot be empty' })
@@ -45,4 +45,15 @@ export class CreateProblemsDto {
   @IsNumber()
   @Min(0, { message: 'Acceptance rate cannot be negative' })
   acceptance_rate: number;
+  @ApiProperty({ description: 'The list of company IDs related to the problem', type: [Number] })
+  @IsOptional()
+  @IsArray()
+  @IsNumber({}, { each: true })
+  companyIds: number[];
+
+  @ApiProperty({ description: 'The list of topic IDs related to the problem', type: [Number] })
+  @IsOptional()
+  @IsArray()
+  @IsNumber({}, { each: true })
+  topicIds: number[];
 }
