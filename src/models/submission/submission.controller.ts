@@ -7,7 +7,8 @@ import { CreateSubmissionDto } from './dto/submission.dto';
 @Controller('submissions')
 @ApiBearerAuth('JWT')
 export class SubmissionController {
-  constructor(private readonly submissionService: SubmissionService) {}
+  constructor(private readonly submissionService: SubmissionService) { }
+
   @Post(':userId')
   @ApiOperation({ summary: 'Submit exercises by user' })
   async createOrUpdateSubmission(
@@ -15,21 +16,20 @@ export class SubmissionController {
     @Body() createSubmissionDto: CreateSubmissionDto,
   ) {
     try {
-      // Gọi service để tạo submission và acceptance_submission
       const { submission, acceptanceSubmission } =
         await this.submissionService.createOrUpdateSubmission(
           userId,
           createSubmissionDto.language,
           createSubmissionDto.problemId,
           createSubmissionDto.code,
-          createSubmissionDto.stdin || '', // Truyền stdin nếu có, nếu không thì truyền chuỗi rỗng
+          createSubmissionDto.stdin || '',
         );
 
       return {
         message: 'Submission processed successfully',
         data: {
           submission,
-          acceptanceSubmission, // Trả về acceptance_submission vừa tạo
+          acceptanceSubmission,
         },
       };
     } catch (error) {
@@ -38,5 +38,14 @@ export class SubmissionController {
         error: error.message,
       };
     }
+  }
+
+  @Post('run/:userId')
+  @ApiOperation({ summary: 'Run code directly with input' })
+  async runCode(
+    @Param('userId') userId: number,
+    @Body() createSubmissionDto: CreateSubmissionDto,
+  ) {
+    return this.submissionService.submitToJudge0(createSubmissionDto, userId);
   }
 }

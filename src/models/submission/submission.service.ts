@@ -3,6 +3,7 @@ import { InjectModel } from '@nestjs/sequelize';
 import axios from 'axios';
 import { Submission } from './entities/submission.model';
 import { AcceptanceSubmission } from '../acceptance_submissions/entities/acceptance_submissions.entity';
+import { CreateSubmissionDto } from './dto/submission.dto';
 
 @Injectable()
 export class SubmissionService {
@@ -13,7 +14,7 @@ export class SubmissionService {
     private readonly acceptanceSubmissionModel: typeof AcceptanceSubmission,
   ) {}
 
-  private mapLanguageToId(language: string): number {
+  public mapLanguageToId(language: string): number {
     const languageMap = {
       python: 100,
       javascript: 93,
@@ -105,6 +106,37 @@ export class SubmissionService {
       await submission.save();
 
       throw new Error('Judge0 API Error: ' + error.message);
+    }
+  }
+  async submitToJudge0(createSubmissionDto: CreateSubmissionDto, userId: number) {
+    const { code, language, stdin } = createSubmissionDto;
+    const languageId = this.mapLanguageToId(language);
+    if (!languageId) {
+      throw new Error('Unsupported language');
+    }
+
+    const judge0Options = {
+      method: 'POST',
+      url: 'https://judge0-ce.p.rapidapi.com/submissions?base64_encoded=false&wait=true',
+      headers: {
+        'x-rapidapi-key': 'a51392120fmshf8b944e8e3afe15p1fb976jsn80348da00d5c',
+        'x-rapidapi-host': 'judge0-ce.p.rapidapi.com',
+        'Content-Type': 'application/json',
+      },
+      data: {
+        language_id: languageId,
+        source_code: code,
+        stdin: stdin || '',
+      },
+    };
+    console.log("Request Data to Judge0:", judge0Options.data);
+
+    try {
+      const response = await axios(judge0Options);
+      return response.data;
+    } catch (error) {
+      console.error("Error calling Judge0 API:", error.response ? error.response.data : error.message);
+      throw new Error('Error calling Judge0 API: ' + (error.response ? error.response.data : error.message));
     }
   }
 }
