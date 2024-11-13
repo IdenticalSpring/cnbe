@@ -101,9 +101,12 @@ import { PayOSModule } from './models/payos/payos.module';
 import { AdminChapterModule } from './admin/chapters/chapters.module';
 import { LessonsService } from './models/course_lesson/course_lesson.service';
 import { AdminLessonsModule } from './admin/lesson/course_lesson.module';
+import { languageCode } from './models/language_code/entities/language_code.entity';
+import { LanguageCodeModule } from './models/language_code/language.module';
+import { TestCase } from './models/testcase/entities/testcase.entity';
+import { TestCaseModule } from './models/testcase/testcase.module';
 import { AdminTopicsModule } from './admin/topics/topics.module';
 import { AdminCompaniesModule } from './admin/companies/companies.module';
-
 
 @Module({
   imports: [
@@ -130,6 +133,8 @@ import { AdminCompaniesModule } from './admin/companies/companies.module';
           Tag,
           TagDiscussion,
           Comments,
+          languageCode,
+          TestCase,
           UserComments,
           DiscussionComment,
           UserDiscussion,
@@ -192,6 +197,8 @@ import { AdminCompaniesModule } from './admin/companies/companies.module';
     UsersModule,
     AuthModule,
     TopicsModule,
+    LanguageCodeModule,
+    TestCaseModule,
     ProblemTopicsModule,
     CoursesModule,
     DiscussModule,
