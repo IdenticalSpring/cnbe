@@ -9,6 +9,7 @@ import {
   UpdatedAt,
   PrimaryKey,
   AutoIncrement,
+  HasMany,
 } from 'sequelize-typescript';
 import { Companies } from 'src/models/companies/entities/companies.entities';
 import { ProblemCompanies } from 'src/models/problems_companies/entities/problems_companies.entits';
@@ -16,6 +17,7 @@ import { Courses } from 'src/models/courses/entities/courses.entity';
 import { Difficulty } from 'src/models/difficulties/entities/difficulties.entites';
 import { Topics } from 'src/models/topics/entities/topics.entities';
 import { ProblemTopics } from 'src/models/problems_topics/entities/problems_topics.entities';
+import { TestCase } from 'src/models/testcase/entities/testcase.entity';
 
 @Table({
   tableName: 'problems',
@@ -71,6 +73,9 @@ export class Problems extends Model<Problems> {
 
   // @BelongsTo(() => Courses)
   // course!: Courses;
+
+  @HasMany(() => TestCase)
+  testCases: TestCase[];
 
   @BelongsToMany(() => Companies, () => ProblemCompanies)
   companies!: Companies[];
