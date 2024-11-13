@@ -34,6 +34,7 @@ export class CommentService {
   async createComment(
     createCommentDto: CreateCommentDto,
     userId: number,
+    discussionId: number,
   ): Promise<Comments> {
     // Bước 1: Tạo một Comment mới
     const newComment = await this.commentModel.create(createCommentDto);
@@ -47,7 +48,7 @@ export class CommentService {
 
     // Bước 3: Lưu vào bảng DiscussionComment
     const discussionCommentData = {
-      discussionId: createCommentDto.discussionId, // Lấy discussionId từ createCommentDto
+      discussionId: discussionId, // Lấy discussionId từ createCommentDto
       commentId: newComment.id,
     };
     await this.discussionCommentModel.create(discussionCommentData);

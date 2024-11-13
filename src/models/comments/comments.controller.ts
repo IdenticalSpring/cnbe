@@ -18,12 +18,17 @@ import { CommentService } from './comments.service';
 export class CommentController {
   constructor(private readonly commentService: CommentService) {}
 
-  @Post(':userId')
+  @Post(':discussionId/:userId')
   async createComment(
     @Param('userId') userId: number,
+    @Param('discussionId') discussionId: number,
     @Body() createCommentDto: CreateCommentDto,
   ) {
-    return this.commentService.createComment(createCommentDto, userId);
+    return this.commentService.createComment(
+      createCommentDto,
+      userId,
+      discussionId,
+    );
   }
   @Get(':id')
   findOne(@Param('id') id: number) {
