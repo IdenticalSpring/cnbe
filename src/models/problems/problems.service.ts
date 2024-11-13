@@ -70,15 +70,15 @@ export class PromblemsService {
       include: [Companies, Topics],
     });
   }
-
-  async findAllWithPagination(page: number): Promise<{ data: Problems[]; currentPage: number; totalPages: number; totalItems: number }> {
+  async findAllWithPagination(page: number = 1): Promise<{ data: Problems[]; currentPage: number; totalPages: number; totalItems: number }> {
     const limit = parseInt(this.defaultLimit.toString(), 10);
     const offset = (page - 1) * limit;
 
     const { rows, count } = await this.problemsModel.findAndCountAll({
+      distinct: true, 
       offset,
       limit,
-      include: [Companies, Topics], 
+      include: [Companies, Topics],
     });
 
     return {
@@ -88,6 +88,7 @@ export class PromblemsService {
       totalItems: count,
     };
   }
+
 
   async findOne(id: number): Promise<Problems> {
     const problem = await this.problemsModel.findByPk(id, {
