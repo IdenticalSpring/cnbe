@@ -105,6 +105,8 @@ import { languageCode } from './models/language_code/entities/language_code.enti
 import { LanguageCodeModule } from './models/language_code/language.module';
 import { TestCase } from './models/testcase/entities/testcase.entity';
 import { TestCaseModule } from './models/testcase/testcase.module';
+import { AdminTopicsModule } from './admin/topics/topics.module';
+import { AdminCompaniesModule } from './admin/companies/companies.module';
 
 @Module({
   imports: [
@@ -232,6 +234,8 @@ import { TestCaseModule } from './models/testcase/testcase.module';
     AdminProblemModule,
     AdminChapterModule,
     AdminLessonsModule,
+    AdminTopicsModule,
+    AdminCompaniesModule,
 
     // Các module AI API
     GeminiApiModule,

@@ -30,7 +30,18 @@ export class PromblemsService {
   // }
   async create(createProblemDto: CreateProblemsDto): Promise<Problems> {
     try {
-      const problem = await Problems.create(createProblemDto);
+      const problem = await this.problemsModel.create(createProblemDto);
+
+      if (createProblemDto.companyIds) {
+        const companies = await Companies.findAll({ where: { id: createProblemDto.companyIds } });
+        await problem.$set('companies', companies);
+      }
+
+      if (createProblemDto.topicIds) {
+        const topics = await Topics.findAll({ where: { id: createProblemDto.topicIds } });
+        await problem.$set('topics', topics);
+      }
+
       return problem;
     } catch (error) {
       console.error('Error creating problem:', error);
@@ -38,16 +49,36 @@ export class PromblemsService {
     }
   }
 
-  async findAll(): Promise<Problems[]> {
-    return this.problemsModel.findAll();
+  async update(id: number, updateProblemDto: UpdateProblemsDto): Promise<Problems> {
+    const problem = await this.findOne(id);
+    await problem.update(updateProblemDto);
+
+    if (updateProblemDto.companyIds) {
+      const companies = await Companies.findAll({ where: { id: updateProblemDto.companyIds } });
+      await problem.$set('companies', companies);
+    }
+
+    if (updateProblemDto.topicIds) {
+      const topics = await Topics.findAll({ where: { id: updateProblemDto.topicIds } });
+      await problem.$set('topics', topics);
+    }
+
+    return problem;
   }
-  async findAllWithPagination(page: number): Promise<{ data: Problems[]; currentPage: number; totalPages: number; totalItems: number }> {
+  async findAll(): Promise<Problems[]> {
+    return this.problemsModel.findAll({
+      include: [Companies, Topics],
+    });
+  }
+  async findAllWithPagination(page: number = 1): Promise<{ data: Problems[]; currentPage: number; totalPages: number; totalItems: number }> {
     const limit = parseInt(this.defaultLimit.toString(), 10);
     const offset = (page - 1) * limit;
 
     const { rows, count } = await this.problemsModel.findAndCountAll({
+      distinct: true, 
       offset,
       limit,
+      include: [Companies, Topics],
     });
 
     return {
@@ -57,21 +88,16 @@ export class PromblemsService {
       totalItems: count,
     };
   }
-  async findOne(id: number): Promise<Problems> {
-    const exercise = await this.problemsModel.findByPk(id);
-    if (!exercise) {
-      throw new NotFoundException(`Exercise with ID ${id} not found`);
-    }
-    return exercise;
-  }
 
-  async update(
-    id: number,
-    updateExerciseDto: UpdateProblemsDto,
-  ): Promise<Problems> {
-    const exercise = await this.findOne(id);
-    await exercise.update(updateExerciseDto);
-    return exercise;
+
+  async findOne(id: number): Promise<Problems> {
+    const problem = await this.problemsModel.findByPk(id, {
+      include: [Companies, Topics], 
+    });
+    if (!problem) {
+      throw new NotFoundException(`Problem with ID ${id} not found`);
+    }
+    return problem;
   }
 
   async remove(id: number): Promise<void> {
