@@ -102,6 +102,7 @@ import { AdminChapterModule } from './admin/chapters/chapters.module';
 import { LessonsService } from './models/course_lesson/course_lesson.service';
 import { AdminLessonsModule } from './admin/lesson/course_lesson.module';
 import { AdminTopicsModule } from './admin/topics/topics.module';
+import { AdminCompaniesModule } from './admin/companies/companies.module';
 
 
 @Module({
@@ -227,6 +228,7 @@ import { AdminTopicsModule } from './admin/topics/topics.module';
     AdminChapterModule,
     AdminLessonsModule,
     AdminTopicsModule,
+    AdminCompaniesModule,
 
     // Các module AI API
     GeminiApiModule,
