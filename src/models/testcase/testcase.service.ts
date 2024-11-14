@@ -23,7 +23,6 @@ export class TestCaseService {
   async findAll(): Promise<TestCase[]> {
     return this.testCaseModel.findAll({
       include: [
-        { model: languageCode }, // Lấy thông tin languageCode của test case
         { model: Problems }, // Lấy thông tin Problems của test case
       ],
     });
