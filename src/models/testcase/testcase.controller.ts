@@ -12,10 +12,12 @@ import { ApiBearerAuth, ApiTags } from '@nestjs/swagger';
 import { TestCaseService } from './testcase.service';
 import { CreateTestCaseDto } from './dto/create-testcase.dto';
 import { UpdateTestCaseDto } from './dto/update-testcase.dto';
+import { Public } from 'src/decorator/public.decorator';
 
 @ApiTags('TestCase')
 @Controller('test-cases')
 @ApiBearerAuth('JWT')
+@Public()
 export class TestCaseController {
   constructor(private readonly testCaseService: TestCaseService) {}
 
@@ -51,5 +53,9 @@ export class TestCaseController {
   @Delete(':id')
   remove(@Param('id') id: number) {
     return this.testCaseService.remove(id);
+  }
+  @Get('problem/:problemId')
+  findAllByProblemId(@Param('problemId') problemId: number) {
+    return this.testCaseService.findAllByProblemId(problemId);
   }
 }
