@@ -33,7 +33,6 @@ export class TestCaseService {
   async findOne(id: number): Promise<TestCase> {
     return this.testCaseModel.findByPk(id, {
       include: [
-        { model: languageCode }, // Lấy thông tin languageCode của test case
         { model: Problems }, // Lấy thông tin Problems của test case
       ],
     });

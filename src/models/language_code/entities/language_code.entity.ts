@@ -27,6 +27,6 @@ export class languageCode extends Model<languageCode> {
   })
   language_code!: string;
 
-  @HasMany(() => TestCase)
-  testCases: TestCase[];
+  // @HasMany(() => TestCase)
+  // testCases: TestCase[];
 }

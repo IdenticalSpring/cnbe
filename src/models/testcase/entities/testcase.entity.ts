@@ -8,7 +8,6 @@ import {
   PrimaryKey,
   Table,
 } from 'sequelize-typescript';
-import { languageCode } from 'src/models/language_code/entities/language_code.entity';
 import { Problems } from 'src/models/problems/entitites/problems.entity';
 
 @Table({
@@ -23,12 +22,12 @@ export class TestCase extends Model<TestCase> {
   })
   id!: number;
 
-  @ForeignKey(() => languageCode)
-  @Column({
-    type: DataType.INTEGER,
-    allowNull: false,
-  })
-  languageCodeId!: number;
+  // @ForeignKey(() => languageCode)
+  // @Column({
+  //   type: DataType.INTEGER,
+  //   allowNull: false,
+  // })
+  // languageCodeId!: number;
 
   @ForeignKey(() => Problems)
   @Column({
@@ -41,11 +40,16 @@ export class TestCase extends Model<TestCase> {
     type: DataType.TEXT,
     allowNull: false,
   })
-  testcase!: string;
+  input!: string;
 
-  @BelongsTo(() => languageCode)
-  languageCode!: languageCode;
+  @Column({
+    type: DataType.TEXT,
+    allowNull: false,
+  })
+  expected_output!: string;
 
+  // @BelongsTo(() => languageCode)
+  // languageCode!: languageCode;
   @BelongsTo(() => Problems)
   problem!: Problems;
 }
