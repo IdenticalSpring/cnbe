@@ -4,15 +4,24 @@ import axios from 'axios';
 import { Submission } from './entities/submission.model';
 import { AcceptanceSubmission } from '../acceptance_submissions/entities/acceptance_submissions.entity';
 import { CreateSubmissionDto } from './dto/submission.dto';
+import { ConfigService } from '@nestjs/config';
+import Bottleneck from 'bottleneck';
 
 @Injectable()
 export class SubmissionService {
+  private limiter: Bottleneck;
   constructor(
     @InjectModel(Submission)
     private readonly submissionModel: typeof Submission,
     @InjectModel(AcceptanceSubmission)
     private readonly acceptanceSubmissionModel: typeof AcceptanceSubmission,
-  ) {}
+    private readonly configService: ConfigService,
+  ) {
+    this.limiter = new Bottleneck({
+      maxConcurrent: 1,
+      minTime: 1000,
+    });
+  }
 
   public mapLanguageToId(language: string): number {
     const languageMap = {
@@ -71,7 +80,7 @@ export class SubmissionService {
       method: 'POST',
       url: 'https://judge0-ce.p.rapidapi.com/submissions?base64_encoded=true&wait=true',
       headers: {
-        'x-rapidapi-key': 'a51392120fmshf8b944e8e3afe15p1fb976jsn80348da00d5c',
+        'x-rapidapi-key': this.configService.get<string>('JUDGE0_API_KEY'),
         'x-rapidapi-host': 'judge0-ce.p.rapidapi.com',
         'Content-Type': 'application/json',
       },
@@ -119,7 +128,7 @@ export class SubmissionService {
       method: 'POST',
       url: 'https://judge0-ce.p.rapidapi.com/submissions?base64_encoded=false&wait=true',
       headers: {
-        'x-rapidapi-key': 'a51392120fmshf8b944e8e3afe15p1fb976jsn80348da00d5c',
+        'x-rapidapi-key': this.configService.get<string>('JUDGE0_API_KEY'),
         'x-rapidapi-host': 'judge0-ce.p.rapidapi.com',
         'Content-Type': 'application/json',
       },

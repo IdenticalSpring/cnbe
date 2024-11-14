@@ -55,4 +55,22 @@ export class TestCaseService {
       await testCase.destroy();
     }
   }
+  async findAllByProblemId(problemId: number): Promise<TestCase[]> {
+    const testCases = await this.testCaseModel.findAll({
+      where: { problemId },
+      include: [
+        { model: Problems },
+      ],
+    });
+
+    // Sửa input và expected_output nhưng vẫn giữ kiểu TestCase
+    testCases.forEach(testCase => {
+      testCase.input = testCase.input.replace(/\\n/g, '\n');
+      testCase.expected_output = testCase.expected_output.replace(/\\n/g, '\n');
+    });
+
+    return testCases;
+  }
+
+
 }
