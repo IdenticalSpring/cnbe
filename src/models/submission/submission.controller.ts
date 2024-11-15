@@ -7,7 +7,7 @@ import { CreateSubmissionDto } from './dto/submission.dto';
 @Controller('submissions')
 @ApiBearerAuth('JWT')
 export class SubmissionController {
-  constructor(private readonly submissionService: SubmissionService) { }
+  constructor(private readonly submissionService: SubmissionService) {}
 
   @Post(':userId')
   @ApiOperation({ summary: 'Submit exercises by user' })
@@ -46,6 +46,24 @@ export class SubmissionController {
     @Param('userId') userId: number,
     @Body() createSubmissionDto: CreateSubmissionDto,
   ) {
-    return this.submissionService.submitToJudge0(createSubmissionDto, userId);
+    try {
+      const result = await this.submissionService.createOrUpdateSubmission(
+        userId,
+        createSubmissionDto.language,
+        createSubmissionDto.problemId,
+        createSubmissionDto.code,
+        createSubmissionDto.stdin || '',
+      );
+
+      return {
+        message: 'Code executed successfully',
+        data: result,
+      };
+    } catch (error) {
+      return {
+        message: 'Code execution failed',
+        error: error.message,
+      };
+    }
   }
 }
