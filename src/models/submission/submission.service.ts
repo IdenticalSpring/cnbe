@@ -4,7 +4,6 @@ import axios from 'axios';
 import { Submission } from './entities/submission.model';
 import { AcceptanceSubmission } from '../acceptance_submissions/entities/acceptance_submissions.entity';
 import { CreateSubmissionDto } from './dto/submission.dto';
-import { ConfigService } from '@nestjs/config';
 import Bottleneck from 'bottleneck';
 
 @Injectable()
@@ -15,7 +14,6 @@ export class SubmissionService {
     private readonly submissionModel: typeof Submission,
     @InjectModel(AcceptanceSubmission)
     private readonly acceptanceSubmissionModel: typeof AcceptanceSubmission,
-    private readonly configService: ConfigService,
   ) {
     this.limiter = new Bottleneck({
       maxConcurrent: 1,
@@ -23,21 +21,18 @@ export class SubmissionService {
     });
   }
 
-  public mapLanguageToId(language: string): number {
+  public mapLanguageToVersion(language: string): {
+    language: string;
+    version: string;
+  } {
     const languageMap = {
-      python: 100,
-      javascript: 93,
-      c: 52,
-      csharp: 51,
-      java: 91,
-      dart: 90,
-      php: 98,
-      ruby: 72,
-      typescript: 101,
-      kotlin: 78,
-      lua: 64,
-      cpp: 105,
-      assembly: 45,
+      python: { language: 'python', version: '3.10.0' },
+      javascript: { language: 'javascript', version: '18.15.0' },
+      c: { language: 'c', version: '10.2.0' },
+      csharp: { language: 'csharp.net', version: '5.0.201' },
+      java: { language: 'java', version: '15.0.2' },
+      typescript: { language: 'typescript', version: '5.0.3' },
+      cpp: { language: 'cpp', version: '10.2.0' },
     };
     return languageMap[language.toLowerCase()] || null;
   }
@@ -73,28 +68,35 @@ export class SubmissionService {
       submissionId: submission.id,
       language: language,
       code: code,
-      status: 'pending', // Bạn có thể thay đổi trạng thái mặc định nếu cần
+      status: 'pending',
     });
 
-    const judge0Options = {
+    const mappedLanguage = this.mapLanguageToVersion(language);
+
+    if (!mappedLanguage) {
+      throw new Error('Unsupported language');
+    }
+
+    const pistonOptions = {
       method: 'POST',
-      url: 'https://judge0-ce.p.rapidapi.com/submissions?base64_encoded=true&wait=true',
-      headers: {
-        'x-rapidapi-key': this.configService.get<string>('JUDGE0_API_KEY'),
-        'x-rapidapi-host': 'judge0-ce.p.rapidapi.com',
-        'Content-Type': 'application/json',
-      },
+      url: 'https://emkc.org/api/v2/piston/execute',
       data: {
-        language_id: this.mapLanguageToId(language),
-        source_code: Buffer.from(code).toString('base64'),
-        stdin: Buffer.from(stdinInput).toString('base64'),
+        language: mappedLanguage.language,
+        version: mappedLanguage.version,
+        files: [
+          {
+            name: 'main',
+            content: code,
+          },
+        ],
+        stdin: stdinInput || '',
       },
     };
 
     try {
-      const judge0Response = await axios(judge0Options);
-      const output = judge0Response.data.stdout;
-      const error = judge0Response.data.stderr;
+      const response = await axios(pistonOptions);
+      const output = response.data.run.stdout;
+      const error = response.data.run.stderr;
 
       if (error) {
         submission.status = 'failed';
@@ -102,50 +104,19 @@ export class SubmissionService {
         submission.error = error;
       } else if (output) {
         submission.status = 'completed';
-        submission.output = Buffer.from(output, 'base64').toString('utf-8');
+        submission.output = output;
         submission.error = null;
       }
 
       await submission.save();
-      return { submission, acceptanceSubmission }; // Trả về cả hai đối tượng
+      return { submission, acceptanceSubmission };
     } catch (error) {
       submission.status = 'failed';
       submission.output = null;
-      submission.error = 'Judge0 API Error: ' + error.message;
+      submission.error = 'Piston API Error: ' + error.message;
       await submission.save();
 
-      throw new Error('Judge0 API Error: ' + error.message);
-    }
-  }
-  async submitToJudge0(createSubmissionDto: CreateSubmissionDto, userId: number) {
-    const { code, language, stdin } = createSubmissionDto;
-    const languageId = this.mapLanguageToId(language);
-    if (!languageId) {
-      throw new Error('Unsupported language');
-    }
-
-    const judge0Options = {
-      method: 'POST',
-      url: 'https://judge0-ce.p.rapidapi.com/submissions?base64_encoded=false&wait=true',
-      headers: {
-        'x-rapidapi-key': this.configService.get<string>('JUDGE0_API_KEY'),
-        'x-rapidapi-host': 'judge0-ce.p.rapidapi.com',
-        'Content-Type': 'application/json',
-      },
-      data: {
-        language_id: languageId,
-        source_code: code,
-        stdin: stdin || '',
-      },
-    };
-    console.log("Request Data to Judge0:", judge0Options.data);
-
-    try {
-      const response = await axios(judge0Options);
-      return response.data;
-    } catch (error) {
-      console.error("Error calling Judge0 API:", error.response ? error.response.data : error.message);
-      throw new Error('Error calling Judge0 API: ' + (error.response ? error.response.data : error.message));
+      throw new Error('Piston API Error: ' + error.message);
     }
   }
 }
