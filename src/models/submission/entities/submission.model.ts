@@ -49,7 +49,7 @@ export class Submission extends Model {
   code: string;
 
   @Column({
-    type: DataType.ENUM('failed', 'completed'),
+    type: DataType.ENUM('pending', 'failed', 'completed', 'killed'),
     defaultValue: 'failed',
   })
   status: string;
