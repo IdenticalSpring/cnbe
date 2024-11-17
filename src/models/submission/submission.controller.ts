@@ -47,23 +47,25 @@ export class SubmissionController {
     @Body() createSubmissionDto: CreateSubmissionDto,
   ) {
     try {
-      const result = await this.submissionService.createOrUpdateSubmission(
-        userId,
+      // Gọi service để chạy code, truyền vào tất cả các trường cần thiết từ DTO
+      const result = await this.submissionService.runCode(
         createSubmissionDto.language,
-        createSubmissionDto.problemId,
         createSubmissionDto.code,
         createSubmissionDto.stdin || '',
       );
 
+      // Trả về kết quả
       return {
         message: 'Code executed successfully',
         data: result,
       };
     } catch (error) {
+      // Xử lý lỗi nếu có
       return {
         message: 'Code execution failed',
         error: error.message,
       };
     }
   }
+
 }
