@@ -73,9 +73,9 @@ import { ProblemCompanies } from './models/problems_companies/entities/problems_
 import { Companies } from './models/companies/entities/companies.entities';
 import { Types } from './models/type/entities/types.entity';
 import { CourseTypes } from './models/typeCourse/course_types.entity';
-import { ProgressModule } from './models/progress/progress.module';
+import { ProgressModule } from './models/user_lesson_progress/progress.module';
 import { LessonsModule } from './models/course_lesson/course_lesson.module';
-import { Progress } from './models/progress/entities/progress.entity';
+import { UserLessonProgress } from './models/user_lesson_progress/entities/progress.entity';
 import { Lessons } from './models/course_lesson/entities/course_lesson.entity';
 import { ChapterModule } from './models/course_chapter/chapter.module';
 import { Chapter } from './models/course_chapter/entities/chapter.entity';
@@ -107,6 +107,10 @@ import { TestCase } from './models/testcase/entities/testcase.entity';
 import { TestCaseModule } from './models/testcase/testcase.module';
 import { AdminTopicsModule } from './admin/topics/topics.module';
 import { AdminCompaniesModule } from './admin/companies/companies.module';
+import { UserChapterProgress } from './models/user_chapter_progress/entities/user_chapter_progress.entity';
+import { UserCourseProgress } from './models/user_course_progress/entities/user_course_progress.entity';
+import { UserChapterProgressModule } from './models/user_chapter_progress/user_chapter_progress.module';
+import { UserCourseProgressModule } from './models/user_course_progress/user_course_progress.module';
 
 @Module({
   imports: [
@@ -154,7 +158,9 @@ import { AdminCompaniesModule } from './admin/companies/companies.module';
           Companies,
           Types,
           CourseTypes,
-          Progress,
+          UserLessonProgress,
+          UserChapterProgress,
+          UserCourseProgress,
           Lessons,
           Chapter,
         ],
@@ -221,6 +227,8 @@ import { AdminCompaniesModule } from './admin/companies/companies.module';
     ProblemCompaniesModule,
     CompaniesModule,
     SubmissionModule,
+    UserChapterProgressModule,
+    UserCourseProgressModule,
     ProgressModule,
     LessonsModule,
     ChapterModule,

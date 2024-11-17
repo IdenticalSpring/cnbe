@@ -9,14 +9,15 @@ import {
   Body,
 } from '@nestjs/common';
 
-import { ApiBearerAuth, ApiTags } from '@nestjs/swagger';
+import { ApiTags } from '@nestjs/swagger';
 import { CategoryService } from './categories.service';
 import { CreateCategoryDto } from './dto/create-categories.dto';
 import { Category } from './entities/categories.entity';
+import { Public } from 'src/decorator/public.decorator';
 
+@Public()
 @ApiTags('categories')
 @Controller('categories')
-@ApiBearerAuth('JWT')
 export class CategoryController {
   constructor(private readonly categoryService: CategoryService) {}
 

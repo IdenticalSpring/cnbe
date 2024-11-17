@@ -1,5 +1,4 @@
-
-import { Progress } from 'src/models/progress/entities/progress.entity';
+import { UserLessonProgress } from 'src/models/user_lesson_progress/entities/progress.entity';
 import {
   Column,
   Model,
@@ -94,8 +93,6 @@ export class User extends Model<User> {
     defaultValue: DataType.NOW,
   })
   updatedAt: Date;
-  @HasMany(() => Progress)
-  progresses: Progress[];
-
+  @HasMany(() => UserLessonProgress)
+  progresses: UserLessonProgress[];
 }
-
