@@ -5,6 +5,7 @@ import {
   DataType,
   ForeignKey,
   PrimaryKey,
+  BelongsTo,
 } from 'sequelize-typescript';
 import { Category } from 'src/models/categories/entities/categories.entity';
 import { Discussions } from 'src/models/discussion/entities/discussion.entity';
@@ -23,4 +24,10 @@ export class CategoryDiscussion extends Model<CategoryDiscussion> {
   @ForeignKey(() => Discussions)
   @Column(DataType.INTEGER)
   discussionId: number;
+
+  @BelongsTo(() => Category)
+  category: Category;
+
+  @BelongsTo(() => Discussions)
+  discussion: Discussions;
 }
