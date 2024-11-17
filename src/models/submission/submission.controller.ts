@@ -21,7 +21,6 @@ export class SubmissionController {
     @Res() res: Response,
   ) {
     try {
-      // Gọi service để xử lý logic submission
       const result = await this.submissionService.createOrUpdateSubmission(
         userId,
         createSubmissionDto.language,
@@ -30,10 +29,10 @@ export class SubmissionController {
         createSubmissionDto.stdin || '',
       );
 
-      const { submission, acceptanceSubmission, message } = result;
+      const { submission, acceptanceSubmission, message, status } = result;
 
-      // **1. Nếu bài đã được chấp nhận trước đó**
-      if (acceptanceSubmission.status === 'accepted') {
+      if (status === 200) {
+        // **Đã được chấp nhận trước đó**
         return res.status(200).json({
           status: 200,
           message: 'Your submission has already been completed and accepted.',
@@ -44,11 +43,11 @@ export class SubmissionController {
         });
       }
 
-      // **2. Nếu bài đã hoàn thành nhưng chưa được chấp nhận**
-      if (submission.status === 'completed' && acceptanceSubmission.status !== 'accepted') {
-        return res.status(202).json({
-          status: 202,
-          message: 'Submission completed but not accepted.',
+      if (status === 201) {
+        // **Nộp bài mới hoặc cập nhật bài cũ thành công**
+        return res.status(201).json({
+          status: 201,
+          message: message || 'Submission processed successfully.',
           data: {
             submission,
             acceptanceSubmission,
@@ -56,24 +55,34 @@ export class SubmissionController {
         });
       }
 
-      // **3. Nếu là bài nộp mới**
-      return res.status(201).json({
-        status: 201,
-        message: message || 'Submission processed successfully.',
-        data: {
-          submission,
-          acceptanceSubmission,
-        },
+      if (status === 400) {
+        // **Lỗi do người dùng (ngôn ngữ không được hỗ trợ hoặc lỗi cú pháp)**
+        return res.status(400).json({
+          status: 400,
+          message: message || 'Submission rejected.',
+          data: {
+            submission,
+            acceptanceSubmission,
+          },
+        });
+      }
+
+      // **Lỗi hệ thống**
+      return res.status(500).json({
+        status: 500,
+        message: 'System error occurred during submission processing.',
+        error: result.error || 'Unexpected system error.',
       });
     } catch (error) {
-      // **4. Trả về lỗi**
-      return res.status(400).json({
-        status: 400,
-        message: 'Submission failed',
+      // **Xử lý lỗi không mong đợi**
+      return res.status(500).json({
+        status: 500,
+        message: 'An unexpected error occurred.',
         error: error.message,
       });
     }
   }
+
 
   /**
    * API chạy mã trực tiếp
