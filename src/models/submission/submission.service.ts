@@ -46,14 +46,14 @@ export class SubmissionService {
     language: string,
     problemId: number,
     code: string,
-    stdinInput: string,
+    stdinInput: string
   ) {
-    // Tìm bài nộp cũ dựa trên userId và problemId
+    // Tìm Submission theo userId và problemId
     let submission = await this.submissionModel.findOne({
       where: { userId, problemId },
     });
 
-    let acceptanceSubmission: AcceptanceSubmission;
+    let acceptanceSubmission: AcceptanceSubmission | null = null;
 
     if (submission) {
       // Tìm AcceptanceSubmission liên quan đến Submission
@@ -61,28 +61,17 @@ export class SubmissionService {
         where: { submissionId: submission.id },
       });
 
-      // Kiểm tra nếu Submission đã hoàn thành và được chấp nhận
-      if (
-        submission.status === 'completed' &&
-        acceptanceSubmission?.status === 'accepted'
-      ) {
+      // **Trường hợp đã được chấp nhận**
+      if (acceptanceSubmission && acceptanceSubmission.status === 'accepted') {
         return {
           message: 'Your submission has already been completed and accepted.',
+          status: 200,
           submission,
           acceptanceSubmission,
         };
       }
 
-      // Kiểm tra nếu Submission đã hoàn thành nhưng chưa được chấp nhận
-      if (submission.status === 'completed') {
-        return {
-          message: 'Your submission has already been completed but not accepted.',
-          submission,
-          acceptanceSubmission,
-        };
-      }
-
-      // Cập nhật thông tin bài nộp nếu bài cũ chưa hoàn thành
+      // **Trường hợp chưa được chấp nhận**
       submission.language = language;
       submission.code = code;
       submission.status = 'pending';
@@ -104,7 +93,7 @@ export class SubmissionService {
         });
       }
     } else {
-      // Nếu không có Submission, tạo mới
+      // **Trường hợp không trùng gì hết: Tạo mới Submission và AcceptanceSubmission**
       submission = await this.submissionModel.create({
         userId,
         problemId,
@@ -122,7 +111,7 @@ export class SubmissionService {
       });
     }
 
-    // Kiểm tra ngôn ngữ có được hỗ trợ không
+    // **Kiểm tra ngôn ngữ có được hỗ trợ không**
     const mappedLanguage = this.mapLanguageToVersion(language);
 
     if (!mappedLanguage) {
@@ -135,27 +124,21 @@ export class SubmissionService {
 
       return {
         message: 'Unsupported language. Submission rejected.',
+        status: 400,
         submission,
         acceptanceSubmission,
       };
     }
 
-    // Gọi API để chạy code
+    // **Gọi API để chạy code**
     const pistonOptions = {
       method: 'POST',
       url: 'http://judge0.codmaster.id.vn/api/v2/execute',
-      headers: {
-        'Content-Type': 'application/json',
-      },
+      headers: { 'Content-Type': 'application/json' },
       data: {
         language: mappedLanguage.language,
         version: mappedLanguage.version,
-        files: [
-          {
-            name: 'main',
-            content: code,
-          },
-        ],
+        files: [{ name: 'main', content: code }],
         stdin: stdinInput || '',
       },
     };
@@ -169,7 +152,7 @@ export class SubmissionService {
       submission.error = run?.stderr || 'Unknown error occurred';
       await submission.save();
 
-      // Cập nhật trạng thái của AcceptanceSubmission
+      // Cập nhật AcceptanceSubmission
       acceptanceSubmission.status =
         submission.status === 'completed' ? 'accepted' : 'rejected';
       acceptanceSubmission.output = submission.output;
@@ -181,11 +164,12 @@ export class SubmissionService {
           acceptanceSubmission.status === 'accepted'
             ? 'Your submission has been accepted.'
             : 'Your submission was rejected.',
+        status: submission.status === 'completed' ? 201 : 400,
         submission,
         acceptanceSubmission,
       };
     } catch (error) {
-      // Xử lý lỗi từ API Piston
+      // **Xử lý lỗi từ API Piston**
       submission.status = 'failed';
       submission.output = null;
       submission.error = 'Piston API Error: ' + error.message;
@@ -198,6 +182,7 @@ export class SubmissionService {
 
       return {
         message: 'Submission failed due to a system error.',
+        status: 500,
         error: error.message,
         submission,
         acceptanceSubmission,
