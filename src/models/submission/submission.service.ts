@@ -48,41 +48,99 @@ export class SubmissionService {
     code: string,
     stdinInput: string,
   ) {
-    // Kiểm tra hoặc tạo submission mới
-    const submission = await this.submissionModel.findOrCreate({
-      where: { userId, language },
-      defaults: {
+    // Tìm bài nộp cũ dựa trên userId và problemId
+    let submission = await this.submissionModel.findOne({
+      where: { userId, problemId },
+    });
+
+    let acceptanceSubmission: AcceptanceSubmission;
+
+    if (submission) {
+      // Tìm AcceptanceSubmission liên quan đến Submission
+      acceptanceSubmission = await this.acceptanceSubmissionModel.findOne({
+        where: { submissionId: submission.id },
+      });
+
+      // Kiểm tra nếu Submission đã hoàn thành và được chấp nhận
+      if (
+        submission.status === 'completed' &&
+        acceptanceSubmission?.status === 'accepted'
+      ) {
+        return {
+          message: 'Your submission has already been completed and accepted.',
+          submission,
+          acceptanceSubmission,
+        };
+      }
+
+      // Kiểm tra nếu Submission đã hoàn thành nhưng chưa được chấp nhận
+      if (submission.status === 'completed') {
+        return {
+          message: 'Your submission has already been completed but not accepted.',
+          submission,
+          acceptanceSubmission,
+        };
+      }
+
+      // Cập nhật thông tin bài nộp nếu bài cũ chưa hoàn thành
+      submission.language = language;
+      submission.code = code;
+      submission.status = 'pending';
+      await submission.save();
+
+      if (acceptanceSubmission) {
+        acceptanceSubmission.language = language;
+        acceptanceSubmission.code = code;
+        acceptanceSubmission.status = 'pending';
+        await acceptanceSubmission.save();
+      } else {
+        // Nếu không tồn tại AcceptanceSubmission, tạo mới
+        acceptanceSubmission = await this.acceptanceSubmissionModel.create({
+          userId,
+          submissionId: submission.id,
+          language,
+          code,
+          status: 'pending',
+        });
+      }
+    } else {
+      // Nếu không có Submission, tạo mới
+      submission = await this.submissionModel.create({
         userId,
         problemId,
         language,
         code,
         status: 'pending',
-      },
-    }).then(([submissionInstance]) => submissionInstance);
+      });
 
-    submission.code = code;
-    submission.status = 'pending';
-    await submission.save();
+      acceptanceSubmission = await this.acceptanceSubmissionModel.create({
+        userId,
+        submissionId: submission.id,
+        language,
+        code,
+        status: 'pending',
+      });
+    }
 
-    // Tạo acceptance submission
-    await this.acceptanceSubmissionModel.create({
-      userId,
-      submissionId: submission.id,
-      language,
-      code,
-      status: 'pending',
-    });
-
+    // Kiểm tra ngôn ngữ có được hỗ trợ không
     const mappedLanguage = this.mapLanguageToVersion(language);
 
     if (!mappedLanguage) {
       submission.status = 'failed';
       submission.error = 'Unsupported language';
       await submission.save();
-      throw new Error('Unsupported language');
+
+      acceptanceSubmission.status = 'rejected';
+      await acceptanceSubmission.save();
+
+      return {
+        message: 'Unsupported language. Submission rejected.',
+        submission,
+        acceptanceSubmission,
+      };
     }
 
-    // Cấu hình API Piston
+    // Gọi API để chạy code
     const pistonOptions = {
       method: 'POST',
       url: 'http://judge0.codmaster.id.vn/api/v2/execute',
@@ -106,29 +164,48 @@ export class SubmissionService {
       const response = await axios(pistonOptions);
       const { run } = response.data;
 
-      // Xử lý kết quả
-      submission.status = run ? (run.stderr || run.code !== 0 ? 'failed' : 'completed') : 'failed';
+      submission.status = run && !run.stderr && run.code === 0 ? 'completed' : 'failed';
       submission.output = run?.stdout || null;
       submission.error = run?.stderr || 'Unknown error occurred';
       await submission.save();
 
+      // Cập nhật trạng thái của AcceptanceSubmission
+      acceptanceSubmission.status =
+        submission.status === 'completed' ? 'accepted' : 'rejected';
+      acceptanceSubmission.output = submission.output;
+      acceptanceSubmission.error = submission.error;
+      await acceptanceSubmission.save();
+
       return {
+        message:
+          acceptanceSubmission.status === 'accepted'
+            ? 'Your submission has been accepted.'
+            : 'Your submission was rejected.',
         submission,
-        acceptanceSubmission: {
-          userId,
-          submissionId: submission.id,
-          status: submission.status,
-        },
+        acceptanceSubmission,
       };
     } catch (error) {
+      // Xử lý lỗi từ API Piston
       submission.status = 'failed';
       submission.output = null;
       submission.error = 'Piston API Error: ' + error.message;
       await submission.save();
 
-      throw new Error('Piston API Error: ' + error.message);
+      acceptanceSubmission.status = 'rejected';
+      acceptanceSubmission.output = null;
+      acceptanceSubmission.error = submission.error;
+      await acceptanceSubmission.save();
+
+      return {
+        message: 'Submission failed due to a system error.',
+        error: error.message,
+        submission,
+        acceptanceSubmission,
+      };
     }
   }
+
+
 
   /**
    * Chạy mã nguồn trực tiếp
