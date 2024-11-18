@@ -12,6 +12,7 @@ import { UserComments } from 'src/models/comments_user/entities/commets_user.ent
 import { Discussions } from 'src/models/discussion/entities/discussion.entity';
 import { Submission } from 'src/models/submission/entities/submission.model';
 import { UserDiscussion } from 'src/models/user_discussion/entities/user_discussion.entity';
+import { UserVote } from 'src/models/user_vote/entities/user_vote.entity';
 
 @Table
 export class User extends Model<User> {
@@ -93,6 +94,10 @@ export class User extends Model<User> {
     defaultValue: DataType.NOW,
   })
   updatedAt: Date;
+
   @HasMany(() => UserLessonProgress)
   progresses: UserLessonProgress[];
+
+  @HasMany(() => UserVote)
+  userVotes: UserVote[];
 }

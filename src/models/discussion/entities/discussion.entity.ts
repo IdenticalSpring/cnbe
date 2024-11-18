@@ -16,6 +16,7 @@ import { CategoryDiscussion } from 'src/models/categories_discussion/entities/ca
 import { DiscussionComment } from 'src/models/comments_discussion/entities/comments_discussion.entity';
 import { TagDiscussion } from 'src/models/tag_discussion/entities/tag_discussion.entity';
 import { UserDiscussion } from 'src/models/user_discussion/entities/user_discussion.entity';
+import { UserVote } from 'src/models/user_vote/entities/user_vote.entity';
 import { User } from 'src/models/users/entities/user.entity';
 
 @Table({
@@ -58,6 +59,13 @@ export class Discussions extends Model<Discussions> {
     allowNull: false,
     defaultValue: 0,
   })
+  voteDown: number;
+
+  @Column({
+    type: DataType.INTEGER,
+    allowNull: false,
+    defaultValue: 0,
+  })
   views: number;
 
   @CreatedAt
@@ -83,4 +91,7 @@ export class Discussions extends Model<Discussions> {
 
   @HasMany(() => CategoryDiscussion)
   categoryDiscussions: CategoryDiscussion[];
+
+  @HasMany(() => UserVote)
+  userVotes: UserVote[];
 }

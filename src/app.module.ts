@@ -111,6 +111,8 @@ import { UserChapterProgress } from './models/user_chapter_progress/entities/use
 import { UserCourseProgress } from './models/user_course_progress/entities/user_course_progress.entity';
 import { UserChapterProgressModule } from './models/user_chapter_progress/user_chapter_progress.module';
 import { UserCourseProgressModule } from './models/user_course_progress/user_course_progress.module';
+import { UserVote } from './models/user_vote/entities/user_vote.entity';
+import { UserVoteModule } from './models/user_vote/user_vote.module';
 
 @Module({
   imports: [
@@ -141,6 +143,7 @@ import { UserCourseProgressModule } from './models/user_course_progress/user_cou
           TestCase,
           UserComments,
           DiscussionComment,
+          UserVote,
           UserDiscussion,
           Category,
           CategoryDiscussion,
@@ -208,6 +211,7 @@ import { UserCourseProgressModule } from './models/user_course_progress/user_cou
     ProblemTopicsModule,
     CoursesModule,
     DiscussModule,
+    UserVoteModule,
     TagModule,
     TagDiscussionModule,
     CommentModule,
