@@ -1,8 +1,9 @@
-import { Controller, Post, Body, Param, Res } from '@nestjs/common';
+import { Controller, Post, Body, Param, Res, Get } from '@nestjs/common';
 import { ApiBearerAuth, ApiOperation, ApiTags } from '@nestjs/swagger';
 import { SubmissionService } from './submission.service';
 import { CreateSubmissionDto } from './dto/submission.dto';
 import { Response } from 'express';
+import axios from 'axios';
 
 @ApiTags('Submission')
 @Controller('submissions')
@@ -111,6 +112,15 @@ export class SubmissionController {
         message: 'Code execution failed',
         error: error.message,
       });
+    }
+  }
+  @Get('/check-connection')
+  async checkConnection() {
+    try {
+      const response = await axios.get('https://judge0.codmaster.id.vn');
+      return { status: 'success', data: response.data };
+    } catch (error) {
+      return { status: 'failed', message: error.message };
     }
   }
 }
