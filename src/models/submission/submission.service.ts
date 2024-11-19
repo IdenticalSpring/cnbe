@@ -133,7 +133,7 @@ export class SubmissionService {
     // **Gọi API để chạy code**
     const pistonOptions = {
       method: 'POST',
-      url: 'https://judge0.codmaster.id.vn/api/v2/execute',
+      url: 'http://localhost:2000/api/v2/execute',
       headers: { 'Content-Type': 'application/json' },
       data: {
         language: mappedLanguage.language,
@@ -204,7 +204,7 @@ export class SubmissionService {
 
     const pistonOptions = {
       method: 'POST',
-      url: 'https://judge0.codmaster.id.vn/api/v2/execute',
+      url: 'http://localhost:2000/api/v2/execute',
       headers: { 'Content-Type': 'application/json' },
       data: {
         language: mappedLanguage.language,
