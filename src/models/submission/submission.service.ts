@@ -205,9 +205,7 @@ export class SubmissionService {
     const pistonOptions = {
       method: 'POST',
       url: 'https://judge0.codmaster.id.vn/api/v2/execute',
-      headers: {
-        'Content-Type': 'application/json',
-      },
+      headers: { 'Content-Type': 'application/json' },
       data: {
         language: mappedLanguage.language,
         version: mappedLanguage.version,
