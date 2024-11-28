@@ -33,13 +33,13 @@ export class Courses extends Model<Courses> {
 
   @Column({
     type: DataType.DECIMAL(10, 2),
-    allowNull: false,
+    allowNull: true,
     defaultValue: 0.00,
   })
   price: number;
 
   @Column({
-    type: DataType.ENUM('active', 'inactive', 'draft'),
+    type: DataType.ENUM('active', 'inactive', 'draft', 'demo'),
     allowNull: false,
     defaultValue: 'draft',
   })
@@ -65,4 +65,5 @@ export class Courses extends Model<Courses> {
 
   @BelongsToMany(() => Types, () => CourseTypes)
   types: Types[];
+
 }
