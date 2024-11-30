@@ -123,4 +123,37 @@ export class SubmissionController {
       return { status: 'failed', message: error.message };
     }
   }
+  @Get(':userId/:problemId')
+  @ApiOperation({ summary: 'Get submission by userId and problemId' })
+  async getSubmissionByUserIdAndProblemId(
+    @Param('userId') userId: number,
+    @Param('problemId') problemId: number,
+    @Res() res: Response,
+  ) {
+    try {
+      const submission = await this.submissionService.getSubmissionByUserIdAndProblemId(
+        userId,
+        problemId,
+      );
+
+      if (!submission) {
+        return res.status(404).json({
+          status: 404,
+          message: 'Submission not found.',
+        });
+      }
+
+      return res.status(200).json({
+        status: 200,
+        message: 'Submission retrieved successfully.',
+        data: submission,
+      });
+    } catch (error) {
+      return res.status(500).json({
+        status: 500,
+        message: 'An unexpected error occurred.',
+        error: error.message,
+      });
+    }
+  }
 }

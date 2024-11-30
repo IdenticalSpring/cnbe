@@ -5,7 +5,9 @@ import {
   Table,
   ForeignKey,
   BelongsTo,
+  HasOne,
 } from 'sequelize-typescript';
+import { AcceptanceSubmission } from 'src/models/acceptance_submissions/entities/acceptance_submissions.entity';
 import { Problems } from 'src/models/problems/entitites/problems.entity';
 import { User } from 'src/models/users/entities/user.entity';
 
@@ -59,4 +61,6 @@ export class Submission extends Model {
 
   @Column(DataType.TEXT)
   error: string;
+  @HasOne(() => AcceptanceSubmission)
+  acceptanceSubmission: AcceptanceSubmission;
 }

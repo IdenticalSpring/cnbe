@@ -249,4 +249,19 @@ export class SubmissionService {
       };
     }
   }
+  async getSubmissionByUserIdAndProblemId(
+    userId: number,
+    problemId: number,
+  ): Promise<Submission | null> {
+    return this.submissionModel.findOne({
+      where: { userId, problemId },
+      include: [
+        {
+          model: AcceptanceSubmission,
+          required: false, 
+        },
+      ],
+    });
+  }
+
 }
