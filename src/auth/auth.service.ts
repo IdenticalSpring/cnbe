@@ -45,12 +45,20 @@ export class AuthService {
   }
 
   async createJwtToken(user: any) {
-    const payload = { username: user.username, sub: user.id, role: user.role };
+    const payload = {
+      username: user.username,
+      sub: user.id,
+      role: user.role,
+      email: user.email, 
+      name: user.name,    
+    };
+
     return {
       access_token: this.jwtService.sign(payload),
       user,
     };
   }
+
 
 
   async validateGoogleUser(googleProfile: any) {
@@ -90,11 +98,21 @@ export class AuthService {
 
 
   async login(user: any) {
-    const payload = { username: user.username, sub: user.id, role: user.role };
+  
+
+    const payload = {
+      username: user.username,
+      sub: user.id,
+      role: user.role,
+      email: user.email,   
+      name: user.name      
+    };
+
     return {
       access_token: this.jwtService.sign(payload),
     };
   }
+
 
   async logout(token: string) {
     return { message: 'Logged out successfully' };
