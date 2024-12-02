@@ -8,13 +8,20 @@ import { Request } from 'express';
 export class JwtStrategy extends PassportStrategy(Strategy) {
     constructor(private configService: ConfigService) {
         super({
-            jwtFromRequest: ExtractJwt.fromAuthHeaderAsBearerToken(), 
+            jwtFromRequest: ExtractJwt.fromAuthHeaderAsBearerToken(),
             ignoreExpiration: false,
             secretOrKey: configService.get<string>('JWT_SECRET_KEY'),
         });
     }
 
+    // Modify the validate function to return additional fields
     async validate(payload: any) {
-        return { userId: payload.sub, username: payload.username, role: payload.role };
+        return {
+            userId: payload.sub,
+            username: payload.username,
+            email: payload.email,     
+            name: payload.name,        
+            role: payload.role,
+        };
     }
 }

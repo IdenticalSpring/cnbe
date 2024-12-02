@@ -1,5 +1,5 @@
-import { Controller, Post, Body, Param, Res, Get } from '@nestjs/common';
-import { ApiBearerAuth, ApiOperation, ApiTags } from '@nestjs/swagger';
+import { Controller, Post, Body, Param, Res, Get, Query } from '@nestjs/common';
+import { ApiBearerAuth, ApiOperation, ApiQuery, ApiTags } from '@nestjs/swagger';
 import { SubmissionService } from './submission.service';
 import { CreateSubmissionDto } from './dto/submission.dto';
 import { Response } from 'express';
@@ -121,6 +121,44 @@ export class SubmissionController {
       return { status: 'success', data: response.data };
     } catch (error) {
       return { status: 'failed', message: error.message };
+    }
+  }
+  @Get(':userId')
+  @ApiOperation({ summary: 'Get submission by userId and optional problemId' })
+  @ApiQuery({
+    name: 'problemId',
+    required: false, 
+    description: 'Optional problemId to filter submissions',
+    type: Number,
+  })
+  async getSubmissionByUserIdAndProblemId(
+    @Param('userId') userId: number,
+    @Query('problemId') problemId?: number,
+  ) {
+    try {
+      const submission = await this.submissionService.getSubmissionByUserIdAndProblemId(
+        userId,
+        problemId,
+      );
+
+      if (!submission) {
+        return {
+          status: 404,
+          message: 'Submission not found.',
+        };
+      }
+
+      return {
+        status: 200,
+        message: 'Submission retrieved successfully.',
+        data: submission,
+      };
+    } catch (error) {
+      return {
+        status: 500,
+        message: 'An unexpected error occurred.',
+        error: error.message,
+      };
     }
   }
 }

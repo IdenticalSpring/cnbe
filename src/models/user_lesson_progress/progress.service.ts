@@ -1,4 +1,4 @@
-import { Injectable, Inject } from '@nestjs/common';
+import { Injectable, Inject, NotFoundException } from '@nestjs/common';
 import { InjectModel } from '@nestjs/sequelize';
 import { UserLessonProgress } from './entities/progress.entity';
 import { UserChapterProgress } from '../user_chapter_progress/entities/user_chapter_progress.entity';
@@ -30,8 +30,18 @@ export class ProgressService {
   ) {}
 
   async create(createProgressDto: any): Promise<UserLessonProgress> {
+    const existingProgress = await this.progressModel.findOne({
+      where: {
+        userId: createProgressDto.userId,
+        lessonId: createProgressDto.lessonId,
+      },
+    });
+    if (existingProgress) {
+      return existingProgress; 
+    }
     return await this.progressModel.create(createProgressDto);
   }
+
 
   async findAll(): Promise<UserLessonProgress[]> {
     return await this.progressModel.findAll();
@@ -131,5 +141,29 @@ export class ProgressService {
   }
   async findAllByUser(userId: number): Promise<UserLessonProgress[]> {
     return await this.progressModel.findAll({ where: { userId } });
+  }
+  async findAllProgressByCourseId(courseId: number, userId: number): Promise<any[]> {
+    // Bước 1: Tìm tất cả lessons thuộc khóa học (courseId) qua bảng Chapter
+    const lessons = await this.lessonModel.findAll({
+      include: [
+        {
+          model: Chapter,
+          where: { courseId }, // Lọc theo courseId trong bảng Chapter
+          required: true, // Đảm bảo chỉ lấy các lessons có Chapter tương ứng
+        },
+      ],
+    });
+
+    if (!lessons || lessons.length === 0) {
+      throw new NotFoundException(`No lessons found for course ID: ${courseId}`);
+    }
+
+    // Bước 2: Lấy tất cả progress của người dùng cho các bài học này
+    const lessonIds = lessons.map((lesson) => lesson.id); // Lấy tất cả lessonId
+    const progress = await this.progressModel.findAll({
+      where: { userId, lessonId: lessonIds }, // Lọc theo userId và lessonId
+    });
+
+    return progress;
   }
 }

@@ -66,16 +66,18 @@ export class AuthController {
     return { message: 'Logged out successfully' };
   }
 
-  @Roles('admin')
+  @UseGuards(JwtAuthGuard) 
   @Get('profile')
-  @UseGuards(JwtAuthGuard)
-  @ApiBearerAuth()
-  @ApiOperation({ summary: 'Lấy thông tin Profile' })
-  @ApiResponse({ status: 200, description: 'Lấy profile thành công.' })
+  @ApiBearerAuth('JWT')
   getProfile(@Request() req) {
-    return req.user;
+    const user = req.user;
+    return {
+      username: user.username,
+      email: user.email,
+      name: user.name,
+      role: user.role,
+    };
   }
-
   @Post('register')
   @ApiOperation({ summary: 'User Registration' })
   @ApiResponse({ status: 200, description: 'Registration successful.' })

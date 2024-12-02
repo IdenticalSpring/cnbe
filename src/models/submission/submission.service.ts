@@ -4,6 +4,7 @@ import axios from 'axios';
 import { Submission } from './entities/submission.model';
 import { AcceptanceSubmission } from '../acceptance_submissions/entities/acceptance_submissions.entity';
 import Bottleneck from 'bottleneck';
+import { Problems } from '../problems/entitites/problems.entity';
 
 @Injectable()
 export class SubmissionService {
@@ -249,4 +250,41 @@ export class SubmissionService {
       };
     }
   }
+  async getSubmissionByUserIdAndProblemId(
+    userId: number,
+    problemId?: number
+  ): Promise<Submission[] | Submission | null> {
+    if (problemId) {
+      return this.submissionModel.findOne({
+        where: { userId, problemId },
+        include: [
+          {
+            model: AcceptanceSubmission,
+            required: false,
+          },
+          {
+            model: Problems, // Thêm quan hệ với model Problem
+            attributes: ['title'], // Chỉ lấy trường name của Problem
+            required: false, // Nếu không có Problem thì vẫn trả về Submission
+          },
+        ],
+      });
+    } else {
+      return this.submissionModel.findAll({
+        where: { userId },
+        include: [
+          {
+            model: AcceptanceSubmission,
+            required: false,
+          },
+          {
+            model: Problems, // Thêm quan hệ với model Problem
+            attributes: ['title'], // Chỉ lấy trường name của Problem
+            required: false, // Nếu không có Problem thì vẫn trả về Submission
+          },
+        ],
+      });
+    }
+  }
+
 }

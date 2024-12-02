@@ -42,26 +42,6 @@ export class UserLessonProgress extends Model<UserLessonProgress> {
   @BelongsTo(() => Lessons)
   lesson: Lessons;
 
-  // @ForeignKey(() => Chapter)
-  // @Column({
-  //   type: DataType.INTEGER,
-  //   allowNull: true, // Optional, if needed
-  // })
-  // chapterId: number;
-
-  // @BelongsTo(() => Chapter)
-  // chapter: Chapter;
-
-  // @ForeignKey(() => Courses)
-  // @Column({
-  //   type: DataType.INTEGER,
-  //   allowNull: true, // Optional, if needed
-  // })
-  // courseId: number;
-
-  // @BelongsTo(() => Courses)
-  // course: Courses;
-
   @Column({
     type: DataType.ENUM('not-started', 'in-progress', 'completed'),
     allowNull: false,
