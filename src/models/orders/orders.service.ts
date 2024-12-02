@@ -7,6 +7,7 @@ import { CouponsService } from '../coupons/coupons.service';
 import { CoursesModule } from '../courses/courses.module';
 import { CoursesService } from '../courses/courses.service';
 import { PayOSService } from '../payos/payos.service';
+import { Courses } from '../courses/entities/courses.entity';
 
 @Injectable()
 export class OrdersService {
@@ -33,9 +34,17 @@ export class OrdersService {
     return this.orderModel.findAll({
       where: {
         userId: userId,
+        paymentStatus: 'completed',  
       },
+      include: [
+        {
+          model: Courses, 
+          attributes: ['title'],  
+        },
+      ],
     });
   }
+
 
   async create(createOrderDto: CreateOrderDto): Promise<Orders> {
     // Kiểm tra xem đã có đơn hàng hoàn thành với userId và courseId chưa
