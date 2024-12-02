@@ -134,4 +134,11 @@ export class ProgressController {
   remove(@Param('id') id: string) {
     return this.progressService.remove(+id);
   }
+  @Get(':courseId/:userId')
+  async getProgressByCourseId(
+    @Param('courseId') courseId: number,
+    @Param('userId') userId: number,
+  ) {
+    return this.progressService.findAllProgressByCourseId(courseId, userId);
+  }
 }

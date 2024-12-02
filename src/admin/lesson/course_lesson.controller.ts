@@ -50,13 +50,21 @@ export class AdminLessonsController {
   }
 
   // Lấy tất cả bài học trong một chương cụ thể
-  @Get('chapter/:chapterId/:courseId')
-  @ApiOperation({ summary: 'Get all lessons for a specific chapter' })
+  @Get('chapter/:chapterId/:courseId/:userId')
+  @ApiOperation({ summary: 'Get all lessons for a specific chapter and user' })
   @ApiParam({ name: 'chapterId', description: 'ID of the chapter' })
+  @ApiParam({ name: 'courseId', description: 'ID of the course' })
+  @ApiParam({ name: 'userId', description: 'ID of the user' })
   @ApiResponse({ status: 200, description: 'List of lessons for the chapter.' })
-  async findByChapter(@Param('chapterId') chapterId: string, @Param('courseId') courseId: string) {
-    return this.lessonsService.findByChapterId(+chapterId);
+  async findByChapter(
+    @Param('chapterId') chapterId: string,
+    @Param('courseId') courseId: string,
+    @Param('userId') userId: string,
+  ) {
+    // Truyền cả chapterId, courseId và userId vào service
+    return this.lessonsService.findByChapterId(+chapterId, +courseId, +userId);
   }
+
 
   // Cập nhật bài học
   @Put(':id')

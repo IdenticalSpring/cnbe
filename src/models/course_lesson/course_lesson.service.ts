@@ -4,6 +4,7 @@ import { Lessons } from './entities/course_lesson.entity';
 import { ConfigService } from '@nestjs/config';
 import { Courses } from '../courses/entities/courses.entity';
 import { Chapter } from '../course_chapter/entities/chapter.entity';
+import { UserLessonProgress } from '../user_lesson_progress/entities/progress.entity';
 
 
 @Injectable()
@@ -69,12 +70,26 @@ export class LessonsService {
       await lesson.destroy();
     }
   }
-  async findByChapterId(chapterId: number): Promise<Lessons[]> {
-    return this.lessonsModel.findAll({
+  async findByChapterId(chapterId: number, courseId: number, userId: number): Promise<Lessons[]> {
+    // Lấy tất cả các bài học trong chapter, bao gồm tiến trình và kiểm tra courseId và userId
+    const lessons = await this.lessonsModel.findAll({
       where: { chapterId },
-      order: [['order', 'ASC']], 
+      order: [['order', 'ASC']],
+      include: [
+        {
+          model: UserLessonProgress,
+          where: { userId },
+          required: false, 
+        },
+      ],
+    });
+
+    return lessons.map(lesson => {
+      return lesson;
     });
   }
+
+
   async findAllWithPagination(page: number = 1): Promise<{
     data: Lessons[];
     currentPage: number;

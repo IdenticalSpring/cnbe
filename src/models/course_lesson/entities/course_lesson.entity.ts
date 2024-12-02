@@ -63,7 +63,12 @@ export class Lessons extends Model<Lessons> {
   @HasMany(() => UserLessonProgress)
   progresses: UserLessonProgress[];
 
+
   get courseId(): number | undefined {
     return this.chapter ? this.chapter.courseId : undefined;
+  }
+  get completed(): boolean {
+    const progress = this.progresses && this.progresses.length > 0 ? this.progresses[0] : null;
+    return progress ? progress.status === 'completed' : false;
   }
 }
