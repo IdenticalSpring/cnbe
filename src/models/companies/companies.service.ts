@@ -89,4 +89,28 @@ export class CompaniesService {
       );
     }
   }
+  async remove(id: number): Promise<void> {
+    const company = await this.companiesModel.findByPk(id);
+    if (!company) {
+      throw new NotFoundException(`Company with id ${id} not found`);
+    }
+
+    // Xoá công ty
+    await company.destroy();
+  }
+  async findOne(id: number): Promise<Companies | null> {
+    try {
+      const company = await this.companiesModel.findByPk(id);
+      if (!company) {
+        throw new HttpException('Company not found', HttpStatus.NOT_FOUND);
+      }
+      return company;
+    } catch (error) {
+      throw new HttpException(
+        'Failed to retrieve company',
+        HttpStatus.INTERNAL_SERVER_ERROR,
+      );
+    }
+  }
+
 }
