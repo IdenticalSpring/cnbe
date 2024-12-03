@@ -8,6 +8,7 @@ import {
   Patch,
   Param,
   UseGuards,
+  Delete,
 } from '@nestjs/common';
 import { ApiTags, ApiOperation, ApiResponse, ApiBearerAuth } from '@nestjs/swagger';
 import { JwtAuthGuard } from 'src/auth/passport/jwt-auth.guard';
@@ -89,4 +90,36 @@ export class AdminCompaniesController {
   async findAllWithProblemCount(): Promise<any[]> {
     return await this.companiesService.findAllWithProblemCount();
   }
+  @Get(':id')
+  @ApiOperation({ summary: 'Get a company by ID' })
+  @ApiResponse({
+    status: HttpStatus.OK,
+    description: 'Company retrieved successfully.',
+    type: Companies,
+  })
+  @ApiResponse({
+    status: HttpStatus.NOT_FOUND,
+    description: 'Company not found.',
+  })
+  async findOne(@Param('id') id: number): Promise<Companies> {
+    const company = await this.companiesService.findOne(id);
+    if (!company) {
+      throw new HttpException('Company not found', HttpStatus.NOT_FOUND);
+    }
+    return company;
+  }
+  @Delete(':id')
+  @ApiOperation({ summary: 'Delete a company by ID' })
+  @ApiResponse({
+    status: HttpStatus.NO_CONTENT,
+    description: 'Company successfully deleted.',
+  })
+  @ApiResponse({
+    status: HttpStatus.NOT_FOUND,
+    description: 'Company not found.',
+  })
+  async remove(@Param('id') id: number): Promise<void> {
+    await this.companiesService.remove(id);
+  }
+
 }
