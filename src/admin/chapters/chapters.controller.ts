@@ -58,20 +58,7 @@ export class AdminChapterController {
     }
 
     @Post()
-    @ApiOperation({ summary: 'Create a new chapter with image upload' })
-    @ApiConsumes('multipart/form-data')
-    @ApiBody({
-        schema: {
-            type: 'object',
-            properties: {
-                title: { type: 'string' },
-                content: { type: 'string' },
-                courseId: { type: 'integer' },
-                image: { type: 'string', format: 'binary' },
-            },
-        },
-    })
-    @UseInterceptors(FileInterceptor('image'))
+    @ApiOperation({ summary: 'Create a new chapter ' })
     @ApiResponse({
         status: 201,
         description: 'The chapter has been successfully created.',
