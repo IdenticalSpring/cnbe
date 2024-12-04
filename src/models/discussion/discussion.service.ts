@@ -3,11 +3,25 @@ import { InjectModel } from '@nestjs/sequelize';
 import { Discussions } from './entities/discussion.entity';
 import { CreateDiscussDto } from './dto/create-discussion.dto';
 import { UserDiscussion } from '../user_discussion/entities/user_discussion.entity';
+import { User } from '../users/entities/user.entity'; 
 import { ConfigService } from '@nestjs/config';
+
+interface DiscussionWithUsername {
+  id: number;
+  title: string;
+  content: string;
+  voteUp: number;
+  voteDown: number;
+  views: number;
+  createdAt: Date;
+  updatedAt: Date;
+  username: string;
+}
 
 @Injectable()
 export class DiscussService {
   private readonly defaultLimit: number;
+
   constructor(
     @InjectModel(Discussions)
     private readonly discussModel: typeof Discussions,
@@ -62,8 +76,9 @@ export class DiscussService {
       await discuss.destroy();
     }
   }
+
   async findAllPagination(page: number): Promise<{
-    data: Discussions[];
+    data: DiscussionWithUsername[];
     currentPage: number;
     totalPages: number;
     totalItems: number;
@@ -75,10 +90,34 @@ export class DiscussService {
       offset,
       limit,
       order: [['createdAt', 'DESC']],
+      include: [
+        {
+          model: User, // Lấy thông tin User
+          through: { attributes: [] }, // Không lấy các thuộc tính bảng UserDiscussion
+          attributes: ['username'], // Lấy chỉ 'username'
+        },
+      ],
+    });
+
+    // Map dữ liệu lấy được từ Sequelize để thêm 'username' cho từng thảo luận
+    const data = rows.map((discussion) => {
+      const discussionJSON = discussion.toJSON() as Discussions & { users: User[] };
+      const username = discussionJSON.users.length > 0 ? discussionJSON.users[0].username : 'Ẩn danh';
+      return {
+        id: discussionJSON.id,
+        title: discussionJSON.title,
+        content: discussionJSON.content,
+        voteUp: discussionJSON.voteUp,
+        voteDown: discussionJSON.voteDown,
+        views: discussionJSON.views,
+        createdAt: discussionJSON.createdAt,
+        updatedAt: discussionJSON.updatedAt,
+        username,
+      };
     });
 
     return {
-      data: rows,
+      data,
       currentPage: page,
       totalPages: Math.ceil(count / limit),
       totalItems: count,

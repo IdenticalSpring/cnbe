@@ -19,6 +19,7 @@ import {
   ApiTags,
 } from '@nestjs/swagger';
 import { Public } from 'src/decorator/public.decorator';
+import { DiscussionWithUsername } from './dto/discussion-with-username.dto';
 @ApiTags('discuss')
 @Controller('discuss')
 @ApiBearerAuth('JWT')
@@ -44,15 +45,17 @@ export class DiscussController {
     return this.discussService.findOne(id);
   }
 
-  @Get(`getpaginated`)
+  @Get('getpaginated')
   @ApiQuery({
     name: 'page',
     required: false,
     type: Number,
     description: 'Page number',
   })
-  async findAllPagination(@Query('page') page: number = 1): Promise<{
-    data: Discussions[];
+  async findAllPagination(
+    @Query('page') page: number = 1,
+  ): Promise<{
+    data: DiscussionWithUsername[];
     currentPage: number;
     totalPages: number;
     totalItems: number;
