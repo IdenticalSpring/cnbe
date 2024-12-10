@@ -14,7 +14,7 @@ import { PromblemsService } from "src/models/problems/problems.service";
 @Controller('admin/problem')
 @UseGuards(JwtAuthGuard, RolesGuard)
 @ApiBearerAuth('JWT')
-@Roles('admin')
+@Roles('admin', 'mentor')
 export class AdminProblemController {
     constructor(private readonly problemsService: PromblemsService) { }
 

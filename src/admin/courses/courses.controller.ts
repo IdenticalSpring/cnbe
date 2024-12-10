@@ -15,6 +15,7 @@ import { Courses } from "src/models/courses/entities/courses.entity";
 @Controller('admin/courses')
 @UseGuards(JwtAuthGuard, RolesGuard)
 @ApiBearerAuth('JWT')
+@Roles('admin', 'mentor')
 export class AdminCoursesController {
   constructor(
     private readonly coursesService: CoursesService,

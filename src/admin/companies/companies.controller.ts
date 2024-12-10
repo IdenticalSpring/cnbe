@@ -13,6 +13,7 @@ import {
 import { ApiTags, ApiOperation, ApiResponse, ApiBearerAuth } from '@nestjs/swagger';
 import { JwtAuthGuard } from 'src/auth/passport/jwt-auth.guard';
 import { RolesGuard } from 'src/auth/passport/roles.guard';
+import { Roles } from 'src/decorator/admin.decorator';
 
 import { Public } from 'src/decorator/public.decorator';
 import { CompaniesService } from 'src/models/companies/companies.service';
@@ -21,9 +22,10 @@ import { UpdateCompanyDto } from 'src/models/companies/dto/update-company.dto';
 import { Companies } from 'src/models/companies/entities/companies.entities';
 
 @ApiTags('admin/Companies')
-  @Controller('admin/companies')
+@Controller('admin/companies')
 @ApiBearerAuth('JWT')
 @UseGuards(JwtAuthGuard, RolesGuard)
+@Roles('admin')
 export class AdminCompaniesController {
   constructor(private readonly companiesService: CompaniesService) {}
 

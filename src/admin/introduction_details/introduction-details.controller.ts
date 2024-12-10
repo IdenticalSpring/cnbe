@@ -12,6 +12,7 @@ import { IntroductionDetailsService } from 'src/models/introduction_details/intr
 @Controller('admin/introduction-details')
 @UseGuards(JwtAuthGuard, RolesGuard)
 @ApiBearerAuth('JWT')
+@Roles('admin')
 export class AdminIntroductionDetailsController {
     constructor(private readonly introductionDetailsService: IntroductionDetailsService) { }
 

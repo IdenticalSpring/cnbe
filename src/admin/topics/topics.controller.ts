@@ -13,6 +13,7 @@ import {
 import { ApiBearerAuth, ApiTags } from '@nestjs/swagger';
 import { JwtAuthGuard } from 'src/auth/passport/jwt-auth.guard';
 import { RolesGuard } from 'src/auth/passport/roles.guard';
+import { Roles } from 'src/decorator/admin.decorator';
 import { Public } from 'src/decorator/public.decorator';
 import { CreateTopicDto } from 'src/models/topics/dto/create-topics.dto';
 import { TopicsService } from 'src/models/topics/topics.service';
@@ -21,6 +22,7 @@ import { TopicsService } from 'src/models/topics/topics.service';
 @Controller('admin/topics')
 @ApiBearerAuth('JWT')
 @UseGuards(JwtAuthGuard, RolesGuard)
+@Roles('admin')
 export class AdminTopicsController {
   constructor(private readonly topicsService: TopicsService) {}
 

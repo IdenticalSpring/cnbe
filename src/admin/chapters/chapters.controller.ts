@@ -31,12 +31,14 @@ import { CreateChapterDto } from 'src/models/course_chapter/dto/create-chapter.d
 import { UpdateChapterDto } from 'src/models/course_chapter/dto/update-chapter.dto';
 import { JwtAuthGuard } from 'src/auth/passport/jwt-auth.guard';
 import { RolesGuard } from 'src/auth/passport/roles.guard';
+import { Roles } from 'src/decorator/admin.decorator';
 
 @Public()
 @ApiTags('admin/chapters')
 @Controller('admin/chapters')
 @ApiBearerAuth('JWT')
 @UseGuards(JwtAuthGuard, RolesGuard)
+@Roles('admin','mentor')
 export class AdminChapterController {
     constructor(
         private readonly chapterService: ChapterService,

@@ -2,6 +2,7 @@ import { Controller, Get, Post, Body, Param, Put, Delete, UseGuards, Query } fro
 import { ApiTags, ApiOperation, ApiResponse, ApiParam, ApiBearerAuth, ApiQuery } from '@nestjs/swagger';
 import { JwtAuthGuard } from 'src/auth/passport/jwt-auth.guard';
 import { RolesGuard } from 'src/auth/passport/roles.guard';
+import { Roles } from 'src/decorator/admin.decorator';
 import { LessonsService } from 'src/models/course_lesson/course_lesson.service';
 import { CreateCourseLessonDto } from 'src/models/course_lesson/dto/create-course_lesson.dto';
 import { UpdateCourseLessonDto } from 'src/models/course_lesson/dto/update-course_lesson.dto';
@@ -10,6 +11,7 @@ import { UpdateCourseLessonDto } from 'src/models/course_lesson/dto/update-cours
 @Controller('admin/lessons')
 @ApiBearerAuth('JWT')
 @UseGuards(JwtAuthGuard, RolesGuard)
+  @Roles('admin', 'mentor')
 export class AdminLessonsController {
   constructor(private readonly lessonsService: LessonsService) { }
 

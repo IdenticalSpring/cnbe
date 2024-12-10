@@ -69,7 +69,7 @@ export class User extends Model<User> {
   isActive: boolean;
 
   @Column({
-    type: DataType.ENUM('user', 'admin'),
+    type: DataType.ENUM('user', 'admin','mentor'),
     defaultValue: 'user',
   })
   role: string;

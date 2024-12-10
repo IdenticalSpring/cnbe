@@ -11,6 +11,7 @@ import { UsersService } from 'src/models/users/users.service';
 @Controller('admin/users')
 @UseGuards(JwtAuthGuard, RolesGuard) 
 @ApiBearerAuth('JWT')
+@Roles('admin', 'mentor')
 export class AdminUsersController {
     constructor(private readonly usersService: UsersService) { }
 

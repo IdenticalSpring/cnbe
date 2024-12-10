@@ -12,6 +12,7 @@ import { JwtAuthGuard } from 'src/auth/passport/jwt-auth.guard';
 @Controller('admin/course-introductions')
 @UseGuards(JwtAuthGuard, RolesGuard)
 @ApiBearerAuth('JWT')
+@Roles('admin')
 export class AdminCourseIntroductionsController {
     constructor(private readonly courseIntroductionsService: CourseIntroductionsService) { }
 
