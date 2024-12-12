@@ -23,9 +23,9 @@ import { Companies } from 'src/models/companies/entities/companies.entities';
 
 @ApiTags('admin/Companies')
 @Controller('admin/companies')
-@ApiBearerAuth('JWT')
 @UseGuards(JwtAuthGuard, RolesGuard)
-@Roles('admin')
+@ApiBearerAuth('JWT')
+@Roles('admin', 'mentor')
 export class AdminCompaniesController {
   constructor(private readonly companiesService: CompaniesService) {}
 
