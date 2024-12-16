@@ -70,12 +70,15 @@ export class CoursesController {
   @Get('getByType')
   @ApiQuery({ name: 'type', required: true, type: String, description: 'Course type' })
   @ApiQuery({ name: 'page', required: false, type: Number, example: 1 })
+  @ApiQuery({ name: 'userId', required: false, type: Number, description: 'User ID to track progress' }) 
   async getByType(
     @Query('type') type: string,
-    @Query('page') page: string = '1'
+    @Query('page') page: string = '1',
+    @Query('userId') userId?: number, 
   ): Promise<{ data: CourseWithCounts[]; currentPage: number; totalPages: number; totalItems: number }> {
-    return this.coursesService.getByType(type, +page || 1);
+    return this.coursesService.getByType(type, +page || 1, userId); 
   }
+
 
   @Get(':id')
   findOne(@Param('id') id: string) {

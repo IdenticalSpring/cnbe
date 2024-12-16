@@ -9,6 +9,7 @@ import { CourseWithCounts } from './dto/CourseWithCounts.dto';
 import { Chapter } from '../course_chapter/entities/chapter.entity';
 import { Lessons } from '../course_lesson/entities/course_lesson.entity';
 import { Op } from 'sequelize';
+import { UserLessonProgress } from '../user_lesson_progress/entities/progress.entity';
 
 @Injectable()
 export class CoursesService {
@@ -65,8 +66,8 @@ export class CoursesService {
     return course;
   }
 
-  async getByType(typeName: string, page: number = 1): Promise<{ data: CourseWithCounts[]; currentPage: number; totalPages: number; totalItems: number }> {
-    const limit = Number(this.defaultLimit); 
+  async getByType(typeName: string, page: number = 1, userId?: number): Promise<{ data: CourseWithCounts[]; currentPage: number; totalPages: number; totalItems: number }> {
+    const limit = Number(this.defaultLimit);
     const offset = (page - 1) * limit;
 
     const type = await this.typesModel.findOne({
@@ -86,24 +87,47 @@ export class CoursesService {
       include: [
         {
           model: Chapter,
-          include: [Lessons],
+          include: [
+            {
+              model: Lessons,
+              include: userId ? [
+                {
+                  model: UserLessonProgress,
+                  where: { userId },
+                  required: false,
+                }
+              ] : []
+            },
+          ],
         },
       ],
     });
 
-    // Calculate chapter and lesson counts for each course
-    const data: CourseWithCounts[] = courses.map((course) => ({
-      id: course.id,
-      title: course.title,
-      description: course.description,
-      imageUrl: course.imageUrl,
-      price: course.price,
-      status: course.status,
-      createdAt: course.createdAt,
-      updatedAt: course.updatedAt,
-      chapterCount: course.chapters.length,
-      itemCount: course.chapters.reduce((sum, chapter) => sum + chapter.lessons.length, 0),
-    }));
+    // Calculate chapter, lesson counts, and completed lesson counts for each course
+    const data: CourseWithCounts[] = courses.map((course) => {
+      const totalLessons = course.chapters.reduce((sum, chapter) => sum + chapter.lessons.length, 0);
+      const completedLessons = course.chapters.reduce((sum, chapter) => {
+        return sum + (chapter.lessons?.filter(lesson => {
+          const progress = lesson.progresses?.find(p => p.userId === userId && p.status === 'completed');
+          return progress !== undefined;
+        }).length || 0); // Nếu không có lessons, trả về 0
+      }, 0);
+
+
+      return {
+        id: course.id,
+        title: course.title,
+        description: course.description,
+        imageUrl: course.imageUrl,
+        price: course.price,
+        status: course.status,
+        createdAt: course.createdAt,
+        updatedAt: course.updatedAt,
+        chapterCount: course.chapters.length,
+        itemCount: totalLessons,
+        completedLessons, // Additional field to show how many lessons the user has completed
+      };
+    });
 
     const totalItems = courseIds.length;
     const totalPages = Math.ceil(totalItems / limit);
@@ -115,6 +139,7 @@ export class CoursesService {
       totalItems,
     };
   }
+
 
   async remove(id: number): Promise<void> {
     const course = await this.findOne(id);
