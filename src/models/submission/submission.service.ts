@@ -1,26 +1,17 @@
 import { Injectable } from '@nestjs/common';
 import { InjectModel } from '@nestjs/sequelize';
-import axios from 'axios';
 import { Submission } from './entities/submission.model';
 import { AcceptanceSubmission } from '../acceptance_submissions/entities/acceptance_submissions.entity';
-import Bottleneck from 'bottleneck';
 import { Problems } from '../problems/entitites/problems.entity';
 
 @Injectable()
 export class SubmissionService {
-  private limiter: Bottleneck;
-
   constructor(
     @InjectModel(Submission)
     private readonly submissionModel: typeof Submission,
     @InjectModel(AcceptanceSubmission)
     private readonly acceptanceSubmissionModel: typeof AcceptanceSubmission,
-  ) {
-    this.limiter = new Bottleneck({
-      maxConcurrent: 1,
-      minTime: 1000,
-    });
-  }
+  ) {}
 
   /**
    * Map ngôn ngữ lập trình với phiên bản
@@ -33,21 +24,107 @@ export class SubmissionService {
       python: { language: 'python', version: '3.10.0' },
       javascript: { language: 'javascript', version: '16.3.0' },
       c: { language: 'c', version: '10.2.0' },
-      java: { language: 'java', version: '15.0.2' },
-      cpp: { language: 'cpp', version: '10.2.0' },
     };
     return languageMap[language.toLowerCase()] || null;
   }
 
   /**
-   * Tạo hoặc cập nhật submission
+   * Hàm chạy code trực tiếp trên server (được sử dụng lại trong createOrUpdateSubmission)
+   */
+  private async executeCodeDirectly(
+    language: string,
+    code: string,
+    stdinInput?: string,
+  ): Promise<{ status: string; output: string | null; error: string | null }> {
+    const mappedLanguage = this.mapLanguageToVersion(language);
+
+    if (!mappedLanguage) {
+      return {
+        status: 'failed',
+        output: null,
+        error: 'Unsupported language',
+      };
+    }
+
+    const { spawn } = require('child_process');
+
+    try {
+      let command: string;
+      let args: string[] = [];
+
+      // Xác định lệnh thực thi dựa trên ngôn ngữ
+      if (mappedLanguage.language === 'python') {
+        command = 'python';
+        args = ['-c', code]; // Chạy mã Python trực tiếp từ chuỗi
+      } else if (mappedLanguage.language === 'javascript') {
+        command = 'node';
+        args = ['-e', code]; // Chạy mã JavaScript trực tiếp từ chuỗi
+      } else {
+        // Các ngôn ngữ còn lại chưa hỗ trợ chạy trực tiếp trong ví dụ này
+        return {
+          status: 'failed',
+          output: null,
+          error: `Unsupported language for direct execution: ${mappedLanguage.language}`,
+        };
+      }
+
+      // Thực thi mã
+      const process = spawn(command, args);
+
+      if (stdinInput) {
+        process.stdin.write(stdinInput);
+      }
+      process.stdin.end();
+
+      let stdout = '';
+      let stderr = '';
+
+      process.stdout.on('data', (data) => {
+        stdout += data;
+      });
+
+      process.stderr.on('data', (data) => {
+        stderr += data;
+      });
+
+      return new Promise((resolve) => {
+        process.on('close', (code) => {
+          const cleanedStdout = stdout.trim();
+          const cleanedStderr = stderr.trim();
+      
+          resolve({
+            status: code === 0 ? 'completed' : 'failed',
+            output: cleanedStdout || null,
+            error: cleanedStderr || null,
+          });
+        });
+      
+        process.on('error', (error) => {
+          resolve({
+            status: 'failed',
+            output: null,
+            error: `Execution error: ${error.message}`,
+          });
+        });
+      });
+    } catch (error) {
+      return {
+        status: 'failed',
+        output: null,
+        error: `Execution error: ${error.message}`,
+      };
+    }
+  }
+
+  /**
+   * Tạo hoặc cập nhật submission (chạy code trực tiếp trên server thay vì gọi API piston)
    */
   async createOrUpdateSubmission(
     userId: number,
     language: string,
     problemId: number,
     code: string,
-    stdinInput: string
+    stdinInput: string,
   ) {
     // Tìm Submission theo userId và problemId
     let submission = await this.submissionModel.findOne({
@@ -114,13 +191,14 @@ export class SubmissionService {
 
     // **Kiểm tra ngôn ngữ có được hỗ trợ không**
     const mappedLanguage = this.mapLanguageToVersion(language);
-
     if (!mappedLanguage) {
       submission.status = 'failed';
       submission.error = 'Unsupported language';
       await submission.save();
 
       acceptanceSubmission.status = 'rejected';
+      acceptanceSubmission.output = null;
+      acceptanceSubmission.error = 'Unsupported language';
       await acceptanceSubmission.save();
 
       return {
@@ -131,128 +209,42 @@ export class SubmissionService {
       };
     }
 
-    // **Gọi API để chạy code**
-    const pistonOptions = {
-      method: 'POST',
-      url: 'http://localhost:2000/api/v2/execute',
-      headers: { 'Content-Type': 'application/json' },
-      data: {
-        language: mappedLanguage.language,
-        version: mappedLanguage.version,
-        files: [{ name: 'main', content: code }],
-        stdin: stdinInput || '',
-      },
+    // **Chạy code trực tiếp trên server** // Đã sửa
+    const execResult = await this.executeCodeDirectly(language, code, stdinInput);
+
+    submission.status = execResult.status === 'completed' ? 'completed' : 'failed';
+    submission.output = execResult.output;
+    submission.error = execResult.error;
+    await submission.save();
+
+    acceptanceSubmission.status =
+      submission.status === 'completed' ? 'accepted' : 'rejected';
+    acceptanceSubmission.output = submission.output;
+    acceptanceSubmission.error = submission.error;
+    await acceptanceSubmission.save();
+
+    return {
+      message:
+        acceptanceSubmission.status === 'accepted'
+          ? 'Your submission has been accepted.'
+          : 'Your submission was rejected.',
+      status: submission.status === 'completed' ? 201 : 400,
+      submission,
+      acceptanceSubmission,
     };
-
-    try {
-      const response = await axios(pistonOptions);
-      const { run } = response.data;
-
-      submission.status = run && !run.stderr && run.code === 0 ? 'completed' : 'failed';
-      submission.output = run?.stdout || null;
-      submission.error = run?.stderr || 'Unknown error occurred';
-      await submission.save();
-
-      // Cập nhật AcceptanceSubmission
-      acceptanceSubmission.status =
-        submission.status === 'completed' ? 'accepted' : 'rejected';
-      acceptanceSubmission.output = submission.output;
-      acceptanceSubmission.error = submission.error;
-      await acceptanceSubmission.save();
-
-      return {
-        message:
-          acceptanceSubmission.status === 'accepted'
-            ? 'Your submission has been accepted.'
-            : 'Your submission was rejected.',
-        status: submission.status === 'completed' ? 201 : 400,
-        submission,
-        acceptanceSubmission,
-      };
-    } catch (error) {
-      // **Xử lý lỗi từ API Piston**
-      submission.status = 'failed';
-      submission.output = null;
-      submission.error = 'Piston API Error: ' + error.message;
-      await submission.save();
-
-      acceptanceSubmission.status = 'rejected';
-      acceptanceSubmission.output = null;
-      acceptanceSubmission.error = submission.error;
-      await acceptanceSubmission.save();
-
-      return {
-        message: 'Submission failed due to a system error.',
-        status: 500,
-        error: error.message,
-        submission,
-        acceptanceSubmission,
-      };
-    }
   }
-
-
 
   /**
-   * Chạy mã nguồn trực tiếp
+   * Chạy mã nguồn trực tiếp (bạn vẫn có thể dùng hàm này độc lập nếu muốn)
    */
   async runCode(language: string, code: string, stdinInput: string) {
-    const mappedLanguage = this.mapLanguageToVersion(language);
-
-    if (!mappedLanguage) {
-      throw new Error('Unsupported language');
-    }
-
-    const pistonOptions = {
-      method: 'POST',
-      url: 'http://localhost:2000/api/v2/execute',
-      headers: { 'Content-Type': 'application/json' },
-      data: {
-        language: mappedLanguage.language,
-        version: mappedLanguage.version,
-        files: [
-          {
-            name: 'main',
-            content: code,
-          },
-        ],
-        stdin: stdinInput || '',
-      },
-    };
-
-    try {
-      const response = await axios(pistonOptions);
-      const { run } = response.data;
-
-      if (!run) {
-        return {
-          status: 'failed',
-          output: null,
-          error: 'No run data returned from API.',
-        };
-      }
-
-      const status = run.stderr || run.code !== 0 ? 'failed' : 'completed';
-
-      return {
-        status,
-        output: run.stdout,
-        error: run.stderr || null,
-        cpu_time: run.cpu_time,
-        memory: run.memory,
-        wall_time: run.wall_time,
-      };
-    } catch (error) {
-      return {
-        status: 'failed',
-        output: null,
-        error: 'Piston API Error: ' + error.message,
-      };
-    }
+    const result = await this.executeCodeDirectly(language, code, stdinInput);
+    return result;
   }
+
   async getSubmissionByUserIdAndProblemId(
     userId: number,
-    problemId?: number
+    problemId?: number,
   ): Promise<Submission[] | Submission | null> {
     if (problemId) {
       return this.submissionModel.findOne({
@@ -263,9 +255,9 @@ export class SubmissionService {
             required: false,
           },
           {
-            model: Problems, // Thêm quan hệ với model Problem
-            attributes: ['title'], // Chỉ lấy trường name của Problem
-            required: false, // Nếu không có Problem thì vẫn trả về Submission
+            model: Problems,
+            attributes: ['title'],
+            required: false,
           },
         ],
       });
@@ -278,13 +270,12 @@ export class SubmissionService {
             required: false,
           },
           {
-            model: Problems, // Thêm quan hệ với model Problem
-            attributes: ['title'], // Chỉ lấy trường name của Problem
-            required: false, // Nếu không có Problem thì vẫn trả về Submission
+            model: Problems,
+            attributes: ['title'],
+            required: false,
           },
         ],
       });
     }
   }
-
 }
