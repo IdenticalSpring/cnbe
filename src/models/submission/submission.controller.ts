@@ -72,7 +72,6 @@ export class SubmissionController {
       return res.status(500).json({
         status: 500,
         message: 'System error occurred during submission processing.',
-        error: result.error || 'Unexpected system error.',
       });
     } catch (error) {
       // **Xử lý lỗi không mong đợi**
