@@ -13,9 +13,7 @@ export class SubmissionService {
     private readonly acceptanceSubmissionModel: typeof AcceptanceSubmission,
   ) {}
 
-  /**
-   * Map ngôn ngữ lập trình với phiên bản
-   */
+ 
   private mapLanguageToVersion(language: string): {
     language: string;
     version: string;
@@ -28,9 +26,7 @@ export class SubmissionService {
     return languageMap[language.toLowerCase()] || null;
   }
 
-  /**
-   * Hàm chạy code trực tiếp trên server (được sử dụng lại trong createOrUpdateSubmission)
-   */
+
   private async executeCodeDirectly(
     language: string,
     code: string,
@@ -52,15 +48,14 @@ export class SubmissionService {
       let command: string;
       let args: string[] = [];
 
-      // Xác định lệnh thực thi dựa trên ngôn ngữ
+      
       if (mappedLanguage.language === 'python') {
         command = 'python';
-        args = ['-c', code]; // Chạy mã Python trực tiếp từ chuỗi
+        args = ['-c', code]; 
       } else if (mappedLanguage.language === 'javascript') {
         command = 'node';
-        args = ['-e', code]; // Chạy mã JavaScript trực tiếp từ chuỗi
+        args = ['-e', code]; 
       } else {
-        // Các ngôn ngữ còn lại chưa hỗ trợ chạy trực tiếp trong ví dụ này
         return {
           status: 'failed',
           output: null,
@@ -68,7 +63,6 @@ export class SubmissionService {
         };
       }
 
-      // Thực thi mã
       const process = spawn(command, args);
 
       if (stdinInput) {
@@ -116,9 +110,6 @@ export class SubmissionService {
     }
   }
 
-  /**
-   * Tạo hoặc cập nhật submission (chạy code trực tiếp trên server thay vì gọi API piston)
-   */
   async createOrUpdateSubmission(
     userId: number,
     language: string,
@@ -126,7 +117,7 @@ export class SubmissionService {
     code: string,
     stdinInput: string,
   ) {
-    // Tìm Submission theo userId và problemId
+
     let submission = await this.submissionModel.findOne({
       where: { userId, problemId },
     });
@@ -134,12 +125,10 @@ export class SubmissionService {
     let acceptanceSubmission: AcceptanceSubmission | null = null;
 
     if (submission) {
-      // Tìm AcceptanceSubmission liên quan đến Submission
+
       acceptanceSubmission = await this.acceptanceSubmissionModel.findOne({
         where: { submissionId: submission.id },
       });
-
-      // **Trường hợp đã được chấp nhận**
       if (acceptanceSubmission && acceptanceSubmission.status === 'accepted') {
         return {
           message: 'Your submission has already been completed and accepted.',
@@ -149,7 +138,6 @@ export class SubmissionService {
         };
       }
 
-      // **Trường hợp chưa được chấp nhận**
       submission.language = language;
       submission.code = code;
       submission.status = 'pending';
@@ -161,7 +149,6 @@ export class SubmissionService {
         acceptanceSubmission.status = 'pending';
         await acceptanceSubmission.save();
       } else {
-        // Nếu không tồn tại AcceptanceSubmission, tạo mới
         acceptanceSubmission = await this.acceptanceSubmissionModel.create({
           userId,
           submissionId: submission.id,
@@ -171,7 +158,7 @@ export class SubmissionService {
         });
       }
     } else {
-      // **Trường hợp không trùng gì hết: Tạo mới Submission và AcceptanceSubmission**
+
       submission = await this.submissionModel.create({
         userId,
         problemId,
@@ -188,8 +175,6 @@ export class SubmissionService {
         status: 'pending',
       });
     }
-
-    // **Kiểm tra ngôn ngữ có được hỗ trợ không**
     const mappedLanguage = this.mapLanguageToVersion(language);
     if (!mappedLanguage) {
       submission.status = 'failed';
@@ -209,7 +194,6 @@ export class SubmissionService {
       };
     }
 
-    // **Chạy code trực tiếp trên server** // Đã sửa
     const execResult = await this.executeCodeDirectly(language, code, stdinInput);
 
     submission.status = execResult.status === 'completed' ? 'completed' : 'failed';
@@ -234,9 +218,7 @@ export class SubmissionService {
     };
   }
 
-  /**
-   * Chạy mã nguồn trực tiếp (bạn vẫn có thể dùng hàm này độc lập nếu muốn)
-   */
+
   async runCode(language: string, code: string, stdinInput: string) {
     const result = await this.executeCodeDirectly(language, code, stdinInput);
     return result;

@@ -17,4 +17,8 @@ export class CreateCoursesDto {
   @ApiProperty({ description: 'The type of the course', required: false })
   @IsOptional()
   types?: number[];
+
+  @ApiProperty({ description: 'The price of the course', required: false })
+  @IsOptional()
+  price?: number;
 }

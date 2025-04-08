@@ -51,6 +51,7 @@ export class CoursesController {
         description: { type: 'string' },
         image: { type: 'string', format: 'binary' },
         types: { type: 'array', items: { type: 'string' } },
+        price:{ type: 'number' },
       },
     },
   })
